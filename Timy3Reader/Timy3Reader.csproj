@@ -42,7 +42,7 @@
     <Compile Include="Timy3UsbReader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ReaderInterfaces\ReaderInterfaces.csproj">
+    <ProjectReference Include="..\ReaderInterfaces\ReaderInterfaces.csproj">
       <Project>{e92ed62e-a560-4df3-a230-8b5f4cd8f27e}</Project>
       <Name>ReaderInterfaces</Name>
     </ProjectReference>

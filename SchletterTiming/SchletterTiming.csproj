@@ -81,11 +81,11 @@
       <Project>{e92ed62e-a560-4df3-a230-8b5f4cd8f27e}</Project>
       <Name>ReaderInterfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="Timy3Reader\Timy3Reader.csproj">
+    <ProjectReference Include="..\Timy3Reader\Timy3Reader.csproj">
       <Project>{13f9f895-bd7e-4625-b642-9686b3893ae0}</Project>
       <Name>Timy3Reader</Name>
     </ProjectReference>
-    <ProjectReference Include="WebFrontend\WebFrontend.csproj">
+    <ProjectReference Include="..\WebFrontend\WebFrontend.csproj">
       <Project>{6a03b3f8-f0c0-499a-8c36-eca4fc3d9b64}</Project>
       <Name>WebFrontend</Name>
     </ProjectReference>
