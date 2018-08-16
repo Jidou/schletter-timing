@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchletterTiming", "SchletterTiming.csproj", "{E6A91886-411B-45CD-A387-5AE54BEB1D31}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - DataReaders", "3 - DataReaders", "{C4CF6E54-73D7-4C71-AAC1-FCE77213219E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderInterfaces", "..\ReaderInterfaces\ReaderInterfaces.csproj", "{E92ED62E-A560-4DF3-A230-8B5F4CD8F27E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timy3Reader", "Timy3Reader\Timy3Reader.csproj", "{13F9F895-BD7E-4625-B642-9686B3893AE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Frontned", "1 - Frontned", "{A156F707-FEC6-440A-827F-98F424FEBAC5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - BusinessLogic", "2 - BusinessLogic", "{4F2B57C5-CC71-4814-80C7-BCE8E3379682}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebFrontend", "WebFrontend\WebFrontend.csproj", "{6A03B3F8-F0C0-499A-8C36-ECA4FC3D9B64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{B70D2AED-DF0E-4F0E-B602-1CABD87763C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6A91886-411B-45CD-A387-5AE54BEB1D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A91886-411B-45CD-A387-5AE54BEB1D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A91886-411B-45CD-A387-5AE54BEB1D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A91886-411B-45CD-A387-5AE54BEB1D31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E92ED62E-A560-4DF3-A230-8B5F4CD8F27E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E92ED62E-A560-4DF3-A230-8B5F4CD8F27E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E92ED62E-A560-4DF3-A230-8B5F4CD8F27E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E92ED62E-A560-4DF3-A230-8B5F4CD8F27E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13F9F895-BD7E-4625-B642-9686B3893AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13F9F895-BD7E-4625-B642-9686B3893AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13F9F895-BD7E-4625-B642-9686B3893AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13F9F895-BD7E-4625-B642-9686B3893AE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A03B3F8-F0C0-499A-8C36-ECA4FC3D9B64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A03B3F8-F0C0-499A-8C36-ECA4FC3D9B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A03B3F8-F0C0-499A-8C36-ECA4FC3D9B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A03B3F8-F0C0-499A-8C36-ECA4FC3D9B64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B70D2AED-DF0E-4F0E-B602-1CABD87763C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B70D2AED-DF0E-4F0E-B602-1CABD87763C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B70D2AED-DF0E-4F0E-B602-1CABD87763C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B70D2AED-DF0E-4F0E-B602-1CABD87763C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E6A91886-411B-45CD-A387-5AE54BEB1D31} = {4F2B57C5-CC71-4814-80C7-BCE8E3379682}
+		{E92ED62E-A560-4DF3-A230-8B5F4CD8F27E} = {C4CF6E54-73D7-4C71-AAC1-FCE77213219E}
+		{13F9F895-BD7E-4625-B642-9686B3893AE0} = {C4CF6E54-73D7-4C71-AAC1-FCE77213219E}
+		{6A03B3F8-F0C0-499A-8C36-ECA4FC3D9B64} = {A156F707-FEC6-440A-827F-98F424FEBAC5}
+		{B70D2AED-DF0E-4F0E-B602-1CABD87763C1} = {4F2B57C5-CC71-4814-80C7-BCE8E3379682}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9524E0C2-C5CD-4237-9E36-1807D1EE028D}
+	EndGlobalSection
+EndGlobal

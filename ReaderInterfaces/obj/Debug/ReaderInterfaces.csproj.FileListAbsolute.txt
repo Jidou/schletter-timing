@@ -1,0 +1,10 @@
+E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\ReaderInterfaces.dll.config
+E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\ReaderInterfaces.dll
+E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\ReaderInterfaces.pdb
+E:\Repos\schletter-timing\ReaderInterfaces\obj\Debug\ReaderInterfaces.csproj.CoreCompileInputs.cache
+E:\Repos\schletter-timing\ReaderInterfaces\obj\Debug\ReaderInterfaces.dll
+E:\Repos\schletter-timing\ReaderInterfaces\obj\Debug\ReaderInterfaces.pdb
+E:\Repos\schletter-timing\ReaderInterfaces\obj\Debug\ReaderInterfaces.csprojAssemblyReference.cache
+E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\Model.dll
+E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\Model.pdb
+E:\Repos\schletter-timing\ReaderInterfaces\obj\Debug\ReaderInterfaces.csproj.CopyComplete
