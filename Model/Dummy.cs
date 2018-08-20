@@ -10,4 +10,7 @@ namespace Model
 
         public string Time { get; set; }
     }
+
+
+    //public
 }
