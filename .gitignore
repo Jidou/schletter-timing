@@ -1,2 +1,7 @@
-**/bin/**/*
-**/obj/**/*
+# Git ignore
+**/bin
+**/obj
+**/.vs
+**/packages
+
+*.[pdb]

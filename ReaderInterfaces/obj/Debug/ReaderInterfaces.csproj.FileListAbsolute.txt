@@ -8,3 +8,5 @@ E:\Repos\schletter-timing\ReaderInterfaces\obj\Debug\ReaderInterfaces.csprojAsse
 E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\Model.dll
 E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\Model.pdb
 E:\Repos\schletter-timing\ReaderInterfaces\obj\Debug\ReaderInterfaces.csproj.CopyComplete
+E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\NLog.dll
+E:\Repos\schletter-timing\ReaderInterfaces\bin\Debug\NLog.xml
