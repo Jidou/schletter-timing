@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace Model {
+    [Serializable]
     public class Group {
         public string Groupname { get; set; }
         public Participant Participant1 { get; set; }

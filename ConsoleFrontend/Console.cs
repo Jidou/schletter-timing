@@ -1,4 +1,5 @@
 ﻿using Model;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,44 +16,36 @@ namespace ConsoleFrontend {
             PrintMainMenu();
                 
             do {
-                var input = System.Console.ReadLine();
+                var input = ReadTrimAndSplit();
 
-                if (input == "q" || input == "quit") {
+                if (input[0] == "q" || input[0] == "quit") {
                     break;
                 }
 
-                if (input.StartsWith("l")) {
+                if (input[0] == "r") {
+                    CheckInputLengthgAndCallFunction(Races, Races, input, 3);
+                    // TODO: race menu
+                }
+
+
+                if (input[0] == "l") {
                     // TODO: Load menu (old races, data for new race, ...)
                 }
 
-                if (input.StartsWith("c")) {
+                if (input[0] == "c") {
                     // TODO: combine menu
                 }
 
-                if (input.StartsWith("e")) {
+                if (input[0] == "e") {
                     // TODO: edit menu
                 }
 
-                if (input.StartsWith("cat")) {
-                    if (input.Length >= 5) {
-                        Categories(input);
-                        continue;
-                    } else {
-                        Categories();
-                    }
+                if (input[0] == "cat") {
+                    CheckInputLengthgAndCallFunction(Categories, Categories, input, 5);
                 }
 
-                if (input.StartsWith("cla")) {
-                    if (input.Length >= 5) {
-                        Classes(input);
-                        continue;
-                    } else {
-                        Classes();
-                    }
-                }
-
-                if (input.StartsWith("r")) {
-
+                if (input[0] == "cla") {
+                    CheckInputLengthgAndCallFunction(Classes, Classes, input, 5);
                 }
 
                 PrintMainMenu();
@@ -60,37 +53,32 @@ namespace ConsoleFrontend {
         }
 
 
-        private void Categories(string input) {
-            var inputSplit = input.Split(' ').Select(x => x.Trim()).ToArray();
-            
-            if (input == "cat s") {
+        #region Category
+
+        private void Categories(string[] input) {
+            if (input[0] == "s") {
                 DoAction(Category.ShowCategories);
                 return;
             }
 
-            if (inputSplit.Length < 3) {
+            if (input.Length < 2) {
                 System.Console.WriteLine("Invalid input, redirect to Categories Menu");
                 Categories();
                 return;
             }
 
-            var nextInputValue = inputSplit[1];
-
-            if (!(nextInputValue == "a" || nextInputValue == "d")) {
-                System.Console.WriteLine("Invalid input, redirect to Categories Menu");
-                Categories();
+            if (input[0] == "a") {
+                DoAction(Category.AddCategory, input.Skip(1));
                 return;
             }
 
-            if (nextInputValue == "a") {
-                DoAction(Category.AddCategory, inputSplit.Skip(2).Select(x => x.Trim()));
+            if (input[0] == "d") {
+                DoAction(Category.DeleteCategory, input.Skip(1));
                 return;
             }
 
-            if (nextInputValue == "d") {
-                DoAction(Category.DeleteCategory, inputSplit.Skip(2).Select(x => x.Trim()));
-                return;
-            }
+            System.Console.WriteLine("Invalid input, redirect to Categories Menu");
+            Categories();
         }
 
 
@@ -98,64 +86,56 @@ namespace ConsoleFrontend {
             PrintCategoriesMenu();
 
             do {
-                var input = System.Console.ReadLine();
+                var input = ReadTrimAndSplit();
 
-                if (input == "q" || input == "quit") {
+                if (input[0] == "q" || input[0] == "quit") {
                     break;
                 }
 
-                if (input.StartsWith("a")) {
-                    var splitInput = input.Split(' ');
-                    // first one is the option select
-                    DoAction(Category.AddCategory, splitInput.Skip(1).Select(x => x.Trim()));
-                }
-
-                if (input.StartsWith("d")) {
-                    var splitInput = input.Split(' ');
-                    // first one is the option select
-                    DoAction(Category.DeleteCategory, splitInput.Skip(1).Select(x => x.Trim()));
-                }
-
-                if (input.StartsWith("s")) {
+                if (input[0] == "s") {
                     DoAction(Category.ShowCategories);
+                }
+
+                if (input[0] == "a") {
+                    DoAction(Category.AddCategory, input.Skip(1));
+                }
+
+                if (input[0] == "d") {
+                    DoAction(Category.DeleteCategory, input.Skip(1));
                 }
 
                 PrintClassesMenu();
             } while (true);
         }
 
+        #endregion
 
-        private void Classes(string input) {
-            var inputSplit = input.Split(' ').Select(x => x.Trim()).ToArray();
+        #region Class
 
-            if (input == "cla s") {
+        private void Classes(string[] input) {
+            if (input[0] == "s") {
                 DoAction(Class.ShowClasses);
                 return;
             }
 
-            if (inputSplit.Length < 3) {
+            if (input.Length < 2) {
                 System.Console.WriteLine("Invalid input, redirect to Classes Menu");
                 Classes();
                 return;
             }
 
-            var nextInputValue = inputSplit[1];
-
-            if (!(nextInputValue == "a" || nextInputValue == "d")) {
-                System.Console.WriteLine("Invalid input, redirect to Classes Menu");
-                Classes();
+            if (input[0] == "a") {
+                DoAction(Class.AddClass, input.Skip(1));
                 return;
             }
 
-            if (nextInputValue == "a") {
-                DoAction(Class.AddClass, inputSplit.Skip(2).Select(x => x.Trim()));
+            if (input[0] == "d") {
+                DoAction(Class.DeleteClass, input.Skip(1));
                 return;
             }
 
-            if (nextInputValue == "d") {
-                DoAction(Class.DeleteClass, inputSplit.Skip(2).Select(x => x.Trim()));
-                return;
-            }
+            System.Console.WriteLine("Invalid input, redirect to Classes Menu");
+            Classes();
         }
 
 
@@ -163,30 +143,73 @@ namespace ConsoleFrontend {
             PrintClassesMenu();
 
             do {
-                var input = System.Console.ReadLine();
+                var input = ReadTrimAndSplit();
 
-                if (input == "q" || input == "quit") {
+                if (input[0] == "q" || input[0] == "quit") {
                     break;
                 }
 
-                if (input.StartsWith("a")) {
-                    var splitInput = input.Split(' ');
-                    // first one is the option select
-                    DoAction(Class.AddClass, splitInput.Skip(1).Select(x => x.Trim()));
-                }
-
-                if (input.StartsWith("d")) {
-                    var splitInput = input.Split(' ');
-                    // first one is the option select
-                    DoAction(Class.DeleteClass, splitInput.Skip(1).Select(x => x.Trim()));
-                }
-
-                if (input.StartsWith("s")) {
+                if (input[0] == "s") {
                     DoAction(Class.ShowClasses);
+                }
+
+                if (input[0] == "a") {
+                    DoAction(Class.AddClass, input.Skip(1));
+                }
+
+                if (input[0] == "d") {
+                    DoAction(Class.DeleteClass, input.Skip(1));
                 }
 
                 PrintClassesMenu();
             } while (true);
+        }
+
+        #endregion
+
+        #region Race
+
+        private void Races(string[] input) {
+
+        }
+
+
+        private void Races() {
+            PrintRacesMenu();
+
+            do {
+                var input = ReadTrimAndSplit();
+
+                if (input[0] == "q" || input[0] == "quit") {
+                    break;
+                }
+
+                if (input[0] == "c") {
+                    if (input.Length == 6) {
+                        CurrentContext.Race = new Race(input.Skip(1).ToArray());
+                    }
+                }
+
+                if (input[0] == "s") {
+                    Race.Save("SaveTest");
+                }
+
+                PrintRacesMenu();
+            } while (true);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private void CheckInputLengthgAndCallFunction(Action simpleAction, Action<string[]> actionWithParameters, string[] input, int requiredLength) {
+            if (input.Length >= 2) {
+                actionWithParameters(input.Skip(1).ToArray());
+                return;
+            } else {
+                simpleAction();
+                return;
+            }
         }
 
 
@@ -204,6 +227,17 @@ namespace ConsoleFrontend {
         }
 
 
+        private string[] ReadTrimAndSplit() {
+            return System.Console.ReadLine()
+                .Split(' ')
+                .Select(x => x.Trim())
+                .ToArray();
+        }
+
+        #endregion
+
+        #region PrintMenues
+
         private void PrintMainMenu() {
             System.Console.WriteLine($"q: Quit Program \ncat: Change to Categories Menu \ncla: Change to Class Menu \nr: Read results from memory");
         }
@@ -217,5 +251,12 @@ namespace ConsoleFrontend {
         private void PrintClassesMenu() {
             System.Console.WriteLine($"q: Quit Classes Menu \na <ClassName>: Add Class \nd <ClassName>: Delete Class \ns: Show current Classes");
         }
+
+
+        private void PrintRacesMenu() {
+            System.Console.WriteLine($"q: Quit Races Menu \ns: Show current Race to file");
+        }
+
+        #endregion
     }
 }

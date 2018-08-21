@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace Model {
+    [Serializable]
     public class Participant {
         public string Firstname { get; set; }
         public string Lastname { get; set; }

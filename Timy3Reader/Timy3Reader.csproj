@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AlgeTimyUsb.x86">
-      <HintPath>..\..\Dependencies\AlgeTimyUsb.x86.dll</HintPath>
+      <HintPath>..\Dependencies\AlgeTimyUsb.x86.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
