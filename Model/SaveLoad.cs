@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using NLog;
 
 namespace Model {
@@ -20,17 +21,18 @@ namespace Model {
         /// <param name="serializableObject"></param>
         /// <param name="fileName"></param>
         public static void SerializeObject<T>(T serializableObject, string fileName) {
-            if (serializableObject == null) { return; }
+            if (serializableObject == null) {
+                return;
+            }
+
+            if (!fileName.EndsWith(".json")) {
+                fileName += ".json";
+            }
 
             try {
-                XmlDocument xmlDocument = new XmlDocument();
-                XmlSerializer serializer = new XmlSerializer(serializableObject.GetType());
-                using (MemoryStream stream = new MemoryStream()) {
-                    serializer.Serialize(stream, serializableObject);
-                    stream.Position = 0;
-                    xmlDocument.Load(stream);
-                    xmlDocument.Save(fileName);
-                    stream.Close();
+                using (StreamWriter file = File.CreateText(fileName)) {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(file, serializableObject);
                 }
             } catch (Exception ex) {
                 logger.Error(ex);
@@ -45,26 +47,35 @@ namespace Model {
         /// <param name="fileName"></param>
         /// <returns></returns>
         public static T DeSerializeObject<T>(string fileName) {
-            if (string.IsNullOrEmpty(fileName)) { return default(T); }
+            if (string.IsNullOrEmpty(fileName)) {
+                return default(T);
+            }
+
+            if (!fileName.EndsWith(".json")) {
+                fileName += ".json";
+            }
 
             T objectOut = default(T);
 
             try {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.Load(fileName);
-                string xmlString = xmlDocument.OuterXml;
-
-                using (StringReader read = new StringReader(xmlString)) {
-                    Type outType = typeof(T);
-
-                    XmlSerializer serializer = new XmlSerializer(outType);
-                    using (XmlReader reader = new XmlTextReader(read)) {
-                        objectOut = (T)serializer.Deserialize(reader);
-                        reader.Close();
-                    }
-
-                    read.Close();
+                using (StreamReader file = File.OpenText(fileName)) {
+                    JsonSerializer serializer = new JsonSerializer();
+                    objectOut = (T)serializer.Deserialize(file, typeof(T));
                 }
+
+
+                //T objectOut = JsonConvert.DeserializeObject<T>(json);
+                //using (StringReader read = new StringReader(xmlString)) {
+                //    Type outType = typeof(T);
+
+                //    XmlSerializer serializer = new XmlSerializer(outType);
+                //    using (XmlReader reader = new XmlTextReader(read)) {
+                //        objectOut = (T)serializer.Deserialize(reader);
+                //        reader.Close();
+                //    }
+
+                //    read.Close();
+                //}
             } catch (Exception ex) {
                 logger.Error(ex);
             }

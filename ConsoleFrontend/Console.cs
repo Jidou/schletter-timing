@@ -1,5 +1,4 @@
 ﻿using Model;
-using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -192,6 +191,10 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "s") {
                     Race.Save("SaveTest");
+                }
+
+                if (input[0] == "l") {
+                    Race.Load("SaveTest");
                 }
 
                 PrintRacesMenu();

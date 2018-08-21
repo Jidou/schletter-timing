@@ -40,11 +40,23 @@ namespace Model {
 
 
         public static void Save(string filename) {
-            if (!string.IsNullOrEmpty(filename)) {
+            if (string.IsNullOrEmpty(filename)) {
                 filename = $"tmp_{CurrentContext.SaveCounter++}";
             }
 
             SaveLoad.SerializeObject<Race>(CurrentContext.Race, filename);
         }
+
+
+        public static void Load(string filename) {
+            if (string.IsNullOrEmpty(filename)) {
+                return;
+                //filename = $"tmp_{CurrentContext.SaveCounter++}";
+            }
+
+            var loadedScenario = SaveLoad.DeSerializeObject<Race>(filename);
+            CurrentContext.Race = loadedScenario;
+        }
+
     }
 }
