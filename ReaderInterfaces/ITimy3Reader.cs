@@ -10,6 +10,6 @@ namespace ReaderInterfaces {
 
         void Init();
 
-        IEnumerable<Dummy> WaitForBulk();
+        List<TimingValue> WaitForBulk();
     }
 }

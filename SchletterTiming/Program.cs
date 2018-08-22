@@ -1,10 +1,9 @@
-using ReaderInterfaces;
 using NConfig;
 using RunningContext;
-using Timy3Reader;
 using System;
 using System.Configuration;
 using System.Linq;
+using Timy3Reader;
 using WebFrontend;
 
 namespace SchletterTiming {
@@ -24,7 +23,13 @@ namespace SchletterTiming {
             var readerType = ConfigurationManager.AppSettings["TimyReader"];
 
             if (string.IsNullOrEmpty(readerType) || readerType == "USB") {
-                CurrentContext.Reader = new Timy3UsbReader();
+                var usbReader = new Timy3UsbReader();
+                usbReader.Init();
+                CurrentContext.Reader = usbReader;
+            } else {
+                 var rs232Reader = new Timy3RS232Reader();
+                rs232Reader.Init();
+                CurrentContext.Reader = rs232Reader;
             }
 
             var startupType = ConfigurationManager.AppSettings["StartupType"];

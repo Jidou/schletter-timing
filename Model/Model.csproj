@@ -52,12 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dummy.cs" />
+    <Compile Include="TimingValue.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Participant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Race.cs" />
-    <Compile Include="Timing.cs" />
+    <Compile Include="TimingTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

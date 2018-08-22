@@ -14,20 +14,20 @@ namespace Model {
         public DateTime StartTime { get; set; }
         public string Place { get; set; }
         public string Judge { get; set; }
-        public Timing Timing { get; set; }
+        public TimingTools TimingTool { get; set; }
         public IEnumerable<Group> Participants { get; set; }
 
 
         public Race() { }
 
 
-        public Race(string raceType, string titel, DateTime date, string place, string judge, Timing timing = Timing.AlgeTiming) {
+        public Race(string raceType, string titel, DateTime date, string place, string judge, TimingTools timingTool = TimingTools.AlgeTiming) {
             RaceType = raceType;
             Titel = titel;
             Date = date;
             Place = place;
             Judge = judge;
-            Timing = Timing;
+            TimingTool = timingTool;
             Participants = new List<Group>();
         }
 
@@ -38,7 +38,7 @@ namespace Model {
             Date = DateTime.Parse(input[2]);
             Place = input[3];
             Judge = input[4];
-            Timing = Timing.AlgeTiming;
+            TimingTool = TimingTools.AlgeTiming;
             Participants = new List<Group>();
         }
     }

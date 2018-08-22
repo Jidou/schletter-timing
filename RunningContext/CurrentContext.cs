@@ -16,5 +16,6 @@ namespace RunningContext {
         public static Model.Race Race { get; set; }
         public static List<Model.Group> AllAvailableGroups { get; set; }
         public static List<Model.Participant> AllAvailableParticipants { get; set; }
+        public static List<Model.TimingValue> Timing { get; set; }
     }
 }

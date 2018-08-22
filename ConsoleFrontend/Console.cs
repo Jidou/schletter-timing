@@ -46,17 +46,18 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "t") {
+                    CheckInputLengthgAndCallFunction(Timing, Timing, input, 3);
                     continue;
                     // TODO: timing data menu
                 }
 
                 if (input[0] == "cat") {
-                    CheckInputLengthgAndCallFunction(Categories, Categories, input, 5);
+                    CheckInputLengthgAndCallFunction(Categories, Categories, input, 3);
                     continue;
                 }
 
                 if (input[0] == "cla") {
-                    CheckInputLengthgAndCallFunction(Classes, Classes, input, 5);
+                    CheckInputLengthgAndCallFunction(Classes, Classes, input, 3);
                     continue;
                 }
             } while (true);
@@ -109,14 +110,17 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "s") {
                     DoAction(Category.ShowCategories);
+                    continue;
                 }
 
                 if (input[0] == "a") {
                     DoAction(Category.AddCategory, input.Skip(1));
+                    continue;
                 }
 
                 if (input[0] == "d") {
                     DoAction(Category.DeleteCategory, input.Skip(1));
+                    continue;
                 }
             } while (true);
         }
@@ -169,14 +173,17 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "s") {
                     DoAction(Class.ShowClasses);
+                    continue;
                 }
 
                 if (input[0] == "a") {
                     DoAction(Class.AddClass, input.Skip(1));
+                    continue;
                 }
 
                 if (input[0] == "d") {
                     DoAction(Class.DeleteClass, input.Skip(1));
+                    continue;
                 }
             } while (true);
         }
@@ -222,6 +229,11 @@ namespace ConsoleFrontend {
                 return;
             }
 
+            if (input[0] == "at") {
+                RunningContext.Race.AddTimingValues();
+                return;
+            }
+
             if (input[0] == "c") {
                 TryCreateNewRace(input.Skip(1).ToArray());
             }
@@ -245,29 +257,37 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "s") {
                     DoAction(RunningContext.Race.Save, input.Skip(1));
+                    continue;
                 }
 
                 if (input[0] == "sp") {
                     DoAction(RunningContext.Participant.SaveFromRace, input.Skip(1));
-                    return;
+                    continue;
                 }
 
                 if (input[0] == "sg") {
                     DoAction(RunningContext.Group.SaveFromRace, input.Skip(1));
-                    return;
+                    continue;
                 }
 
                 if (input[0] == "l") {
                     DoAction(RunningContext.Race.Load, input.Skip(1));
+                    continue;
                 }
 
                 if (input[0] == "ag") {
                     RunningContext.Race.AddGroup(input.Skip(1).ToArray());
-                    return;
+                    continue;
+                }
+
+                if (input[0] == "at") {
+                    RunningContext.Race.AddTimingValues();
+                    continue;
                 }
 
                 if (input[0] == "c") {
                     TryCreateNewRace(input.Skip(1).ToArray());
+                    continue;
                 }
             } while (true);
         }
@@ -327,14 +347,17 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "c") {
                     TryCreateNewParticipant(input.Skip(1).ToArray());
+                    continue;
                 }
 
                 if (input[0] == "s") {
                     DoAction(RunningContext.Participant.Save, input.Skip(1));
+                    continue;
                 }
 
                 if (input[0] == "l") {
                     DoAction(RunningContext.Participant.Load, input.Skip(1));
+                    continue;
                 }
             } while (true);
         }
@@ -408,14 +431,17 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "c") {
                     TryCreateNewGroup(input.Skip(1).ToArray());
+                    continue;
                 }
 
                 if (input[0] == "s") {
                     DoAction(RunningContext.Group.Save, input.Skip(1));
+                    continue;
                 }
 
                 if (input[0] == "l") {
                     DoAction(RunningContext.Group.Load, input.Skip(1));
+                    continue;
                 }
             } while (true);
         }
@@ -488,15 +514,20 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "rm") {
-                    TryCreateNewGroup(input.Skip(1).ToArray());
+                    var memoryDump = CurrentContext.Reader.WaitForBulk();
+                    CurrentContext.Timing = memoryDump;
+                    RunningContext.TimingValue.Save();
+                    continue;
                 }
 
                 if (input[0] == "s") {
-                    DoAction(RunningContext.Group.Save, input.Skip(1));
+                    DoAction(RunningContext.TimingValue.Save);
+                    continue;
                 }
 
                 if (input[0] == "l") {
-                    DoAction(RunningContext.Group.Load, input.Skip(1));
+                    DoAction(RunningContext.TimingValue.Load, input.Skip(1));
+                    continue;
                 }
             } while (true);
         }

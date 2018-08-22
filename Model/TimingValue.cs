@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
-{
-    public class Dummy {
-
+namespace Model {
+    [Serializable]
+    public class TimingValue {
+        public int MeasurementNumber { get; set; }
         public string Time { get; set; }
+        public int Groupnumber { get; set; }
     }
-
-
-    //public
 }

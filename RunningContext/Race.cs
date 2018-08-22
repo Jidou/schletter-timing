@@ -44,6 +44,22 @@ namespace RunningContext {
         }
 
 
+        public static void AddTimingValues() {
+            var allGroups = CurrentContext.Race.Participants;
+
+            foreach (var group in allGroups) {
+                var finishTimeOfGroup = CurrentContext.Timing.SingleOrDefault(x => x.Groupnumber == group.Groupnumber);
+
+                if (finishTimeOfGroup == null) {
+                    logger.Info($"Could not find finish time for group {group.Groupname}");
+                    continue;
+                }
+
+                group.FinishTime = DateTime.Parse(finishTimeOfGroup.Time);
+            }
+        }
+
+
         public static void Save(string filename) {
             if (string.IsNullOrEmpty(filename)) {
                 filename = $"race_tmp_{CurrentContext.SaveCounter++}";

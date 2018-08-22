@@ -1,5 +1,5 @@
 ﻿namespace Model {
-    public enum Timing {
+    public enum TimingTools {
         Unknown = 0,
         AlgeTiming = 1
     }

@@ -26,7 +26,7 @@ namespace WebFrontend.Controller {
 
             var results = timy3Reader.WaitForBulk();
 
-            return Ok<IEnumerable<Dummy>>(results);
+            return Ok<IEnumerable<TimingValue>>(results);
         }
 
 

@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
 using NLog;
 
@@ -32,6 +26,7 @@ namespace RunningContext {
             try {
                 using (StreamWriter file = File.CreateText(fileName)) {
                     JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, serializableObject);
                 }
             } catch (Exception ex) {
@@ -62,20 +57,6 @@ namespace RunningContext {
                     JsonSerializer serializer = new JsonSerializer();
                     objectOut = (T)serializer.Deserialize(file, typeof(T));
                 }
-
-
-                //T objectOut = JsonConvert.DeserializeObject<T>(json);
-                //using (StringReader read = new StringReader(xmlString)) {
-                //    Type outType = typeof(T);
-
-                //    XmlSerializer serializer = new XmlSerializer(outType);
-                //    using (XmlReader reader = new XmlTextReader(read)) {
-                //        objectOut = (T)serializer.Deserialize(reader);
-                //        reader.Close();
-                //    }
-
-                //    read.Close();
-                //}
             } catch (Exception ex) {
                 logger.Error(ex);
             }
