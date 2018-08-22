@@ -61,6 +61,10 @@
       <Project>{b70d2aed-df0e-4f0e-b602-1cabd87763c1}</Project>
       <Name>Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RunningContext\RunningContext.csproj">
+      <Project>{d005378b-4e1d-4a64-b689-b31f32857f99}</Project>
+      <Name>RunningContext</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

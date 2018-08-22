@@ -1,6 +1,7 @@
 using ReaderInterfaces;
 using NConfig;
-using Model;
+using RunningContext;
+using Timy3Reader;
 using System;
 using System.Configuration;
 using System.Linq;
@@ -9,11 +10,8 @@ using WebFrontend;
 namespace SchletterTiming {
     class Program {
 
-        public static ITimy3Reader reader;
-
         static void Main(string[] args) {
             NConfigurator.UsingFile(@"Config\Default.config").SetAsSystemDefault();
-            Console.WriteLine("Hello World!");
 
             InitObjectsFromConfig();
 
@@ -21,6 +19,12 @@ namespace SchletterTiming {
 
             if (string.IsNullOrEmpty(baseAddress)) {
                 baseAddress = "http://localhost:9000";
+            }
+
+            var readerType = ConfigurationManager.AppSettings["TimyReader"];
+
+            if (string.IsNullOrEmpty(readerType) || readerType == "USB") {
+                CurrentContext.Reader = new Timy3UsbReader();
             }
 
             var startupType = ConfigurationManager.AppSettings["StartupType"];

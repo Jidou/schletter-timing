@@ -43,13 +43,13 @@
     <Compile Include="Timy3UsbReader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ReaderInterfaces\ReaderInterfaces.csproj">
-      <Project>{e92ed62e-a560-4df3-a230-8b5f4cd8f27e}</Project>
-      <Name>ReaderInterfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{b70d2aed-df0e-4f0e-b602-1cabd87763c1}</Project>
       <Name>Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReaderInterfaces\ReaderInterfaces.csproj">
+      <Project>{e92ed62e-a560-4df3-a230-8b5f4cd8f27e}</Project>
+      <Name>ReaderInterfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

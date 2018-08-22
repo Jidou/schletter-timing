@@ -1,4 +1,5 @@
 ﻿using Model;
+using RunningContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,33 +22,43 @@ namespace ConsoleFrontend {
                     break;
                 }
 
+                if (input[0] == "h") {
+                    PrintMainMenu();
+                    continue;
+                }
+
                 if (input[0] == "r") {
                     CheckInputLengthgAndCallFunction(Races, Races, input, 3);
+                    continue;
                     // TODO: race menu
                 }
 
-
-                if (input[0] == "l") {
-                    // TODO: Load menu (old races, data for new race, ...)
+                if (input[0] == "p") {
+                    CheckInputLengthgAndCallFunction(Participants, Participants, input, 3);
+                    continue;
+                    // TODO: participants menu
                 }
 
-                if (input[0] == "c") {
-                    // TODO: combine menu
+                if (input[0] == "g") {
+                    CheckInputLengthgAndCallFunction(Groups, Groups, input, 3);
+                    continue;
+                    // TODO: groups menu
                 }
 
-                if (input[0] == "e") {
-                    // TODO: edit menu
+                if (input[0] == "t") {
+                    continue;
+                    // TODO: timing data menu
                 }
 
                 if (input[0] == "cat") {
                     CheckInputLengthgAndCallFunction(Categories, Categories, input, 5);
+                    continue;
                 }
 
                 if (input[0] == "cla") {
                     CheckInputLengthgAndCallFunction(Classes, Classes, input, 5);
+                    continue;
                 }
-
-                PrintMainMenu();
             } while (true);
         }
 
@@ -61,7 +72,7 @@ namespace ConsoleFrontend {
             }
 
             if (input.Length < 2) {
-                System.Console.WriteLine("Invalid input, redirect to Categories Menu");
+                logger.Info("Invalid input, redirect to Categories Menu");
                 Categories();
                 return;
             }
@@ -76,7 +87,7 @@ namespace ConsoleFrontend {
                 return;
             }
 
-            System.Console.WriteLine("Invalid input, redirect to Categories Menu");
+            logger.Info("Invalid input, redirect to Categories Menu");
             Categories();
         }
 
@@ -91,6 +102,11 @@ namespace ConsoleFrontend {
                     break;
                 }
 
+                if (input[0] == "h") {
+                    PrintCategoriesMenu();
+                    continue;
+                }
+
                 if (input[0] == "s") {
                     DoAction(Category.ShowCategories);
                 }
@@ -102,8 +118,6 @@ namespace ConsoleFrontend {
                 if (input[0] == "d") {
                     DoAction(Category.DeleteCategory, input.Skip(1));
                 }
-
-                PrintClassesMenu();
             } while (true);
         }
 
@@ -118,7 +132,7 @@ namespace ConsoleFrontend {
             }
 
             if (input.Length < 2) {
-                System.Console.WriteLine("Invalid input, redirect to Classes Menu");
+                logger.Info("Invalid input, redirect to Classes Menu");
                 Classes();
                 return;
             }
@@ -133,7 +147,7 @@ namespace ConsoleFrontend {
                 return;
             }
 
-            System.Console.WriteLine("Invalid input, redirect to Classes Menu");
+            logger.Info("Invalid input, redirect to Classes Menu");
             Classes();
         }
 
@@ -148,6 +162,11 @@ namespace ConsoleFrontend {
                     break;
                 }
 
+                if (input[0] == "h") {
+                    PrintClassesMenu();
+                    continue;
+                }
+
                 if (input[0] == "s") {
                     DoAction(Class.ShowClasses);
                 }
@@ -159,8 +178,6 @@ namespace ConsoleFrontend {
                 if (input[0] == "d") {
                     DoAction(Class.DeleteClass, input.Skip(1));
                 }
-
-                PrintClassesMenu();
             } while (true);
         }
 
@@ -169,7 +186,45 @@ namespace ConsoleFrontend {
         #region Race
 
         private void Races(string[] input) {
+            if (input.Length < 2) {
+                logger.Info("Invalid input, redirect to Races Menu");
+                Races();
+                return;
+            }
 
+            if (input[0] == "s") {
+                DoAction(RunningContext.Race.Save, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "sp") {
+                DoAction(RunningContext.Participant.SaveFromRace, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "sg") {
+                DoAction(RunningContext.Group.SaveFromRace, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "l") {
+                DoAction(RunningContext.Race.Load, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "t") {
+                DoAction(RunningContext.Race.SetStartTime, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "ag") {
+                RunningContext.Race.AddGroup(input.Skip(1).ToArray());
+                return;
+            }
+
+            if (input[0] == "c") {
+                TryCreateNewRace(input.Skip(1).ToArray());
+            }
         }
 
 
@@ -183,21 +238,266 @@ namespace ConsoleFrontend {
                     break;
                 }
 
-                if (input[0] == "c") {
-                    if (input.Length == 6) {
-                        CurrentContext.Race = new Race(input.Skip(1).ToArray());
-                    }
+                if (input[0] == "h") {
+                    PrintRacesMenu();
+                    continue;
                 }
 
                 if (input[0] == "s") {
-                    Race.Save("SaveTest");
+                    DoAction(RunningContext.Race.Save, input.Skip(1));
+                }
+
+                if (input[0] == "sp") {
+                    DoAction(RunningContext.Participant.SaveFromRace, input.Skip(1));
+                    return;
+                }
+
+                if (input[0] == "sg") {
+                    DoAction(RunningContext.Group.SaveFromRace, input.Skip(1));
+                    return;
                 }
 
                 if (input[0] == "l") {
-                    Race.Load("SaveTest");
+                    DoAction(RunningContext.Race.Load, input.Skip(1));
                 }
 
-                PrintRacesMenu();
+                if (input[0] == "ag") {
+                    RunningContext.Race.AddGroup(input.Skip(1).ToArray());
+                    return;
+                }
+
+                if (input[0] == "c") {
+                    TryCreateNewRace(input.Skip(1).ToArray());
+                }
+            } while (true);
+        }
+
+
+        private void TryCreateNewRace(string[] input) {
+            if (input.Length == 5) {
+                CurrentContext.Race = new Model.Race(input);
+                logger.Info("Race created");
+                return;
+            }
+
+            logger.Info("Could not create race, wrong number of arguments");
+        }
+
+        #endregion
+
+        #region Participants
+
+        private void Participants(string[] input) {
+            if (input.Length < 2) {
+                logger.Info("Invalid input, redirect to Races Menu");
+                Participants();
+                return;
+            }
+
+            if (input[0] == "s") {
+                DoAction(RunningContext.Participant.Save, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "l") {
+                DoAction(RunningContext.Participant.Load, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "c") {
+                TryCreateNewParticipant(input.Skip(1).ToArray());
+            }
+        }
+
+
+        private void Participants() {
+            PrintParticipantsMenu();
+
+            do {
+                var input = ReadTrimAndSplit();
+
+                if (input[0] == "q" || input[0] == "quit") {
+                    break;
+                }
+
+                if (input[0] == "h") {
+                    PrintParticipantsMenu();
+                    continue;
+                }
+
+                if (input[0] == "c") {
+                    TryCreateNewParticipant(input.Skip(1).ToArray());
+                }
+
+                if (input[0] == "s") {
+                    DoAction(RunningContext.Participant.Save, input.Skip(1));
+                }
+
+                if (input[0] == "l") {
+                    DoAction(RunningContext.Participant.Load, input.Skip(1));
+                }
+            } while (true);
+        }
+
+
+        private void TryCreateNewParticipant(string[] input) {
+            if (input.Length == 4) {
+                if (CurrentContext.AllAvailableParticipants == null) {
+                    CurrentContext.AllAvailableParticipants = new List<Model.Participant>();
+                }
+
+                CurrentContext.AllAvailableParticipants.Add(new Model.Participant(input));
+                logger.Info("Added new Participant");
+                return;
+            }
+
+            logger.Info("Could not add participant, wrong number of arguments");
+        }
+
+        #endregion
+
+        #region Groups
+
+        private void Groups(string[] input) {
+            if (input.Length < 2) {
+                logger.Info("Invalid input, redirect to Groups Menu");
+                Groups();
+                return;
+            }
+
+            if (input[0] == "s") {
+                DoAction(RunningContext.Group.Save, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "l") {
+                DoAction(RunningContext.Group.Load, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "c") {
+                TryCreateNewGroup(input.Skip(1).ToArray());
+            }
+
+            if (input.Length < 3) {
+                logger.Info("Invalid input, redirect to Groups Menu");
+                Groups();
+                return;
+            }
+
+            if (input[0] == "ap") {
+                RunningContext.Group.AddParticipants(input.Skip(1).ToArray());
+            }
+        }
+
+
+        private void Groups() {
+            PrintGroupsMenu();
+
+            do {
+                var input = ReadTrimAndSplit();
+
+                if (input[0] == "q" || input[0] == "quit") {
+                    break;
+                }
+
+                if (input[0] == "h") {
+                    PrintGroupsMenu();
+                    continue;
+                }
+
+                if (input[0] == "c") {
+                    TryCreateNewGroup(input.Skip(1).ToArray());
+                }
+
+                if (input[0] == "s") {
+                    DoAction(RunningContext.Group.Save, input.Skip(1));
+                }
+
+                if (input[0] == "l") {
+                    DoAction(RunningContext.Group.Load, input.Skip(1));
+                }
+            } while (true);
+        }
+
+
+        private void TryCreateNewGroup(string[] input) {
+            if (input.Length == 3) {
+                if (CurrentContext.AllAvailableGroups == null) {
+                    CurrentContext.AllAvailableGroups = new List<Model.Group>();
+                }
+
+                CurrentContext.AllAvailableGroups.Add(new Model.Group(input));
+                logger.Info("Added new Group");
+                return;
+            }
+
+            logger.Info("Could not add group, wrong number of arguments");
+        }
+
+        #endregion
+
+        #region Timing
+
+        private void Timing(string[] input) {
+            if (input.Length < 2) {
+                logger.Info("Invalid input, redirect to Groups Menu");
+                Timing();
+                return;
+            }
+
+            if (input[0] == "s") {
+                DoAction(RunningContext.Group.Save, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "l") {
+                DoAction(RunningContext.Group.Load, input.Skip(1));
+                return;
+            }
+
+            if (input[0] == "c") {
+                TryCreateNewGroup(input.Skip(1).ToArray());
+            }
+
+            if (input.Length < 3) {
+                logger.Info("Invalid input, redirect to Groups Menu");
+                Timing();
+                return;
+            }
+
+            if (input[0] == "ap") {
+                RunningContext.Group.AddParticipants(input.Skip(1).ToArray());
+            }
+        }
+
+
+        private void Timing() {
+            PrintTimingMenu();
+
+            do {
+                var input = ReadTrimAndSplit();
+
+                if (input[0] == "q" || input[0] == "quit") {
+                    break;
+                }
+
+                if (input[0] == "h") {
+                    PrintTimingMenu();
+                    continue;
+                }
+
+                if (input[0] == "rm") {
+                    TryCreateNewGroup(input.Skip(1).ToArray());
+                }
+
+                if (input[0] == "s") {
+                    DoAction(RunningContext.Group.Save, input.Skip(1));
+                }
+
+                if (input[0] == "l") {
+                    DoAction(RunningContext.Group.Load, input.Skip(1));
+                }
             } while (true);
         }
 
@@ -242,22 +542,37 @@ namespace ConsoleFrontend {
         #region PrintMenues
 
         private void PrintMainMenu() {
-            System.Console.WriteLine($"q: Quit Program \ncat: Change to Categories Menu \ncla: Change to Class Menu \nr: Read results from memory");
+            logger.Info($"q: Quit Program \ncat: Change to Categories Menu \ncla: Change to Class Menu \nr: Read results from memory");
         }
 
 
         private void PrintCategoriesMenu() {
-            System.Console.WriteLine($"q: Quit Categories Menu \na <CategorieName>: Add Category \nd <CategorieName>: Delete Category \ns: Show current Categories");
+            logger.Info($"q: Quit Categories Menu \na <CategorieName>: Add Category \nd <CategorieName>: Delete Category \ns: Show current Categories");
         }
 
 
         private void PrintClassesMenu() {
-            System.Console.WriteLine($"q: Quit Classes Menu \na <ClassName>: Add Class \nd <ClassName>: Delete Class \ns: Show current Classes");
+            logger.Info($"q: Quit Classes Menu \na <ClassName>: Add Class \nd <ClassName>: Delete Class \ns: Show current Classes");
         }
 
 
         private void PrintRacesMenu() {
-            System.Console.WriteLine($"q: Quit Races Menu \ns: Show current Race to file");
+            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
+        }
+
+
+        private void PrintParticipantsMenu() {
+            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
+        }
+
+
+        private void PrintGroupsMenu() {
+            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
+        }
+
+
+        private void PrintTimingMenu() {
+            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
         }
 
         #endregion

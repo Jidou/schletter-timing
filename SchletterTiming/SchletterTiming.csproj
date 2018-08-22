@@ -109,6 +109,10 @@
       <Project>{e92ed62e-a560-4df3-a230-8b5f4cd8f27e}</Project>
       <Name>ReaderInterfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RunningContext\RunningContext.csproj">
+      <Project>{d005378b-4e1d-4a64-b689-b31f32857f99}</Project>
+      <Name>RunningContext</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Timy3Reader\Timy3Reader.csproj">
       <Project>{13f9f895-bd7e-4625-b642-9686b3893ae0}</Project>
       <Name>Timy3Reader</Name>

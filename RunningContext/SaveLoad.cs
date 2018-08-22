@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 using Newtonsoft.Json;
 using NLog;
 
-namespace Model {
+namespace RunningContext {
     public class SaveLoad {
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

@@ -1,13 +1,17 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Model {
     [Serializable]
     public class Race {
+        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
 
         public string RaceType { get; set; }
         public string Titel { get; set; }
         public DateTime Date { get; set; }
+        public DateTime StartTime { get; set; }
         public string Place { get; set; }
         public string Judge { get; set; }
         public Timing Timing { get; set; }
@@ -37,26 +41,5 @@ namespace Model {
             Timing = Timing.AlgeTiming;
             Participants = new List<Group>();
         }
-
-
-        public static void Save(string filename) {
-            if (string.IsNullOrEmpty(filename)) {
-                filename = $"tmp_{CurrentContext.SaveCounter++}";
-            }
-
-            SaveLoad.SerializeObject<Race>(CurrentContext.Race, filename);
-        }
-
-
-        public static void Load(string filename) {
-            if (string.IsNullOrEmpty(filename)) {
-                return;
-                //filename = $"tmp_{CurrentContext.SaveCounter++}";
-            }
-
-            var loadedScenario = SaveLoad.DeSerializeObject<Race>(filename);
-            CurrentContext.Race = loadedScenario;
-        }
-
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model {
+namespace RunningContext {
     public class Category {
 
         public static IEnumerable<string> AvailableCategories { get; private set; }
