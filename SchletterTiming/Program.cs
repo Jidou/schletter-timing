@@ -23,14 +23,18 @@ namespace SchletterTiming {
 
             var readerType = ConfigurationManager.AppSettings["TimyReader"];
 
-            if (string.IsNullOrEmpty(readerType) || readerType == "USB") {
+            if (string.IsNullOrEmpty(readerType)) {
+                CurrentContext.Reader = new Timy3MockReader();
+            } else if (readerType == "USB") {
                 var usbReader = new Timy3UsbReader();
                 usbReader.Init();
                 CurrentContext.Reader = usbReader;
-            } else {
+            } else if (readerType == "RS232") {
                  var rs232Reader = new Timy3RS232Reader();
                 rs232Reader.Init();
                 CurrentContext.Reader = rs232Reader;
+            } else {
+                CurrentContext.Reader = new Timy3MockReader();
             }
 
             var startupType = ConfigurationManager.AppSettings["StartupType"];
