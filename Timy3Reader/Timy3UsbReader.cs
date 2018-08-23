@@ -58,22 +58,21 @@ namespace Timy3Reader {
         private void timyUsb_LineReceived(object sender, DataReceivedEventArgs e) {
             logger.Info($"Device {e.Device.Id} Bytes: {e.Data}");
 
-            if ( (e.Data.Contains("ALGE-TIMING") || e.Data.Contains("TIMY V 0974")) && waitingForMemoryDump ) {
-                memoryDumpRecieved = true;
-                waitingForMemoryDump = false;
-                return;
-            }
-
             var parsedLine = e.Data.Split(' ');
 
             if (waitingForMemoryDump) {
-                var timingValue = new TimingValue {
-                    Time = parsedLine[3],
-                    MeasurementNumber = int.Parse(parsedLine[1])
-                };
+                if (parsedLine.Length == 7) {
+                    var timingValue = new TimingValue {
+                        Time = parsedLine[3],
+                        MeasurementNumber = int.Parse(parsedLine[1])
+                    };
 
-                memoryDump.Add(timingValue);
-            }
+                    memoryDump.Add(timingValue);
+                } else if (e.Data.Contains("ALGE-TIMING") || e.Data.Contains("TIMY V 0974")) {
+                    memoryDumpRecieved = true;
+                    waitingForMemoryDump = false;
+                }
+            } 
 
             if (e.Data.StartsWith("PROG: ")) {
                 logger.Debug(e.Data);
