@@ -16,7 +16,7 @@ namespace ConsoleFrontend {
             PrintMainMenu();
                 
             do {
-                var input = ReadTrimAndSplit();
+                var input = ReadTrimAndSplit("Main");
 
                 if (input[0] == "q" || input[0] == "quit") {
                     break;
@@ -28,27 +28,23 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "r") {
-                    CheckInputLengthgAndCallFunction(Races, Races, input, 3);
+                    CheckInputLengthgAndCallFunction(Race, Race, input, 3);
                     continue;
-                    // TODO: race menu
                 }
 
                 if (input[0] == "p") {
                     CheckInputLengthgAndCallFunction(Participants, Participants, input, 3);
                     continue;
-                    // TODO: participants menu
                 }
 
                 if (input[0] == "g") {
                     CheckInputLengthgAndCallFunction(Groups, Groups, input, 3);
                     continue;
-                    // TODO: groups menu
                 }
 
                 if (input[0] == "t") {
                     CheckInputLengthgAndCallFunction(Timing, Timing, input, 3);
                     continue;
-                    // TODO: timing data menu
                 }
 
                 if (input[0] == "cat") {
@@ -97,7 +93,7 @@ namespace ConsoleFrontend {
             PrintCategoriesMenu();
 
             do {
-                var input = ReadTrimAndSplit();
+                var input = ReadTrimAndSplit("Categories");
 
                 if (input[0] == "q" || input[0] == "quit") {
                     break;
@@ -160,7 +156,7 @@ namespace ConsoleFrontend {
             PrintClassesMenu();
 
             do {
-                var input = ReadTrimAndSplit();
+                var input = ReadTrimAndSplit("Classes");
 
                 if (input[0] == "q" || input[0] == "quit") {
                     break;
@@ -192,10 +188,10 @@ namespace ConsoleFrontend {
 
         #region Race
 
-        private void Races(string[] input) {
+        private void Race(string[] input) {
             if (input.Length < 2) {
                 logger.Info("Invalid input, redirect to Races Menu");
-                Races();
+                Race();
                 return;
             }
 
@@ -240,11 +236,11 @@ namespace ConsoleFrontend {
         }
 
 
-        private void Races() {
+        private void Race() {
             PrintRacesMenu();
 
             do {
-                var input = ReadTrimAndSplit();
+                var input = ReadTrimAndSplit("Race");
 
                 if (input[0] == "q" || input[0] == "quit") {
                     break;
@@ -334,7 +330,7 @@ namespace ConsoleFrontend {
             PrintParticipantsMenu();
 
             do {
-                var input = ReadTrimAndSplit();
+                var input = ReadTrimAndSplit("Participants");
 
                 if (input[0] == "q" || input[0] == "quit") {
                     break;
@@ -418,7 +414,7 @@ namespace ConsoleFrontend {
             PrintGroupsMenu();
 
             do {
-                var input = ReadTrimAndSplit();
+                var input = ReadTrimAndSplit("Groups");
 
                 if (input[0] == "q" || input[0] == "quit") {
                     break;
@@ -441,6 +437,11 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "l") {
                     DoAction(RunningContext.Group.Load, input.Skip(1));
+                    continue;
+                }
+
+                if (input[0] == "ap") {
+                    RunningContext.Group.AddParticipants(input.Skip(1).ToArray());
                     continue;
                 }
             } while (true);
@@ -466,34 +467,33 @@ namespace ConsoleFrontend {
         #region Timing
 
         private void Timing(string[] input) {
+            if (input[0] == "rm") {
+                var memoryDump = CurrentContext.Reader.WaitForBulk();
+                CurrentContext.Timing = memoryDump;
+                RunningContext.TimingValue.Save();
+                return;
+            }
+
             if (input.Length < 2) {
-                logger.Info("Invalid input, redirect to Groups Menu");
+                logger.Info("Invalid input, redirect to Timing Menu");
                 Timing();
                 return;
             }
 
             if (input[0] == "s") {
-                DoAction(RunningContext.Group.Save, input.Skip(1));
+                DoAction(RunningContext.TimingValue.Save);
                 return;
             }
 
             if (input[0] == "l") {
-                DoAction(RunningContext.Group.Load, input.Skip(1));
+                DoAction(RunningContext.TimingValue.Load, input.Skip(1));
                 return;
-            }
-
-            if (input[0] == "c") {
-                TryCreateNewGroup(input.Skip(1).ToArray());
             }
 
             if (input.Length < 3) {
-                logger.Info("Invalid input, redirect to Groups Menu");
+                logger.Info("Invalid input, redirect to Timing Menu");
                 Timing();
                 return;
-            }
-
-            if (input[0] == "ap") {
-                RunningContext.Group.AddParticipants(input.Skip(1).ToArray());
             }
         }
 
@@ -502,7 +502,7 @@ namespace ConsoleFrontend {
             PrintTimingMenu();
 
             do {
-                var input = ReadTrimAndSplit();
+                var input = ReadTrimAndSplit("Timing");
 
                 if (input[0] == "q" || input[0] == "quit") {
                     break;
@@ -561,7 +561,8 @@ namespace ConsoleFrontend {
         }
 
 
-        private string[] ReadTrimAndSplit() {
+        private string[] ReadTrimAndSplit(string currentMenu) {
+            System.Console.Write($"{currentMenu}:");
             return System.Console.ReadLine()
                 .Split(' ')
                 .Select(x => x.Trim())
@@ -573,37 +574,79 @@ namespace ConsoleFrontend {
         #region PrintMenues
 
         private void PrintMainMenu() {
-            logger.Info($"q: Quit Program \ncat: Change to Categories Menu \ncla: Change to Class Menu \nr: Read results from memory");
+            logger.Info(@"
+q: Quit Program 
+h: Show this text
+r: Change to Race Menu
+p: Chnage to Participants Menu
+g: Change to Groups Menu
+t: Change to Timing Menu
+cla: Change to Class Menu 
+cat: Change to Categories Menu");
         }
 
 
         private void PrintCategoriesMenu() {
-            logger.Info($"q: Quit Categories Menu \na <CategorieName>: Add Category \nd <CategorieName>: Delete Category \ns: Show current Categories");
+            logger.Info(@"
+q: Quit Categories Menu
+a <CategorieName>: Add Category
+d <CategorieName>: Delete Category
+s: Show current Categories");
         }
 
 
         private void PrintClassesMenu() {
-            logger.Info($"q: Quit Classes Menu \na <ClassName>: Add Class \nd <ClassName>: Delete Class \ns: Show current Classes");
+            logger.Info(@"
+q: Quit Classes Menu
+a <ClassName>: Add Class
+d <ClassName>: Delete Class
+s: Show current Classes");
         }
 
 
         private void PrintRacesMenu() {
-            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
+            logger.Info(@"
+q: Quit Menu
+h: Show this text
+s <Filename>: Save current Race to file
+sp <Filename>: Save all Participants in current Race to file
+sg <Filename>: Save all Groups in current Race to file
+l <Filename>: Load race from file
+t <Time>: Set the start time of the race
+ag <Group1> [Group2 Group3 ...]: Adds Groups to current race
+at: Combines the Timing values with the Groups by matching the groupnumbers
+c <RaceType Titel Date Place Judge>: Creates a new Race with the given Parameter");
         }
 
 
         private void PrintParticipantsMenu() {
-            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
+            logger.Info(@"
+q: Quit Menu
+h: Show this text
+s <Filename>: Save all participants to file
+l <Filename>: Load participants from file
+c <Firstname Lastname YearOfBirth Class>: Create new Participant with the given parameters");
         }
 
 
         private void PrintGroupsMenu() {
-            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
+            logger.Info(@"
+q: Quit Menu
+h: Show this text
+s <Filename>: Save all groups to file
+l <Filename>: Load groups from file
+c <Groupname Groupnumber Category>: Creates new group with the given parameters
+ap <(Groupname|Groupnumber) Participant1 Participant2>: Adds Participants to groups");
         }
 
 
         private void PrintTimingMenu() {
-            logger.Info($"q: Quit Races Menu \ns: Show current Race to file");
+            logger.Info(@"
+q: Quit Menu
+h: Show this text
+s: Save current Timing Values to a new file
+l <Filename>: Load Timing Values from file
+rm: Start waiting for memory dump from Timy");
         }
 
         #endregion
