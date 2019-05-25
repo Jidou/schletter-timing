@@ -1,0 +1,4 @@
+code	geschlecht	nachname	vorname	verein	nvg	jahrgang	punkte	strasse	plz	ort
+	M	NIEDERBACHER	Simon		AUT	1986	9999,99			
+	W	NIEDERBACHER	Sofia		AUT	2015	9999,99			
+	1	SEIDNER	Florian		AUT	1987	9999,99			
