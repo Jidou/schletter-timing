@@ -51,7 +51,7 @@ namespace Timy3Reader {
 
 
         private void timyUsb_BytesReceived(object sender, BytesReceivedEventArgs e) {
-            logger.Debug($"Device {e.Device.Id} Bytes: {e.Data.Length}");
+            logger.Trace($"Device {e.Device.Id} Bytes: {e.Data.Length}");
         }
 
 
@@ -67,10 +67,19 @@ namespace Timy3Reader {
             var parsedLine = e.Data.Split(' ');
 
             if (waitingForMemoryDump) {
-                var timingValue = new TimingValue {
-                    Time = parsedLine[3],
-                    MeasurementNumber = int.Parse(parsedLine[1])
-                };
+                TimingValue timingValue;
+
+                if (parsedLine[0].StartsWith("c")) {
+                    timingValue = new TimingValue {
+                        MeasurementNumber = TryParseMeasurementNumber(parsedLine[0]),
+                        Time = parsedLine[2],
+                    };
+                } else {
+                    timingValue = new TimingValue {
+                        MeasurementNumber = TryParseMeasurementNumber(parsedLine[1]),
+                        Time = parsedLine[3],
+                    };
+                }
 
                 memoryDump.Add(timingValue);
             }
@@ -85,6 +94,18 @@ namespace Timy3Reader {
             if (!e.Data.StartsWith("TIMY:")) {
                 logger.Info($"Device {e.Device.Id} Raw: {e.Data}");
             }
+        }
+
+
+        private int TryParseMeasurementNumber(string value) {
+            if (!int.TryParse(value, out var measurement)) {
+                value = value.Remove(0, 2);
+                if (!int.TryParse(value, out measurement)) {
+                    measurement = -1;
+                }
+            }
+
+            return measurement;
         }
     }
 }

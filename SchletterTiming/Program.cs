@@ -2,6 +2,7 @@ using NConfig;
 using RunningContext;
 using System;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using Timy3Reader;
 using WebFrontend;
@@ -52,6 +53,16 @@ namespace SchletterTiming {
         private static void InitObjectsFromConfig() {
             InitCategories();
             InitClasses();
+            CheckOrCreateDataFolder();
+        }
+
+        private static void CheckOrCreateDataFolder() {
+            var path = Environment.CurrentDirectory + "/" + ConfigurationManager.AppSettings["SaveFileDirectory"];
+            if (Directory.Exists(path)) {
+                return;
+            }
+
+            Directory.CreateDirectory(path);
         }
 
 

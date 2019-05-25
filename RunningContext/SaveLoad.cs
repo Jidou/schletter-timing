@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using Newtonsoft.Json;
 using NLog;
@@ -22,6 +23,8 @@ namespace RunningContext {
             if (!fileName.EndsWith(".json")) {
                 fileName += ".json";
             }
+
+            fileName = $"{Environment.CurrentDirectory}/{ConfigurationManager.AppSettings["SaveFileDirectory"]}/{fileName}";
 
             try {
                 using (StreamWriter file = File.CreateText(fileName)) {
@@ -49,6 +52,8 @@ namespace RunningContext {
             if (!fileName.EndsWith(".json")) {
                 fileName += ".json";
             }
+
+            fileName = $"{Environment.CurrentDirectory}/{ConfigurationManager.AppSettings["SaveFileDirectory"]}/{fileName}";
 
             T objectOut = default(T);
 

@@ -1,5 +1,10 @@
 # schletter-timing
 
+## TODO
+
+* Calculated time in groups
+* Output sorted and grouped
+
 ## Components
 
 * Frontend
