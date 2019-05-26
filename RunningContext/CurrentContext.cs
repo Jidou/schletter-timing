@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RunningContext {
-    public static class CurrentContext {
+    public class CurrentContext {
 
         public static ITimy3Reader Reader;
 
