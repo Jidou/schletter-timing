@@ -2,12 +2,12 @@
 
 ## TODO
 
-* Calculated time in groups
-* Output sorted and grouped
+* Web Frontend
 
 ## Components
 
 * Frontend
+* PDF Generator
 * Business Logic
 * Data Reader(s)
 

@@ -37,6 +37,11 @@ namespace SchletterTiming {
                 CurrentContext.Reader = new Timy3MockReader();
             }
 
+            var autoLoadRace = ConfigurationManager.AppSettings["AutoLoadRace"];
+            if (!string.IsNullOrEmpty(autoLoadRace)) {
+                RunningContext.Race.Load(autoLoadRace);
+            }
+
             var startupType = ConfigurationManager.AppSettings["StartupType"];
 
             if (startupType == "ConsoleOnly") {
