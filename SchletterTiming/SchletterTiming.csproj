@@ -117,10 +117,6 @@
       <Project>{13f9f895-bd7e-4625-b642-9686b3893ae0}</Project>
       <Name>Timy3Reader</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WebFrontend\WebFrontend.csproj">
-      <Project>{6a03b3f8-f0c0-499a-8c36-eca4fc3d9b64}</Project>
-      <Name>WebFrontend</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

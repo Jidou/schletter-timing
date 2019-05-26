@@ -5,7 +5,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using Timy3Reader;
-using WebFrontend;
+
 
 namespace SchletterTiming {
     class Program {
@@ -51,10 +51,6 @@ namespace SchletterTiming {
             }
 
             if (startupType == "WebApplication") {
-                using (Microsoft.Owin.Hosting.WebApp.Start<Startup1>(baseAddress)) {
-                    Console.WriteLine("Press [enter] to quit...");
-                    Console.ReadLine();
-                }
             }
         }
 
