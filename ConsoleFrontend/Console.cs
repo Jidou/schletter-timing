@@ -29,11 +29,14 @@ namespace ConsoleFrontend {
 
                 if (input[0] == "r") {
                     CheckInputLengthgAndCallFunction(Race, Race, input, 3);
+<<<<<<< HEAD
                     continue;
                 }
 
                 if (input[0] == "f") {
                     CheckInputLengthgAndCallFunction(Race, Race, input, 3);
+=======
+>>>>>>> 07458a52391428d58a743e59f97079ddfea163f4
                     continue;
                 }
 

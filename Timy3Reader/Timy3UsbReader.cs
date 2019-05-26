@@ -61,6 +61,7 @@ namespace Timy3Reader {
             var parsedLine = e.Data.Split(' ');
 
             if (waitingForMemoryDump) {
+<<<<<<< HEAD
                 TimingValue timingValue;
 
                 if (parsedLine[0].StartsWith("c")) {
@@ -80,6 +81,20 @@ namespace Timy3Reader {
                     memoryDumpRecieved = true;
                     waitingForMemoryDump = false;
                 }
+=======
+                if (parsedLine.Length == 7) {
+                    var timingValue = new TimingValue {
+                        Time = parsedLine[3],
+                        MeasurementNumber = int.Parse(parsedLine[1])
+                    };
+
+                    memoryDump.Add(timingValue);
+                } else if (e.Data.Contains("ALGE-TIMING") || e.Data.Contains("TIMY V 0974")) {
+                    memoryDumpRecieved = true;
+                    waitingForMemoryDump = false;
+                }
+            } 
+>>>>>>> 07458a52391428d58a743e59f97079ddfea163f4
 
             if (e.Data.StartsWith("PROG: ")) {
                 logger.Debug(e.Data);
