@@ -33,7 +33,7 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "f") {
-                    CheckInputLengthgAndCallFunction(Race, Race, input, 3);
+                    CheckInputLengthgAndCallFunction(Finish, Finish, input, 3);
                     continue;
                 }
 
@@ -539,6 +539,46 @@ namespace ConsoleFrontend {
 
         #endregion
 
+        #region Finish
+
+        private void Finish(string[] input) {
+
+        }
+
+
+        private void Finish() {
+            PrintFinishMenu();
+
+            do {
+                var input = ReadTrimAndSplit("Finish");
+
+                if (input[0] == "q" || input[0] == "quit") {
+                    break;
+                }
+
+                if (input[0] == "h") {
+                    PrintFinishMenu();
+                    continue;
+                }
+
+                if (input[0] == "c") {
+                    DoAction(RunningContext.Race.CalculateFinishTimes);
+                }
+
+                if (input[0] == "pg") {
+                    PdfGenerator.PdfRenderer.GroupByClassAndOrder(CurrentContext.Race);
+                }
+
+                if (input[0] == "pa") {
+                    PdfGenerator.PdfRenderer.Order(CurrentContext.Race);
+                }
+
+            } while (true);
+
+        }
+
+        #endregion
+
         #region Helpers
 
         private void CheckInputLengthgAndCallFunction(Action simpleAction, Action<string[]> actionWithParameters, string[] input, int requiredLength) {
@@ -621,6 +661,16 @@ t <Time>: Set the start time of the race
 ag <Group1> [Group2 Group3 ...]: Adds Groups to current race
 at: Combines the Timing values with the Groups by matching the groupnumbers
 c <RaceType Titel Date Place Judge>: Creates a new Race with the given Parameter");
+        }
+
+
+        private void PrintFinishMenu() {
+            logger.Info(@"
+q: Quit Menu
+h: Show this text
+c: (re)calculate finishing times of all groups
+pg: group by group.class and print ordered result to pdf
+pa: order result and print to pdf");
         }
 
 

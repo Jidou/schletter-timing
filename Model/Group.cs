@@ -15,6 +15,7 @@ namespace Model {
         public string Class { get; set; }
 
         public DateTime FinishTime { get; set; }
+        public TimeSpan TimeTaken { get; set; }
 
 
         public Group() { }

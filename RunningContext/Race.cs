@@ -45,7 +45,8 @@ namespace RunningContext {
 
 
         public static void AddTimingValues() {
-            var allGroups = CurrentContext.Race.Participants;
+            var race = CurrentContext.Race;
+            var allGroups = race.Participants;
 
             foreach (var group in allGroups) {
                 var finishTimeOfGroup = CurrentContext.Timing.SingleOrDefault(x => x.Groupnumber == group.Groupnumber);
@@ -56,6 +57,17 @@ namespace RunningContext {
                 }
 
                 group.FinishTime = DateTime.Parse(finishTimeOfGroup.Time);
+                group.TimeTaken = group.FinishTime - race.StartTime;
+            }
+        }
+
+
+        public static void CalculateFinishTimes() {
+            var race = CurrentContext.Race;
+            var allGroups = race.Participants;
+
+            foreach (var group in allGroups) {
+                group.TimeTaken = group.FinishTime - race.StartTime;
             }
         }
 

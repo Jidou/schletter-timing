@@ -2,12 +2,12 @@
 
 ## TODO
 
-* Calculated time in groups
-* Output sorted and grouped
+* Web Frontend
 
 ## Components
 
 * Frontend
+* PDF Generator
 * Business Logic
 * Data Reader(s)
 
@@ -35,6 +35,7 @@ t l timing_values_0.json
 p l AllParticipants.json
 g l AllGroups.json
 r l TestSave.json
+r l FinalTestSave.json
 
 p s AllParticipants.json
 g s AllGroups.json
