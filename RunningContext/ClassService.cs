@@ -1,34 +1,43 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RunningContext {
-    public class Class {
+    public class ClassService {
+
+        private readonly IConfiguration _configuration;
+
         public static IEnumerable<string> AvailableClasses { get; private set; }
 
 
-        public static void InitClasses(IEnumerable<string> classes) {
+        public ClassService(IConfiguration configuration) {
+            _configuration = configuration;
+        }
+
+
+        public void InitClasses(IEnumerable<string> classes) {
             AvailableClasses = classes;
         }
 
 
-        public static void AddClass(string newClass) {
+        public void AddClass(string newClass) {
             var tmp = AvailableClasses.ToList();
             tmp.Add(newClass);
             AvailableClasses = tmp;
         }
 
 
-        public static void DeleteClass(string @class) {
+        public void DeleteClass(string @class) {
             var tmp = AvailableClasses.ToList();
             tmp.Remove(@class);
             AvailableClasses = tmp;
         }
 
 
-        public static void ShowClasses() {
+        public void ShowClasses() {
             var allClasses = "";
             foreach (var @class in AvailableClasses) {
                 allClasses += $"{@class}\n";

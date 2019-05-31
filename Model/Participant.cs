@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Model {
     [Serializable]
     public class Participant {
-        public Guid Guid { get; set; }
+        public int ParticipantId { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public string YearOfBirth { get; set; }
@@ -18,7 +18,6 @@ namespace Model {
 
 
         public Participant(string firstname, string lastname, string yearOfBirth, string category) {
-            Guid = Guid.NewGuid();
             Firstname = firstname;
             Lastname = lastname;
             YearOfBirth = yearOfBirth;
@@ -27,7 +26,6 @@ namespace Model {
 
 
         public Participant(string[] input) {
-            Guid = Guid.NewGuid();
             Firstname = input[0];
             Lastname = input[1];
             YearOfBirth = input[2];

@@ -128,7 +128,7 @@ namespace PdfGenerator {
         private static void AddTableRow(Group group, Group first, int rank, ref string body) {
             body += $@"<tr>
     <td><b>{rank}<b></td>
-    <td><b>{group.Groupnumber}<b></td> 
+    <td><b>{group.StartNumber}<b></td> 
     <td>{group.Groupname}</td>
     <td>{group.Participant1.Category} <br> {group.Participant2.Category}</td>
     <td>{group.Participant1.Firstname} {group.Participant1.Lastname} <br> {group.Participant2.Firstname} {group.Participant2.Lastname}</td>

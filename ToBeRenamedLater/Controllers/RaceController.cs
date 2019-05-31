@@ -10,20 +10,25 @@ namespace ToBeRenamedLater.Controllers {
     [Route("api/[controller]")]
     public class RaceController : Controller {
 
-        private readonly CurrentContext _currentContext;
+        private readonly RaceService _raceService;
+        private readonly GroupService _groupService;
+        private readonly ParticipantService _participantService;
+        private readonly TimingValueService _timingValueService;
 
-
-        public RaceController(CurrentContext currentContext) {
-            _currentContext = currentContext;
+        public RaceController(RaceService raceService, GroupService groupService, ParticipantService participantService, TimingValueService timingValueService) {
+            _raceService = raceService;
+            _groupService = groupService;
+            _participantService = participantService;
+            _timingValueService = timingValueService;
         }
 
 
         [HttpGet()]
-        public Model.Race Get() {
+        public Race Get() {
             var currentRace = CurrentContext.Race;
 
             if (currentRace == null) {
-                currentRace = new Model.Race {
+                currentRace = new Race {
                     Date = DateTime.Today,
                     Judge = string.Empty,
                     Participants = null,
@@ -42,18 +47,18 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet("[action]")]
-        public Model.Race Load() {
-            RunningContext.Race.Load("Testing");
+        public Race Load() {
+            _raceService.Load("Testing");
             var currentRace = CurrentContext.Race;
             return currentRace;
         }
 
 
         [HttpPost()]
-        public void Post([FromBody] Model.Race race) {
+        public void Post([FromBody] Race race) {
             CurrentContext.Race = race;
 
-            RunningContext.Race.Save("Testing");
+            _raceService.Save("Testing");
         }
     }
 }

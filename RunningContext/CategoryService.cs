@@ -1,35 +1,43 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RunningContext {
-    public class Category {
+    public class CategoryService {
+
+        private readonly IConfiguration _configuration;
 
         public static IEnumerable<string> AvailableCategories { get; private set; }
 
 
-        public static void InitCategories(IEnumerable<string> categories) {
+        public CategoryService(IConfiguration configuration) {
+            _configuration = configuration;
+        }
+
+
+        public void InitCategories(IEnumerable<string> categories) {
             AvailableCategories = categories;
         }
 
 
-        public static void AddCategory(string newCategory) {
+        public void AddCategory(string newCategory) {
             var tmp = AvailableCategories.ToList();
             tmp.Add(newCategory);
             AvailableCategories = tmp;
         }
 
 
-        public static void DeleteCategory(string category) {
+        public void DeleteCategory(string category) {
             var tmp = AvailableCategories.ToList();
             tmp.Remove(category);
             AvailableCategories = tmp;
         }
 
 
-        public static void ShowCategories() {
+        public void ShowCategories() {
             var allCategories = "";
             foreach (var category in AvailableCategories) {
                 allCategories += $"{category}\n";

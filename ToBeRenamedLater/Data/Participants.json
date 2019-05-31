@@ -1,0 +1,18 @@
+[
+  {
+    "ParticipantId": 1,
+    "Firstname": "asdf",
+    "Lastname": "asdf",
+    "YearOfBirth": "asdf",
+    "Category": "asdf",
+    "FinishTime": null
+  },
+  {
+    "ParticipantId": 2,
+    "Firstname": "fdsa",
+    "Lastname": "fdsa",
+    "YearOfBirth": "fdsa",
+    "Category": "fdsa",
+    "FinishTime": null
+  }
+]

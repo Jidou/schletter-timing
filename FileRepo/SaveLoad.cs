@@ -1,5 +1,5 @@
-﻿using System;
-using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
 using Newtonsoft.Json;
 using NLog;
@@ -8,6 +8,13 @@ namespace RunningContext {
     public class SaveLoad {
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private readonly IConfiguration _configuration;
+
+
+        public SaveLoad(IConfiguration configuration) {
+            _configuration = configuration;
+        }
+
 
         /// <summary>
         /// Serializes an object.
@@ -15,7 +22,7 @@ namespace RunningContext {
         /// <typeparam name="T"></typeparam>
         /// <param name="serializableObject"></param>
         /// <param name="fileName"></param>
-        public static void SerializeObject<T>(T serializableObject, string fileName) {
+        public void SerializeObject<T>(T serializableObject, string fileName) {
             if (serializableObject == null) {
                 return;
             }
@@ -24,7 +31,7 @@ namespace RunningContext {
                 fileName += ".json";
             }
 
-            fileName = $"{Environment.CurrentDirectory}/{ConfigurationManager.AppSettings["SaveFileDirectory"]}/{fileName}";
+            fileName = $"{Environment.CurrentDirectory}/{_configuration["SaveFileDirectory"]}/{fileName}";
 
             try {
                 using (StreamWriter file = File.CreateText(fileName)) {
@@ -44,7 +51,7 @@ namespace RunningContext {
         /// <typeparam name="T"></typeparam>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public static T DeSerializeObject<T>(string fileName) {
+        public T DeSerializeObject<T>(string fileName) {
             if (string.IsNullOrEmpty(fileName)) {
                 return default(T);
             }
@@ -53,7 +60,7 @@ namespace RunningContext {
                 fileName += ".json";
             }
 
-            fileName = $"{Environment.CurrentDirectory}/{ConfigurationManager.AppSettings["SaveFileDirectory"]}/{fileName}";
+            fileName = $"{Environment.CurrentDirectory}/{_configuration["SaveFileDirectory"]}/{fileName}";
 
             T objectOut = default(T);
 

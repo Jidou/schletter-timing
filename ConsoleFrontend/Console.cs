@@ -6,12 +6,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NLog;
+using Microsoft.Extensions.Configuration;
 
 namespace ConsoleFrontend {
     public class Console {
 
         private readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private readonly SaveLoad _repo;
+        private readonly IConfiguration _configuration;
+        private readonly TimingValueService _timingValue;
+        private readonly RaceService _race;
+        private readonly ParticipantService _participant;
+        private readonly GroupService _group;
+        private readonly CategoryService _categoryService;
+        private readonly ClassService _classService;
+
+
+        public Console(IConfiguration configuration, SaveLoad repo, TimingValueService timingValue, RaceService race, ParticipantService participant, GroupService group, CategoryService categoryService, ClassService classService) {
+            _configuration = configuration;
+            _repo = repo;
+            _timingValue = timingValue;
+            _race = race;
+            _participant = participant;
+            _group = group;
+            _categoryService = categoryService;
+            _classService = classService;
+        }
         
+
         public void Start() {
             PrintMainMenu();
                 
@@ -69,7 +91,7 @@ namespace ConsoleFrontend {
 
         private void Categories(string[] input) {
             if (input[0] == "s") {
-                DoAction(Category.ShowCategories);
+                DoAction(_categoryService.ShowCategories);
                 return;
             }
 
@@ -80,12 +102,12 @@ namespace ConsoleFrontend {
             }
 
             if (input[0] == "a") {
-                DoAction(Category.AddCategory, input.Skip(1));
+                DoAction(_categoryService.AddCategory, input.Skip(1));
                 return;
             }
 
             if (input[0] == "d") {
-                DoAction(Category.DeleteCategory, input.Skip(1));
+                DoAction(_categoryService.DeleteCategory, input.Skip(1));
                 return;
             }
 
@@ -110,17 +132,17 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "s") {
-                    DoAction(Category.ShowCategories);
+                    DoAction(_categoryService.ShowCategories);
                     continue;
                 }
 
                 if (input[0] == "a") {
-                    DoAction(Category.AddCategory, input.Skip(1));
+                    DoAction(_categoryService.AddCategory, input.Skip(1));
                     continue;
                 }
 
                 if (input[0] == "d") {
-                    DoAction(Category.DeleteCategory, input.Skip(1));
+                    DoAction(_categoryService.DeleteCategory, input.Skip(1));
                     continue;
                 }
             } while (true);
@@ -132,7 +154,7 @@ namespace ConsoleFrontend {
 
         private void Classes(string[] input) {
             if (input[0] == "s") {
-                DoAction(Class.ShowClasses);
+                DoAction(_classService.ShowClasses);
                 return;
             }
 
@@ -143,12 +165,12 @@ namespace ConsoleFrontend {
             }
 
             if (input[0] == "a") {
-                DoAction(Class.AddClass, input.Skip(1));
+                DoAction(_classService.AddClass, input.Skip(1));
                 return;
             }
 
             if (input[0] == "d") {
-                DoAction(Class.DeleteClass, input.Skip(1));
+                DoAction(_classService.DeleteClass, input.Skip(1));
                 return;
             }
 
@@ -173,17 +195,17 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "s") {
-                    DoAction(Class.ShowClasses);
+                    DoAction(_classService.ShowClasses);
                     continue;
                 }
 
                 if (input[0] == "a") {
-                    DoAction(Class.AddClass, input.Skip(1));
+                    DoAction(_classService.AddClass, input.Skip(1));
                     continue;
                 }
 
                 if (input[0] == "d") {
-                    DoAction(Class.DeleteClass, input.Skip(1));
+                    DoAction(_classService.DeleteClass, input.Skip(1));
                     continue;
                 }
             } while (true);
@@ -201,37 +223,27 @@ namespace ConsoleFrontend {
             }
 
             if (input[0] == "s") {
-                DoAction(RunningContext.Race.Save, input.Skip(1));
-                return;
-            }
-
-            if (input[0] == "sp") {
-                DoAction(RunningContext.Participant.SaveFromRace, input.Skip(1));
-                return;
-            }
-
-            if (input[0] == "sg") {
-                DoAction(RunningContext.Group.SaveFromRace, input.Skip(1));
+                DoAction(_race.Save, input.Skip(1));
                 return;
             }
 
             if (input[0] == "l") {
-                DoAction(RunningContext.Race.Load, input.Skip(1));
+                DoAction(_race.Load, input.Skip(1));
                 return;
             }
 
             if (input[0] == "t") {
-                DoAction(RunningContext.Race.SetStartTime, input.Skip(1));
+                DoAction(_race.SetStartTime, input.Skip(1));
                 return;
             }
 
             if (input[0] == "ag") {
-                RunningContext.Race.AddGroup(input.Skip(1).ToArray());
+                _race.AddGroup(input.Skip(1).ToArray());
                 return;
             }
 
             if (input[0] == "at") {
-                RunningContext.Race.AddTimingValues();
+                _race.AddTimingValues();
                 return;
             }
 
@@ -257,32 +269,22 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "s") {
-                    DoAction(RunningContext.Race.Save, input.Skip(1));
-                    continue;
-                }
-
-                if (input[0] == "sp") {
-                    DoAction(RunningContext.Participant.SaveFromRace, input.Skip(1));
-                    continue;
-                }
-
-                if (input[0] == "sg") {
-                    DoAction(RunningContext.Group.SaveFromRace, input.Skip(1));
+                    DoAction(_race.Save, input.Skip(1));
                     continue;
                 }
 
                 if (input[0] == "l") {
-                    DoAction(RunningContext.Race.Load, input.Skip(1));
+                    DoAction(_race.Load, input.Skip(1));
                     continue;
                 }
 
                 if (input[0] == "ag") {
-                    RunningContext.Race.AddGroup(input.Skip(1).ToArray());
+                    _race.AddGroup(input.Skip(1).ToArray());
                     continue;
                 }
 
                 if (input[0] == "at") {
-                    RunningContext.Race.AddTimingValues();
+                    _race.AddTimingValues();
                     continue;
                 }
 
@@ -316,12 +318,12 @@ namespace ConsoleFrontend {
             }
 
             if (input[0] == "s") {
-                DoAction(RunningContext.Participant.Save, input.Skip(1));
+                _participant.Save();
                 return;
             }
 
             if (input[0] == "l") {
-                DoAction(RunningContext.Participant.Load, input.Skip(1));
+                _participant.Load();
                 return;
             }
 
@@ -352,12 +354,12 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "s") {
-                    DoAction(RunningContext.Participant.Save, input.Skip(1));
+                    _participant.Save();
                     continue;
                 }
 
                 if (input[0] == "l") {
-                    DoAction(RunningContext.Participant.Load, input.Skip(1));
+                    _participant.Load();
                     continue;
                 }
             } while (true);
@@ -390,12 +392,12 @@ namespace ConsoleFrontend {
             }
 
             if (input[0] == "s") {
-                DoAction(RunningContext.Group.Save, input.Skip(1));
+                DoAction(_group.Save);
                 return;
             }
 
             if (input[0] == "l") {
-                DoAction(RunningContext.Group.Load, input.Skip(1));
+                _group.Load();
                 return;
             }
 
@@ -410,7 +412,7 @@ namespace ConsoleFrontend {
             }
 
             if (input[0] == "ap") {
-                RunningContext.Group.AddParticipants(input.Skip(1).ToArray());
+                _group.AddParticipants(input.Skip(1).ToArray());
             }
         }
 
@@ -436,17 +438,17 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "s") {
-                    DoAction(RunningContext.Group.Save, input.Skip(1));
+                    DoAction(_group.Save);
                     continue;
                 }
 
                 if (input[0] == "l") {
-                    DoAction(RunningContext.Group.Load, input.Skip(1));
+                    _group.Load();
                     continue;
                 }
 
                 if (input[0] == "ap") {
-                    RunningContext.Group.AddParticipants(input.Skip(1).ToArray());
+                    _group.AddParticipants(input.Skip(1).ToArray());
                     continue;
                 }
             } while (true);
@@ -475,7 +477,7 @@ namespace ConsoleFrontend {
             if (input[0] == "rm") {
                 var memoryDump = CurrentContext.Reader.WaitForBulk();
                 CurrentContext.Timing = memoryDump;
-                RunningContext.TimingValue.Save();
+                _timingValue.Save();
                 return;
             }
 
@@ -486,12 +488,12 @@ namespace ConsoleFrontend {
             }
 
             if (input[0] == "s") {
-                DoAction(RunningContext.TimingValue.Save);
+                DoAction(_timingValue.Save);
                 return;
             }
 
             if (input[0] == "l") {
-                DoAction(RunningContext.TimingValue.Load, input.Skip(1));
+                DoAction(_timingValue.Load, input.Skip(1));
                 return;
             }
 
@@ -521,17 +523,17 @@ namespace ConsoleFrontend {
                 if (input[0] == "rm") {
                     var memoryDump = CurrentContext.Reader.WaitForBulk();
                     CurrentContext.Timing = memoryDump;
-                    RunningContext.TimingValue.Save();
+                    _timingValue.Save();
                     continue;
                 }
 
                 if (input[0] == "s") {
-                    DoAction(RunningContext.TimingValue.Save);
+                    DoAction(_timingValue.Save);
                     continue;
                 }
 
                 if (input[0] == "l") {
-                    DoAction(RunningContext.TimingValue.Load, input.Skip(1));
+                    DoAction(_timingValue.Load, input.Skip(1));
                     continue;
                 }
             } while (true);
@@ -562,7 +564,7 @@ namespace ConsoleFrontend {
                 }
 
                 if (input[0] == "c") {
-                    DoAction(RunningContext.Race.CalculateFinishTimes);
+                    DoAction(_race.CalculateFinishTimes);
                 }
 
                 if (input[0] == "pg") {
@@ -654,8 +656,6 @@ s: Show current Classes");
 q: Quit Menu
 h: Show this text
 s <Filename>: Save current Race to file
-sp <Filename>: Save all Participants in current Race to file
-sg <Filename>: Save all Groups in current Race to file
 l <Filename>: Load race from file
 t <Time>: Set the start time of the race
 ag <Group1> [Group2 Group3 ...]: Adds Groups to current race

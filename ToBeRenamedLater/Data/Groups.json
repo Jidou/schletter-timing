@@ -1,0 +1,32 @@
+[
+  {
+    "GroupId": 0,
+    "Groupname": "Test003",
+    "Participant1": null,
+    "Participant2": null,
+    "Class": "None",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  },
+  {
+    "GroupId": 2,
+    "Groupname": "Test002",
+    "Participant1": null,
+    "Participant2": null,
+    "Class": "None",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  },
+  {
+    "GroupId": 1,
+    "Groupname": "Test001",
+    "Participant1": null,
+    "Participant2": null,
+    "Class": "None",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  }
+]

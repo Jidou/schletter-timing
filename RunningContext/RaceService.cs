@@ -1,20 +1,29 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Configuration;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RunningContext {
-    public class Race {
+    public class RaceService {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private readonly IConfiguration _configuration;
+        private readonly SaveLoad _repo;
 
 
-        public static void SetStartTime(string startTime) {
+        public RaceService(IConfiguration configuration, SaveLoad repo) {
+            _configuration = configuration;
+            _repo = repo;
+        }
+
+
+        public void SetStartTime(string startTime) {
             var time = DateTime.Parse(startTime);
             CurrentContext.Race.StartTime = time;
         }
 
 
-        public static void AddGroup(string[] input) {
+        public void AddGroup(string[] input) {
             if (CurrentContext.Race == null) {
                 logger.Info($"No race created yet");
                 return;
@@ -23,8 +32,8 @@ namespace RunningContext {
             var currentRaceParticipants = CurrentContext.Race.Participants.ToList();
 
             foreach (var groupIdentifier in input) {
-                int.TryParse(groupIdentifier, out int groupnumber);
-                var group = CurrentContext.AllAvailableGroups.SingleOrDefault(x => x.Groupname == groupIdentifier || x.Groupnumber == groupnumber);
+                int.TryParse(groupIdentifier, out int startNumber);
+                var group = CurrentContext.AllAvailableGroups.SingleOrDefault(x => x.Groupname == groupIdentifier || x.StartNumber == startNumber);
 
                 if (group == null) {
                     logger.Info($"Unable to find group {groupIdentifier}");
@@ -44,12 +53,12 @@ namespace RunningContext {
         }
 
 
-        public static void AddTimingValues() {
+        public void AddTimingValues() {
             var race = CurrentContext.Race;
             var allGroups = race.Participants;
 
             foreach (var group in allGroups) {
-                var finishTimeOfGroup = CurrentContext.Timing.SingleOrDefault(x => x.Groupnumber == group.Groupnumber);
+                var finishTimeOfGroup = CurrentContext.Timing.SingleOrDefault(x => x.StartNumber == group.StartNumber);
 
                 if (finishTimeOfGroup == null) {
                     logger.Info($"Could not find finish time for group {group.Groupname}");
@@ -62,7 +71,7 @@ namespace RunningContext {
         }
 
 
-        public static void CalculateFinishTimes() {
+        public void CalculateFinishTimes() {
             var race = CurrentContext.Race;
             var allGroups = race.Participants;
 
@@ -72,22 +81,22 @@ namespace RunningContext {
         }
 
 
-        public static void Save(string filename) {
+        public void Save(string filename) {
             if (string.IsNullOrEmpty(filename)) {
                 filename = $"race_tmp_{CurrentContext.SaveCounter++}";
             }
 
-            SaveLoad.SerializeObject<Model.Race>(CurrentContext.Race, filename);
+            _repo.SerializeObject<Model.Race>(CurrentContext.Race, filename);
         }
 
 
-        public static void Load(string filename) {
+        public void Load(string filename) {
             if (string.IsNullOrEmpty(filename)) {
                 return;
                 //filename = $"tmp_{CurrentContext.SaveCounter++}";
             }
 
-            var loadedScenario = SaveLoad.DeSerializeObject<Model.Race>(filename);
+            var loadedScenario = _repo.DeSerializeObject<Model.Race>(filename);
             CurrentContext.Race = loadedScenario;
         }
     }

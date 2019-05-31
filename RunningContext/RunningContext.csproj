@@ -13,9 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FileRepo\FileRepo.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\ReaderInterfaces\ReaderInterfaces.csproj" />
     <ProjectReference Include="..\Timy3Reader\Timy3Reader.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration.abstractions\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   
 </Project>

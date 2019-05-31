@@ -23,9 +23,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RunningContext", "RunningCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfGenerator", "PdfGenerator\PdfGenerator.csproj", "{BA6F08B3-EA53-4C96-8B70-9905D20CA7D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToBeRenamedLater", "ToBeRenamedLater\ToBeRenamedLater.csproj", "{29E3B630-7DC5-471D-B7BF-8855562A91C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToBeRenamedLater", "ToBeRenamedLater\ToBeRenamedLater.csproj", "{29E3B630-7DC5-471D-B7BF-8855562A91C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfHostingTester", "SelfHostingTester\SelfHostingTester.csproj", "{24005CF8-3241-46C2-90E2-006753559E14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfHostingTester", "SelfHostingTester\SelfHostingTester.csproj", "{24005CF8-3241-46C2-90E2-006753559E14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Repos", "4 - Repos", "{334FE6CD-31C1-4CE0-B7B6-855290AE25FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileRepo", "FileRepo\FileRepo.csproj", "{B0773F53-9FC9-4D38-90ED-95271A573F4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +73,10 @@ Global
 		{24005CF8-3241-46C2-90E2-006753559E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24005CF8-3241-46C2-90E2-006753559E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24005CF8-3241-46C2-90E2-006753559E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0773F53-9FC9-4D38-90ED-95271A573F4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0773F53-9FC9-4D38-90ED-95271A573F4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0773F53-9FC9-4D38-90ED-95271A573F4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0773F53-9FC9-4D38-90ED-95271A573F4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +91,7 @@ Global
 		{BA6F08B3-EA53-4C96-8B70-9905D20CA7D7} = {A156F707-FEC6-440A-827F-98F424FEBAC5}
 		{29E3B630-7DC5-471D-B7BF-8855562A91C9} = {4F2B57C5-CC71-4814-80C7-BCE8E3379682}
 		{24005CF8-3241-46C2-90E2-006753559E14} = {4F2B57C5-CC71-4814-80C7-BCE8E3379682}
+		{B0773F53-9FC9-4D38-90ED-95271A573F4E} = {334FE6CD-31C1-4CE0-B7B6-855290AE25FB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9524E0C2-C5CD-4237-9E36-1807D1EE028D}

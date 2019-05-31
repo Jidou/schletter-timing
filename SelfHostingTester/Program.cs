@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,15 +8,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace ToBeRenamedLater {
+namespace SelfHostingTester {
     public class Program {
         public static void Main(string[] args) {
             CreateWebHostBuilder(args).Build().Run();
-            //RunningContext.CurrentContext
-
-
-
-            
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
