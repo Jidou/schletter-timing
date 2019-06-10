@@ -15,7 +15,7 @@ namespace Model {
         public string Place { get; set; }
         public string Judge { get; set; }
         public TimingTools TimingTool { get; set; }
-        public IEnumerable<Group> Participants { get; set; }
+        public IEnumerable<Group> Groups { get; set; }
 
 
         public Race() { }
@@ -28,7 +28,7 @@ namespace Model {
             Place = place;
             Judge = judge;
             TimingTool = timingTool;
-            Participants = new List<Group>();
+            Groups = new List<Group>();
         }
 
 
@@ -39,7 +39,7 @@ namespace Model {
             Place = input[3];
             Judge = input[4];
             TimingTool = TimingTools.AlgeTiming;
-            Participants = new List<Group>();
+            Groups = new List<Group>();
         }
     }
 }

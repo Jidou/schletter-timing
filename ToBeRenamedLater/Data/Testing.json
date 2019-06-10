@@ -6,5 +6,24 @@
   "Place": "Here or Somewhere",
   "Judge": "Des bin i",
   "TimingTool": 1,
-  "Participants": null
+  "Groups": [
+    {
+      "GroupId": 2,
+      "Groupname": "Test002",
+      "Participant1": {
+        "ParticipantId": 2,
+        "Firstname": "Number",
+        "Lastname": "Two",
+        "YearOfBirth": "1983",
+        "Category": "C1",
+        "GroupId": 2,
+        "FinishTime": null
+      },
+      "Participant2": null,
+      "Class": "None",
+      "StartNumber": 0,
+      "FinishTime": "0001-01-01T00:00:00",
+      "TimeTaken": "00:00:00"
+    }
+  ]
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Model;
 using RunningContext;
+using ToBeRenamedLater.Dto;
 
 namespace ToBeRenamedLater.Controllers {
     [Route("api/[controller]")]
@@ -24,14 +25,14 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet()]
-        public Race Get() {
+        public Dto.Race Get() {
             var currentRace = CurrentContext.Race;
 
             if (currentRace == null) {
-                currentRace = new Race {
+                currentRace = new Model.Race {
                     Date = DateTime.Today,
                     Judge = string.Empty,
-                    Participants = null,
+                    Groups = new List<Model.Group>(),
                     Place = string.Empty,
                     RaceType = string.Empty,
                     StartTime = DateTime.Now,
@@ -42,23 +43,76 @@ namespace ToBeRenamedLater.Controllers {
                 CurrentContext.Race = currentRace;
             }
 
-            return currentRace;
+            return ConvertModelToDto(currentRace);
         }
 
 
         [HttpGet("[action]")]
-        public Race Load() {
+        public Dto.Race Load() {
             _raceService.Load("Testing");
             var currentRace = CurrentContext.Race;
-            return currentRace;
+            return ConvertModelToDto(currentRace);
         }
 
 
         [HttpPost()]
-        public void Post([FromBody] Race race) {
-            CurrentContext.Race = race;
-
+        public void Post([FromBody] Dto.Race race) {
+            var currentRace = ConvertDtoToModel(race);
+            CurrentContext.Race = currentRace;
             _raceService.Save("Testing");
+        }
+
+
+        private Model.Race ConvertDtoToModel(Dto.Race race) {
+            var currentRace = CurrentContext.Race;
+
+            currentRace.Date = race.Date;
+            currentRace.RaceType = race.RaceType;
+            currentRace.Titel = race.Titel;
+            currentRace.StartTime = race.StartTime;
+            currentRace.Place = race.Place;
+            currentRace.Judge = race.Judge;
+            currentRace.TimingTool = race.TimingTool;
+            currentRace.Groups = ConvertGroupDtosToModel(race.Groups, currentRace.Groups);
+
+            return currentRace;
+        }
+
+
+        private IEnumerable<Model.Group> ConvertGroupDtosToModel(IEnumerable<GroupIdAndNameOnly> groups, IEnumerable<Model.Group> currentGroups) {
+            var availableGroups = CurrentContext.AllAvailableGroups;
+
+            foreach (var group in groups) {
+                if (currentGroups.Any(x => x.GroupId == group.GroupId)) {
+                    yield return currentGroups.Single(x => x.GroupId == group.GroupId);
+                } else {
+                    yield return availableGroups.Single(x => x.GroupId == group.GroupId);
+                }
+            }
+        }
+
+
+        private Dto.Race ConvertModelToDto(Model.Race currentRace) {
+            return new Dto.Race {
+                Titel = currentRace.Titel,
+                RaceType = currentRace.RaceType,
+                Place = currentRace.Place,
+                Judge = currentRace.Judge,
+                Date = currentRace.Date,
+                TimingTool = currentRace.TimingTool,
+                StartTime = currentRace.StartTime,
+                Groups = ConvertGroupModelsToDto(currentRace.Groups)
+            };
+        }
+
+
+        private IEnumerable<GroupIdAndNameOnly> ConvertGroupModelsToDto(IEnumerable<Model.Group> groups) {
+            foreach (var group in groups) {
+                yield return new GroupIdAndNameOnly {
+                    GroupId = group.GroupId,
+                    Groupname = group.Groupname,
+                };
+            }
         }
     }
 }

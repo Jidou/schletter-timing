@@ -44,7 +44,7 @@ namespace PdfGenerator {
         private static string OrderAndGenerateHtml(Race race) {
             var body = string.Empty;
 
-            var orderedByRank = race.Participants.OrderBy(x => x.FinishTime);
+            var orderedByRank = race.Groups.OrderBy(x => x.FinishTime);
             AddTableHeaders(ref body);
 
             var first = orderedByRank.First();
@@ -62,7 +62,7 @@ namespace PdfGenerator {
 
 
         private static string GroupByClassOrderAndGenerateHtml(Race race) {
-            var groupedByClass = race.Participants.GroupBy(x => x.Class);
+            var groupedByClass = race.Groups.GroupBy(x => x.Class);
             var body = string.Empty;
 
             foreach (var @class in groupedByClass) {

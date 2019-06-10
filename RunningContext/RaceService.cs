@@ -29,7 +29,7 @@ namespace RunningContext {
                 return;
             }
 
-            var currentRaceParticipants = CurrentContext.Race.Participants.ToList();
+            var currentRaceParticipants = CurrentContext.Race.Groups.ToList();
 
             foreach (var groupIdentifier in input) {
                 int.TryParse(groupIdentifier, out int startNumber);
@@ -49,13 +49,13 @@ namespace RunningContext {
                 logger.Info($"Group {groupIdentifier} successfully added to race");
             }
 
-            CurrentContext.Race.Participants = currentRaceParticipants;
+            CurrentContext.Race.Groups = currentRaceParticipants;
         }
 
 
         public void AddTimingValues() {
             var race = CurrentContext.Race;
-            var allGroups = race.Participants;
+            var allGroups = race.Groups;
 
             foreach (var group in allGroups) {
                 var finishTimeOfGroup = CurrentContext.Timing.SingleOrDefault(x => x.StartNumber == group.StartNumber);
@@ -73,7 +73,7 @@ namespace RunningContext {
 
         public void CalculateFinishTimes() {
             var race = CurrentContext.Race;
-            var allGroups = race.Participants;
+            var allGroups = race.Groups;
 
             foreach (var group in allGroups) {
                 group.TimeTaken = group.FinishTime - race.StartTime;
@@ -93,7 +93,6 @@ namespace RunningContext {
         public void Load(string filename) {
             if (string.IsNullOrEmpty(filename)) {
                 return;
-                //filename = $"tmp_{CurrentContext.SaveCounter++}";
             }
 
             var loadedScenario = _repo.DeSerializeObject<Model.Race>(filename);
