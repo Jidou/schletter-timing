@@ -27,7 +27,7 @@ export class Groups extends Component {
 
     handleChange(groupId, event) {
         var groups = this.state.groups;
-        var index = groups.findIndex((x) => x.groupId == groupId);
+        var index = groups.findIndex((x) => x.groupId === groupId);
         var target = event.target.id;
         var value = event.target.value;
         var tmp = groups[index];
@@ -91,6 +91,11 @@ export class Groups extends Component {
     }
 
 
+    showGroupDetails() {
+
+    }
+
+
     renderGroupsTable(groups) {
         return (
             <div>
@@ -112,24 +117,24 @@ export class Groups extends Component {
                                 <td>
                                     <input type="text" id="groupclass" onChange={this.handleChange.bind(this, group.groupId)} value={group.class}></input>
                                 </td>
-                                <td>{group.participant1}</td>
-                                <td>{group.participant2}</td>
+                                <td>{group.participant1FullName}</td>
+                                <td>{group.participant2FullName}</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
 
-                <div>
+                {/* <div>
                     <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        <ul className="pagination">
+                            <li className="page-item"><a className="page-link" href="#">Previous</a></li>
+                            <li className="page-item"><a className="page-link" href="#">1</a></li>
+                            <li className="page-item"><a className="page-link" href="#">2</a></li>
+                            <li className="page-item"><a className="page-link" href="#">3</a></li>
+                            <li className="page-item"><a className="page-link" href="#">Next</a></li>
                         </ul>
                     </nav>
-                </div>
+                </div> */}
             </div>
         );
     }

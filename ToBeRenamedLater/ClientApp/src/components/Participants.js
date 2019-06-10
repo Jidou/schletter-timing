@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Autosuggest from 'react-autosuggest';
 
 
 export class Participants extends Component {
@@ -14,8 +15,18 @@ export class Participants extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleAddParticipant = this.handleAddParticipant.bind(this);
+        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.getSuggestionValue = this.getSuggestionValue.bind(this);
+        this.getInputProps = this.getInputProps.bind(this);
+        this.state = { groups: [], participants: [], suggestions: [], value: "", loading: true };
 
-        this.state = { groups: [], loading: true };
+        fetch('api/Group/GetIdAndNameOnly/')
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ groups: data, suggestions: data });
+            });
 
         fetch('api/Participant/')
             .then(response => response.json())
@@ -27,7 +38,7 @@ export class Participants extends Component {
 
     handleChange(participantId, event) {
         var participants = this.state.participants;
-        var index = participants.findIndex((x) => x.participantId == participantId);
+        var index = participants.findIndex((x) => x.participantId === participantId);
         var target = event.target.id;
         var value = event.target.value;
         var tmp = participants[index];
@@ -63,6 +74,8 @@ export class Participants extends Component {
             lastname: "",
             category: "",
             yearOfBirth: "",
+            groupId: 0,
+            groupName: "",
             toAdd: true,
         }
 
@@ -104,6 +117,7 @@ export class Participants extends Component {
                         <tr>
                             <th>Firstname</th>
                             <th>Lastname</th>
+                            <th>Group</th>
                             <th>Category</th>
                             <th>Year Of Birth</th>
                         </tr>
@@ -118,6 +132,16 @@ export class Participants extends Component {
                                     <input type="text" id="Lastname" onChange={this.handleChange.bind(this, participant.participantId)} value={participant.lastname}></input>
                                 </td>
                                 <td>
+                                    <Autosuggest
+                                        suggestions={this.state.suggestions}
+                                        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                                        onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                                        getSuggestionValue={this.getSuggestionValue.bind(this, participant.participantId)}
+                                        renderSuggestion={this.renderSuggestion}
+                                        inputProps={this.getInputProps(participant.participantId)}
+                                    />
+                                </td>
+                                <td>
                                     <input type="text" id="Category" onChange={this.handleChange.bind(this, participant.participantId)} value={participant.category}></input>
                                 </td>
                                 <td>
@@ -128,20 +152,120 @@ export class Participants extends Component {
                     </tbody>
                 </table>
 
-                <div>
+                {/* <div>
                     <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        <ul className="pagination">
+                            <li className="page-item"><a className="page-link" href="#">Previous</a></li>
+                            <li className="page-item"><a className="page-link" href="#">1</a></li>
+                            <li className="page-item"><a className="page-link" href="#">2</a></li>
+                            <li className="page-item"><a className="page-link" href="#">3</a></li>
+                            <li className="page-item"><a className="page-link" href="#">Next</a></li>
                         </ul>
                     </nav>
-                </div>
+                </div> */}
             </div>
         );
     }
+
+
+    getInputProps(participantId) {
+        var participants = this.state.participants;
+        var index = participants.findIndex((x) => x.participantId === participantId);
+        var tmp = participants[index].groupName;
+
+        if (tmp === null) {
+            tmp = "";
+        }
+
+        return {
+            placeholder: "Groupname",
+            value: tmp,
+            onChange: this.onChange.bind(this, participantId)
+        };
+    }
+
+
+    getSuggestions = value => {
+        const inputValue = value.trim().toLowerCase();
+        const inputLength = inputValue.length;
+
+        return inputLength === 0 ? [] : this.state.groups.filter(group =>
+            group.groupname.toLowerCase().slice(0, inputLength) === inputValue
+        );
+    };
+
+
+    onSuggestionsFetchRequested = ({ value }) => {
+        this.setState({
+            suggestions: this.getSuggestions(value)
+        });
+    };
+
+
+    onSuggestionsClearRequested = () => {
+        this.setState({
+            suggestions: this.state.groups,
+        });
+    };
+
+
+    getSuggestionValue(participantId, suggestion) {
+        var groups = this.state.groups;
+        var group = groups.find((x) => x.groupname === suggestion.groupname);
+
+        var participants = this.state.participants;
+        var index = participants.findIndex((x) => x.participantId === participantId);
+        var tmp = participants[index];
+
+        if (tmp.toAdd === false && tmp.toDelete === false) {
+            tmp.toUpdate = true;
+        }
+
+        tmp.groupId = group.groupId;
+
+        participants[index] = tmp;
+
+        this.setState({
+            participants: participants
+        });
+
+        return suggestion.groupname;
+    }
+
+
+    renderSuggestion(suggestion) {
+        return (
+            <span>{suggestion.groupname}</span>
+        );
+    }
+
+
+    onChange(participantId, proxy, { newValue, method }) {
+        var groups = this.state.groups;
+        var group = groups.find((x) => x.groupname === newValue);
+
+        var participants = this.state.participants;
+        var index = participants.findIndex((x) => x.participantId === participantId);
+        var tmp = participants[index];
+
+        tmp.groupName = newValue;
+
+        if (group) {
+            tmp.groupId = group.groupId;
+        } else {
+            tmp.groupId = 0;
+        }
+
+        if (tmp.toAdd === false && tmp.toDelete === false) {
+            tmp.toUpdate = true;
+        }
+
+        participants[index] = tmp;
+
+        this.setState({
+            participants: participants
+        });
+    };
 
 
     render() {

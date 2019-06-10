@@ -10,6 +10,9 @@ namespace ToBeRenamedLater.Dto {
         public string Lastname { get; set; }
         public string YearOfBirth { get; set; }
         public string Category { get; set; }
+        public int GroupId { get; set; }
+        public string GroupName { get; set; }
+
         public bool ToDelete { get; set; }
         public bool ToAdd { get; set; }
         public bool ToUpdate { get; set; }

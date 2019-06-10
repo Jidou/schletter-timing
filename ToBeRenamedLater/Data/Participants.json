@@ -1,18 +1,29 @@
 [
   {
-    "ParticipantId": 1,
-    "Firstname": "asdf",
-    "Lastname": "asdf",
-    "YearOfBirth": "asdf",
-    "Category": "asdf",
+    "ParticipantId": 3,
+    "Firstname": "Number",
+    "Lastname": "Three",
+    "YearOfBirth": "1973",
+    "Category": "C1",
+    "GroupId": 3,
     "FinishTime": null
   },
   {
     "ParticipantId": 2,
-    "Firstname": "fdsa",
-    "Lastname": "fdsa",
-    "YearOfBirth": "fdsa",
-    "Category": "fdsa",
+    "Firstname": "Number",
+    "Lastname": "Two",
+    "YearOfBirth": "1983",
+    "Category": "C1",
+    "GroupId": 2,
+    "FinishTime": null
+  },
+  {
+    "ParticipantId": 1,
+    "Firstname": "Number",
+    "Lastname": "One",
+    "YearOfBirth": "1996",
+    "Category": "C1",
+    "GroupId": 1,
     "FinishTime": null
   }
 ]

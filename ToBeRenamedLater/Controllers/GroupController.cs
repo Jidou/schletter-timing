@@ -21,8 +21,28 @@ namespace ToBeRenamedLater.Controllers {
 
         [HttpGet()]
         public IEnumerable<Dto.Group> Get() {
-            var availableGroups = _groupService.Load();
+            var availableGroups = CurrentContext.AllAvailableGroups;
+
+            if (availableGroups == null) {
+                availableGroups = _groupService.Load().ToList();
+                CurrentContext.AllAvailableGroups = availableGroups;
+            }
+
             var dtos = ConvertModelToDto(availableGroups);
+            return dtos;
+        }
+
+
+        [HttpGet("[action]")]
+        public IEnumerable<GroupIdAndNameOnly> GetIdAndNameOnly() {
+            var availableGroups = CurrentContext.AllAvailableGroups;
+
+            if (availableGroups == null) {
+                availableGroups = _groupService.Load().ToList();
+                CurrentContext.AllAvailableGroups = availableGroups;
+            }
+
+            var dtos = ConvertModelToDtoIdAndNameOnly(availableGroups);
             return dtos;
         }
 
@@ -34,18 +54,12 @@ namespace ToBeRenamedLater.Controllers {
             var groupsToUpdate = groups.Where(x => x.ToUpdate);
 
             var newGroups = new List<Model.Group>();
-            int i = 1;
+
+            var i = CurrentContext.AllAvailableGroups.Max(x => x.GroupId) + 1;
 
             foreach (var groupToAdd in groupsToAdd) {
-                while(groupsToUpdate.Any(x => x.GroupId == i)) {
-                    i++;
-                }
-
-                while (groupsToAdd.Any(x => x.GroupId == i)) {
-                    i++;
-                }
-
                 groupToAdd.GroupId = i;
+                i++;
             }
 
             var tmp = groups.Where(x => !x.ToAdd && !x.ToDelete && !x.ToUpdate);
@@ -73,6 +87,8 @@ namespace ToBeRenamedLater.Controllers {
                         GroupId = group.GroupId,
                         Class = group.Class,
                         Groupname = group.Groupname,
+                        Participant1 = CurrentContext.AllAvailableParticipants.SingleOrDefault(x => x.ParticipantId == group.Participant1Id),
+                        Participant2 = CurrentContext.AllAvailableParticipants.SingleOrDefault(x => x.ParticipantId == group.Participant2Id),
                     };
                 } else {
                     groupToUpdate.Groupname = group.Groupname;
@@ -89,6 +105,20 @@ namespace ToBeRenamedLater.Controllers {
                 yield return new Dto.Group {
                     Groupname = group.Groupname,
                     Class = group.Class,
+                    GroupId = group.GroupId,
+                    Participant1Id = group.Participant1?.ParticipantId ?? 0,
+                    Participant1FullName = $"{group.Participant1?.Firstname} {group.Participant1?.Lastname}",
+                    Participant2Id = group.Participant2?.ParticipantId ?? 0,
+                    Participant2FullName = $"{group.Participant2?.Firstname} {group.Participant2?.Lastname}",
+                };
+            }
+        }
+
+
+        private IEnumerable<GroupIdAndNameOnly> ConvertModelToDtoIdAndNameOnly(IEnumerable<Model.Group> availableGroups) {
+            foreach (var group in availableGroups) {
+                yield return new GroupIdAndNameOnly {
+                    Groupname = group.Groupname,
                     GroupId = group.GroupId,
                 };
             }
