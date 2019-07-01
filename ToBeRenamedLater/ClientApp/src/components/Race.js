@@ -6,23 +6,24 @@ import arrayMove from 'array-move';
 import Autosuggest from 'react-autosuggest';
 
 
-const SortableItem = SortableElement(({ value, removeHandler }) =>
+const SortableItem = SortableElement(({ value, removeHandler, changeHandler }) =>
     <div className="input-group mb-3">
         <div className="input-group-prepend">
             <span className="input-group-text">=</span>
+            <input type="text" className="form-control" placeholder="Groupname" aria-label="Username" aria-describedby="addon-wrapping" onChange={changeHandler.bind(this, value.groupId, value.startNumber)} value={value.startNumber} />
         </div>
-        <input type="text" className="form-control" placeholder="Groupname" aria-label="Username" aria-describedby="addon-wrapping" readOnly value={value} />
+        <input type="text" className="form-control" placeholder="Groupname" aria-label="Username" aria-describedby="addon-wrapping" readOnly value={value.groupname} />
         <div className="input-group-append">
-            <button className="btn btn-danger" onClick={removeHandler.bind(this, value)} type="button">Remove</button>
+            <button className="btn btn-danger" onClick={removeHandler.bind(this, value.groupname)} type="button">Remove</button>
         </div>
     </div>);
 
 
-const SortableList = SortableContainer(({ items, removeHandler }) => {
+const SortableList = SortableContainer(({ items, removeHandler, changeHandler }) => {
     return (
         <ul>
             {items.map((item) => (
-                <SortableItem key={`item-${item.groupId}`} index={item.groupId} value={item.groupname} removeHandler={removeHandler}/>
+                <SortableItem key={`item-${item.groupId}`} index={item.startNumber} value={item} removeHandler={removeHandler} changeHandler={changeHandler} />
             ))}
         </ul>
     );
@@ -49,13 +50,26 @@ class SortableComponent extends Component {
 
 
     onSortEnd = ({ oldIndex, newIndex }) => {
-        this.setState(({ items }) => ({
-            items: arrayMove(items, oldIndex, newIndex),
-        }));
+        var tmpItems = this.state.items;
+
+
+        var tmp1 = tmpItems[oldIndex-1];
+        var tmp2 = tmpItems[newIndex-1];
+
+        tmpItems[oldIndex-1] = tmp2;
+        tmpItems[newIndex-1] = tmp1;
+
+        this.setState({
+            items: tmpItems
+        });
+
+        //this.setState(({ items }) => ({
+        //    items: arrayMove(items, oldIndex, newIndex),
+        //}));
     };
 
     render() {
-        return <SortableList items={this.state.items} removeHandler={this.props.removeHandler} onSortEnd={this.onSortEnd} />;
+        return <SortableList items={this.state.items} changeHandler={this.props.changeHandler} removeHandler={this.props.removeHandler} onSortEnd={this.onSortEnd} />;
     }
 }
 
@@ -74,6 +88,7 @@ export class Race extends Component {
         this.handleAddGroup = this.handleAddGroup.bind(this);
         this.onChange = this.onChange.bind(this);
         this.handleRemoveFromChild = this.handleRemoveFromChild.bind(this);
+        this.handleChangeInChild = this.handleChangeInChild.bind(this);
         this.state = { race: [], groups: [], suggestions: [], searchValue: "", loading: true };
 
         fetch('api/Race/')
@@ -134,7 +149,7 @@ export class Race extends Component {
                     <button type="button" onClick={this.handleAddGroup} disabled={this.dirty} className="btn btn-primary">Add Group</button>
                 </div>
 
-                <SortableComponent items={this.state.race.groups} removeHandler={this.handleRemoveFromChild}/>
+                <SortableComponent items={this.state.race.groups} removeHandler={this.handleRemoveFromChild} changeHandler={this.handleChangeInChild} />
             </div>
         );
     }
@@ -191,6 +206,25 @@ export class Race extends Component {
             searchValue: newValue
         });
     };
+
+
+    handleChangeInChild(groupId, startNumber) {
+        console.log("safasfsdfasdffads2121212");
+
+        var race = this.state.race;
+        var groups = race.groups;
+        var index = groups.findIndex((x) => x.groupId === groupId);
+
+        var group1 = groups.find((x) => x.groupId === groupId);
+
+        group1.startNumber = startNumber;
+        groups[index] = groups;
+        race.groups = groups;
+
+        this.setState({
+            race: race
+        })
+    }
 
 
     handleRemoveFromChild(value) {
@@ -266,6 +300,16 @@ export class Race extends Component {
     handleAddGroup() {
         var race = this.state.race;
         var newGroup = this.state.groups.find((x) => x.groupname === this.state.searchValue);
+
+        if (!newGroup) {
+            return;
+        }
+
+        var groups = this.state.race.groups;
+
+        var maxStartNumber = Math.max.apply(Math, groups.map(function (o) { return o.startNumber; }))
+        newGroup.startNumber = ++maxStartNumber;
+
         race.groups.push(newGroup);
 
         this.setState({

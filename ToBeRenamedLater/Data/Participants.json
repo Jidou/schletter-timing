@@ -1,5 +1,14 @@
 [
   {
+    "ParticipantId": 4,
+    "Firstname": "Test",
+    "Lastname": "Test",
+    "YearOfBirth": "2018",
+    "Category": "C2",
+    "GroupId": 5,
+    "FinishTime": null
+  },
+  {
     "ParticipantId": 3,
     "Firstname": "Number",
     "Lastname": "Three",

@@ -22,4 +22,11 @@ namespace ToBeRenamedLater.Dto {
         public int GroupId { get; set; }
         public string Groupname { get; set; }
     }
+
+
+    public class GroupInfoForRace {
+        public int GroupId { get; set; }
+        public string Groupname { get; set; }
+        public int StartNumber { get; set; }
+    }
 }

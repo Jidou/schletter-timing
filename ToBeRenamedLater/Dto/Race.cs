@@ -14,6 +14,6 @@ namespace ToBeRenamedLater.Dto {
         public string Place { get; set; }
         public string Judge { get; set; }
         public TimingTools TimingTool { get; set; }
-        public IEnumerable<GroupIdAndNameOnly> Groups { get; set; }
+        public IEnumerable<GroupInfoForRace> Groups { get; set; }
     }
 }

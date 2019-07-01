@@ -16,6 +16,7 @@ namespace ToBeRenamedLater.Controllers {
         private readonly ParticipantService _participantService;
         private readonly TimingValueService _timingValueService;
 
+
         public RaceController(RaceService raceService, GroupService groupService, ParticipantService participantService, TimingValueService timingValueService) {
             _raceService = raceService;
             _groupService = groupService;
@@ -79,16 +80,24 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private IEnumerable<Model.Group> ConvertGroupDtosToModel(IEnumerable<GroupIdAndNameOnly> groups, IEnumerable<Model.Group> currentGroups) {
+        private IEnumerable<Model.Group> ConvertGroupDtosToModel(IEnumerable<GroupInfoForRace> groups, IEnumerable<Model.Group> currentGroups) {
             var availableGroups = CurrentContext.AllAvailableGroups;
+            var allGroups = new List<Model.Group>();
 
             foreach (var group in groups) {
                 if (currentGroups.Any(x => x.GroupId == group.GroupId)) {
-                    yield return currentGroups.Single(x => x.GroupId == group.GroupId);
+                    var tmp = currentGroups.Single(x => x.GroupId == group.GroupId);
+                    tmp.StartNumber = group.StartNumber;
+                    allGroups.Add(tmp);
                 } else {
-                    yield return availableGroups.Single(x => x.GroupId == group.GroupId);
+                    var tmp = availableGroups.Single(x => x.GroupId == group.GroupId);
+                    tmp.StartNumber = group.StartNumber;
+                    allGroups.Add(tmp);
                 }
             }
+
+            allGroups = allGroups.OrderBy(x => x.StartNumber).ToList();
+            return allGroups;
         }
 
 
@@ -106,13 +115,19 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private IEnumerable<GroupIdAndNameOnly> ConvertGroupModelsToDto(IEnumerable<Model.Group> groups) {
+        private IEnumerable<GroupInfoForRace> ConvertGroupModelsToDto(IEnumerable<Model.Group> groups) {
+            var allGroups = new List<GroupInfoForRace>();
+
             foreach (var group in groups) {
-                yield return new GroupIdAndNameOnly {
+                allGroups.Add(new GroupInfoForRace {
                     GroupId = group.GroupId,
                     Groupname = group.Groupname,
-                };
+                    StartNumber = group.StartNumber,
+                });
             }
+
+            allGroups = allGroups.OrderBy(x => x.StartNumber).ToList();
+            return allGroups;
         }
     }
 }

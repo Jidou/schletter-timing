@@ -1,5 +1,23 @@
 [
   {
+    "GroupId": 5,
+    "Groupname": "SortingTest",
+    "Participant1": {
+      "ParticipantId": 4,
+      "Firstname": "Test",
+      "Lastname": "Test",
+      "YearOfBirth": "2018",
+      "Category": "C2",
+      "GroupId": 5,
+      "FinishTime": null
+    },
+    "Participant2": null,
+    "Class": "Maybe",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  },
+  {
     "GroupId": 4,
     "Groupname": "AnotherGroup",
     "Participant1": null,

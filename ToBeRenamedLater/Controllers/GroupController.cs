@@ -34,6 +34,20 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet("[action]")]
+        public IEnumerable<GroupInfoForRace> GetGroupInfoForRace() {
+            var availableGroups = CurrentContext.AllAvailableGroups;
+
+            if (availableGroups == null) {
+                availableGroups = _groupService.Load().ToList();
+                CurrentContext.AllAvailableGroups = availableGroups;
+            }
+
+            var dtos = ConvertModelToDtoGroupInfoForRace(availableGroups);
+            return dtos;
+        }
+
+
+        [HttpGet("[action]")]
         public IEnumerable<GroupIdAndNameOnly> GetIdAndNameOnly() {
             var availableGroups = CurrentContext.AllAvailableGroups;
 
@@ -120,6 +134,17 @@ namespace ToBeRenamedLater.Controllers {
                 yield return new GroupIdAndNameOnly {
                     Groupname = group.Groupname,
                     GroupId = group.GroupId,
+                };
+            }
+        }
+
+
+        private IEnumerable<GroupInfoForRace> ConvertModelToDtoGroupInfoForRace(IEnumerable<Model.Group> availableGroups) {
+            foreach (var group in availableGroups) {
+                yield return new GroupInfoForRace {
+                    Groupname = group.Groupname,
+                    GroupId = group.GroupId,
+                    StartNumber = group.StartNumber,
                 };
             }
         }
