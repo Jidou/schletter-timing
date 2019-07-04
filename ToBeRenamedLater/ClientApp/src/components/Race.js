@@ -85,6 +85,7 @@ export class Race extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleLoad = this.handleLoad.bind(this);
+        this.handleShuffle = this.handleShuffle.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
         this.onChange = this.onChange.bind(this);
         this.handleRemoveFromChild = this.handleRemoveFromChild.bind(this);
@@ -135,6 +136,7 @@ export class Race extends Component {
                     </div>
                     <button type="submit" className="btn btn-primary">Save</button>
                     <button type="button" onClick={this.handleLoad} disabled={this.dirty} className="btn btn-primary">Load</button>
+                    <button type="button" onClick={this.handleShuffle} disabled={this.dirty} className="btn btn-primary">Assign Startnumbers</button>
                 </div>
 
                 <div className="form-group">
@@ -290,6 +292,15 @@ export class Race extends Component {
 
     handleLoad() {
         fetch('api/Race/Load/')
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ race: data, loading: false });
+            });
+    }
+
+
+    handleShuffle() {
+        fetch('api/Race/AssignStartNumbers/')
             .then(response => response.json())
             .then(data => {
                 this.setState({ race: data, loading: false });

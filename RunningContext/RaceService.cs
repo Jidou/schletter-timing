@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Model;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,45 @@ namespace RunningContext {
                 group.FinishTime = DateTime.Parse(finishTimeOfGroup.Time);
                 group.TimeTaken = group.FinishTime - race.StartTime;
             }
+        }
+
+
+        public void AssingStartNumbers() {
+            var race = CurrentContext.Race;
+            Shuffle(race, true);
+        }
+
+
+        private void Shuffle(Race race, bool shuffleAll = false) {
+            var nextStartNumber = 1;
+
+            if (shuffleAll) {
+                foreach (var group in race.Groups) {
+                    group.StartNumber = 0;
+                }
+            }
+
+            var rand = new Random(DateTime.Now.Millisecond);
+            var groups = race.Groups.ToArray();
+            var numberOfGroups = race.Groups.Count();
+
+            for (var i = 0; i < numberOfGroups; i++) {
+                int nextGroup;
+
+                do {
+                    nextGroup = rand.Next(0, numberOfGroups);
+
+                    if (groups[nextGroup].StartNumber == 0) {
+                        groups[nextGroup].StartNumber = nextStartNumber;
+                        nextStartNumber++;
+                        break;
+                    }
+
+                } while (true);
+            }
+
+            race.Groups = groups.ToList();
+            CurrentContext.Race = race;
         }
 
 

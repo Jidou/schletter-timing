@@ -64,6 +64,15 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
+        [HttpGet("[action]")]
+        public Dto.Race AssignStartNumbers() {
+            _raceService.AssingStartNumbers();
+            var currentRace = CurrentContext.Race;
+            _raceService.Save("Testing");
+            return ConvertModelToDto(currentRace);
+        }
+        
+
         private Model.Race ConvertDtoToModel(Dto.Race race) {
             var currentRace = CurrentContext.Race;
 
