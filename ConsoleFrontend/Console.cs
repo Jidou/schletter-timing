@@ -573,6 +573,10 @@ namespace ConsoleFrontend {
                     PdfGenerator.PdfRenderer.Order(CurrentContext.Race);
                 }
 
+                if (input[0] == "sl") {
+                    PdfGenerator.PdfRenderer.CreateStartList(CurrentContext.Race);
+                }
+
             } while (true);
 
         }
