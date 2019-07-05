@@ -31,7 +31,7 @@ namespace PdfGenerator {
             try {
                 var renderer = new HtmlToPdf();
                 AddFooter(renderer, race);
-                var html = $"{BuildDocHeaders(race)}{GenerateStartListHtml(race)}";
+                var html = $"{BuildDocHeadersStartList(race)}{GenerateStartListHtml(race)}";
                 var PDF = renderer.RenderHtmlAsPdf(html);
                 var OutputPath = "Data/StartList.pdf";
                 PDF.SaveAs(OutputPath);
@@ -111,6 +111,23 @@ namespace PdfGenerator {
             }
 
             return body;
+        }
+
+
+        private static string BuildDocHeadersStartList(Race race) {
+            return $@"
+<center>
+    <text>
+        <font size=""6"">
+            <b>{race.Titel}</b>
+        </font>
+        <br>
+        <font size=""4"">{race.RaceType}</font>
+        <br>
+        <font size=""4"">Offizielle Startliste</font>
+    </text>
+</center>
+<hr/>";
         }
 
 
