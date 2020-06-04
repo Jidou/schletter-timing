@@ -41,9 +41,9 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         [HttpPost()]
         public IEnumerable<Participant> Post([FromBody] IEnumerable<Participant> participants) {
-            var participantsToAdd = participants.Where(x => x.ToAdd);
-            var participantsToDelete = participants.Where(x => x.ToDelete);
-            var participantsToUpdate = participants.Where(x => x.ToUpdate);
+            var participantsToAdd = participants.Where(x => x.ToAdd).ToList();
+            var participantsToDelete = participants.Where(x => x.ToDelete).ToList();
+            var participantsToUpdate = participants.Where(x => x.ToUpdate).ToList();
 
             var newParticipants = UpdateParticipants(participants, participantsToAdd, participantsToUpdate);
             UpdateGroups(participantsToAdd, participantsToUpdate, participantsToDelete);
@@ -133,7 +133,12 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         private List<Model.Participant> UpdateParticipants(IEnumerable<Participant> participants, IEnumerable<Participant> participantsToAdd, IEnumerable<Participant> participantsToUpdate) {
             var newParticipants = new List<Model.Participant>();
-            var i = CurrentContext.AllAvailableParticipants.Max(x => x.ParticipantId) + 1;
+
+            var i = 0;
+
+            if (CurrentContext.AllAvailableParticipants.Count > 0) {
+                i = CurrentContext.AllAvailableParticipants.Max(x => x.ParticipantId) + 1;
+            }
 
             foreach (var participantToAdd in participantsToAdd) {
                 participantToAdd.ParticipantId = i;

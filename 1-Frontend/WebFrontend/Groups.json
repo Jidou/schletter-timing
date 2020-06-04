@@ -1,0 +1,84 @@
+[
+  {
+    "GroupId": 5,
+    "Groupname": "SortingTest",
+    "Participant1": {
+      "ParticipantId": 4,
+      "Firstname": "Test",
+      "Lastname": "Test",
+      "YearOfBirth": "2018",
+      "Category": "C2",
+      "GroupId": 5,
+      "FinishTime": null
+    },
+    "Participant2": null,
+    "Class": "Maybe",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  },
+  {
+    "GroupId": 4,
+    "Groupname": "AnotherGroup",
+    "Participant1": null,
+    "Participant2": null,
+    "Class": "ALittle",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  },
+  {
+    "GroupId": 3,
+    "Groupname": "Test003",
+    "Participant1": {
+      "ParticipantId": 3,
+      "Firstname": "Number",
+      "Lastname": "Three",
+      "YearOfBirth": "1973",
+      "Category": "C1",
+      "GroupId": 3,
+      "FinishTime": null
+    },
+    "Participant2": null,
+    "Class": "None",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  },
+  {
+    "GroupId": 2,
+    "Groupname": "Test002",
+    "Participant1": {
+      "ParticipantId": 2,
+      "Firstname": "Number",
+      "Lastname": "Two",
+      "YearOfBirth": "1983",
+      "Category": "C1",
+      "GroupId": 2,
+      "FinishTime": null
+    },
+    "Participant2": null,
+    "Class": "None",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  },
+  {
+    "GroupId": 1,
+    "Groupname": "Test001",
+    "Participant1": {
+      "ParticipantId": 1,
+      "Firstname": "Number",
+      "Lastname": "One",
+      "YearOfBirth": "1996",
+      "Category": "C1",
+      "GroupId": 1,
+      "FinishTime": null
+    },
+    "Participant2": null,
+    "Class": "None",
+    "StartNumber": 0,
+    "FinishTime": "0001-01-01T00:00:00",
+    "TimeTaken": "00:00:00"
+  }
+]

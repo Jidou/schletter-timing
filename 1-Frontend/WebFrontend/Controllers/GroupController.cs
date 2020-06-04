@@ -66,7 +66,11 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
             var newGroups = new List<Model.Group>();
 
-            var i = CurrentContext.AllAvailableGroups.Max(x => x.GroupId) + 1;
+            var i = 0;
+
+            if (CurrentContext.AllAvailableGroups.Count > 0) {
+                i = CurrentContext.AllAvailableGroups.Max(x => x.GroupId) + 1;
+            }
 
             foreach (var groupToAdd in groupsToAdd) {
                 groupToAdd.GroupId = i;

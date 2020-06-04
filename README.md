@@ -1,8 +1,19 @@
 # schletter-timing
 
+1. [schletter-timing](#schletter-timing)
+	1. [TODO](#todo)
+	2. [Components](#components)
+	3. [Roadmap](#roadmap)
+		1. [Reading Data](#reading-data)
+		2. [Console Frontend](#console-frontend)
+		3. [Web Frontend](#web-frontend)
+	4. [Testing](#testing)
+
 ## TODO
 
 * Web Frontend
+  * Read Timing values from device and add to groups
+  * Render result as PDF -> call to existing impl?
 
 ## Components
 
@@ -10,23 +21,63 @@
 * PDF Generator
 * Business Logic
 * Data Reader(s)
+* Repo(s)
 
 ## Roadmap
 
 ### Reading Data
 
-* Read data from ALGE-Timing Timy3 using USB
-	- Output sample: 0005 C0M 22:05:41.08   00
-		+ [0]: Empty
-		+ [1]: Measurement number
-		+ [2]: COM?
-		+ [3]: Time
-		+ [4]: Emtpy
-		+ [5]: Emtpy
-		+ [6]: ?
-* Read data from ALGE-Timing Timy3 using RS 232
-	- Output sample: ?
+* [x] Read data from ALGE-Timing Timy3 using USB
+  * Output sample: 0005 C0M 22:05:41.08   00
+    [0]: Empty
+    [1]: Measurement number
+    [2]: COM?
+    [3]: Time
+    [4]: Emtpy
+    [5]: Emtpy
+    [6]: ?
+* [x] Read data from ALGE-Timing Timy3 using RS 232
+  * Output sample: ?
 
+### Console Frontend
+
+* [x] Console Frontend Features
+  * [x] Add Participant
+  * [x] Add Group
+  * [x] Add Participant to Group
+  * [x] Create new Race
+  * [x] Add Group to Race
+  * [x] Read timing values from device and assign to Groups
+  * [x] Calculate results
+  * [x] Generate PDF(s)
+* [x] General Features
+  * [x] Save Participants into file as JSON
+  * [x] Save Groups into file as JSON
+  * [x] Save Race into file as JSON
+  * [x] Save as often as possible, into different files during read of timing values and assignment process (better save than sorry ;))
+  * [x] Add Option to load Participants/Groups/Race
+
+### Web Frontend
+
+* [ ] Web Frontend Features:
+  * [x] Create race
+  * [x] Add Participants
+  * [x] Add Groups
+  * [x] Add Participants to Group
+  * [x] Add Groups to Race
+  * [x] Assign Start Numbers
+    * [x] Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server
+    * [x] Can be triggered multiple times with different results
+  * [ ] Add Option to trigger timing value load from device
+  * [ ] Add Option to generate PDF(s)
+  * [ ] Add Overview of all Participants ever, without groups
+  * [ ] Add Overview of all Groups ever, without participants
+* [ ] Data Science Stuff ;)
+  * [ ] Add Option to load multiple races for statistics
+  * [ ] Add search and display options
+    * [ ] Fastest group ever
+    * [ ] Time of group over multiple years
+    * ...
 
 ## Testing
 
