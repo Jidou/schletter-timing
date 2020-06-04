@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using Alge;
-using Model;
 using NLog;
 using System.Collections.Generic;
+using SchletterTiming.Model;
 using SchletterTiming.ReaderInterfaces;
 
 namespace Timy3Reader {

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Model;
-using RunningContext;
-using ToBeRenamedLater.Dto;
+using SchletterTiming.Model;
+using SchletterTiming.RunningContext;
+using SchletterTiming.WebFrontend.Dto;
+using Race = SchletterTiming.WebFrontend.Dto.Race;
 
-namespace ToBeRenamedLater.Controllers {
+namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
     public class RaceController : Controller {
 
@@ -26,7 +26,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet()]
-        public Dto.Race Get() {
+        public Race Get() {
             var currentRace = CurrentContext.Race;
 
             if (currentRace == null) {
@@ -49,7 +49,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet("[action]")]
-        public Dto.Race Load() {
+        public Race Load() {
             _raceService.Load("Testing");
             var currentRace = CurrentContext.Race;
             return ConvertModelToDto(currentRace);
@@ -57,7 +57,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpPost()]
-        public void Post([FromBody] Dto.Race race) {
+        public void Post([FromBody] Race race) {
             var currentRace = ConvertDtoToModel(race);
             CurrentContext.Race = currentRace;
             _raceService.Save("Testing");
@@ -65,7 +65,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet("[action]")]
-        public Dto.Race AssignStartNumbers() {
+        public Race AssignStartNumbers() {
             _raceService.AssingStartNumbers();
             var currentRace = CurrentContext.Race;
             _raceService.Save("Testing");
@@ -73,7 +73,7 @@ namespace ToBeRenamedLater.Controllers {
         }
         
 
-        private Model.Race ConvertDtoToModel(Dto.Race race) {
+        private Model.Race ConvertDtoToModel(Race race) {
             var currentRace = CurrentContext.Race;
 
             currentRace.Date = race.Date;
@@ -110,8 +110,8 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private Dto.Race ConvertModelToDto(Model.Race currentRace) {
-            return new Dto.Race {
+        private Race ConvertModelToDto(Model.Race currentRace) {
+            return new Race {
                 Titel = currentRace.Titel,
                 RaceType = currentRace.RaceType,
                 Place = currentRace.Place,

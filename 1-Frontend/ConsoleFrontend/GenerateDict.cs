@@ -1,14 +1,10 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleFrontend {
+namespace SchletterTiming.ConsoleFrontend {
     public class MenuActionDictionary {
 
-        public readonly static Dictionary<string, Dictionary<string, Action>> MenuAction = GenerateDict();
+        public static readonly Dictionary<string, Dictionary<string, Action>> MenuAction = GenerateDict();
 
         public static Dictionary<string, Dictionary<string, Action>> GenerateDict() {
             var outerDict = GenerateMenuDictDict();

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IronPdf;
-using Model;
 using NLog;
+using SchletterTiming.Model;
 
-namespace PdfGenerator {
+namespace SchletterTiming.PdfGenerator {
     public class PdfRenderer {
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

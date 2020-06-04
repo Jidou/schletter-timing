@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Model;
+using SchletterTiming.Model;
 
 namespace SchletterTiming.ReaderInterfaces {
     public interface ITimy3Reader {

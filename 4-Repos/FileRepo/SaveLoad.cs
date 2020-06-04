@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.IO;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
 
-namespace RunningContext {
+namespace SchletterTiming.FileRepo {
     public class SaveLoad {
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

@@ -1,9 +1,8 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using NLog;
 
-namespace Model {
+namespace SchletterTiming.Model {
     [Serializable]
     public class Race {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

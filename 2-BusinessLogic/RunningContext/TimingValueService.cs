@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using SchletterTiming.FileRepo;
+using SchletterTiming.Model;
 
-namespace RunningContext {
+namespace SchletterTiming.RunningContext {
     public class TimingValueService {
 
         private static uint SaveCounter = 0;
@@ -30,7 +29,7 @@ namespace RunningContext {
                 filename = $"timing_values_{--SaveCounter}";
             }
 
-            var loadedTimingValues = _repo.DeSerializeObject<IEnumerable<Model.TimingValue>>(filename).ToList();
+            var loadedTimingValues = _repo.DeSerializeObject<IEnumerable<TimingValue>>(filename).ToList();
             CurrentContext.Timing = loadedTimingValues;
 
             //if (loadIntoRace) {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Model;
+using SchletterTiming.Model;
 using SchletterTiming.ReaderInterfaces;
 
 namespace Timy3Reader {

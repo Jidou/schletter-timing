@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using Model;
-using NLog;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
+using NLog;
+using SchletterTiming.FileRepo;
+using SchletterTiming.Model;
 
-namespace RunningContext {
+namespace SchletterTiming.RunningContext {
     public class RaceService {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private readonly IConfiguration _configuration;
@@ -126,7 +126,7 @@ namespace RunningContext {
                 filename = $"race_tmp_{CurrentContext.SaveCounter++}";
             }
 
-            _repo.SerializeObject<Model.Race>(CurrentContext.Race, filename);
+            _repo.SerializeObject<Race>(CurrentContext.Race, filename);
         }
 
 
@@ -135,7 +135,7 @@ namespace RunningContext {
                 return;
             }
 
-            var loadedScenario = _repo.DeSerializeObject<Model.Race>(filename);
+            var loadedScenario = _repo.DeSerializeObject<Race>(filename);
             CurrentContext.Race = loadedScenario;
         }
     }

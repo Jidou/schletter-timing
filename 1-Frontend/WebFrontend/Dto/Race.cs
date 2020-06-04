@@ -1,10 +1,8 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SchletterTiming.Model;
 
-namespace ToBeRenamedLater.Dto {
+namespace SchletterTiming.WebFrontend.Dto {
     public class Race {
 
         public string RaceType { get; set; }

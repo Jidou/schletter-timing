@@ -1,13 +1,8 @@
-﻿using Model;
-using Timy3Reader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using SchletterTiming.Model;
 using SchletterTiming.ReaderInterfaces;
 
-namespace RunningContext {
+namespace SchletterTiming.RunningContext {
     public static class CurrentContext {
 
         public static ITimy3Reader Reader;

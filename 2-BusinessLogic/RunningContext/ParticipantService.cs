@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using SchletterTiming.FileRepo;
+using SchletterTiming.Model;
 
-namespace RunningContext {
+namespace SchletterTiming.RunningContext {
     public class ParticipantService {
         private const string SaveFileName = "Participants";
 
@@ -23,20 +24,20 @@ namespace RunningContext {
         }
 
 
-        public IEnumerable<Model.Participant> Load() {
-            var participants = (IEnumerable<Model.Participant>)CurrentContext.AllAvailableParticipants;
+        public IEnumerable<Participant> Load() {
+            var participants = (IEnumerable<Participant>)CurrentContext.AllAvailableParticipants;
             if (participants != null) {
                 return participants;
             }
 
-            participants = _repo.DeSerializeObject<IEnumerable<Model.Participant>>(SaveFileName);
+            participants = _repo.DeSerializeObject<IEnumerable<Participant>>(SaveFileName);
 
             if (participants != null) {
                 CurrentContext.AllAvailableParticipants = participants.ToList();
                 return participants;
             }
 
-            participants = new List<Model.Participant>();
+            participants = new List<Participant>();
             CurrentContext.AllAvailableParticipants = participants.ToList();
             return participants;
         }

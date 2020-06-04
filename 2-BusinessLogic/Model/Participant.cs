@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 
-namespace Model {
+namespace SchletterTiming.Model {
     [Serializable]
     public class Participant {
         public int ParticipantId { get; set; }

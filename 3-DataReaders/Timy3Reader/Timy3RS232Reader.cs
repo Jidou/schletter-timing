@@ -1,8 +1,8 @@
-﻿using Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Ports;
 using NLog;
 using System.Threading;
+using SchletterTiming.Model;
 using SchletterTiming.ReaderInterfaces;
 
 namespace Timy3Reader {

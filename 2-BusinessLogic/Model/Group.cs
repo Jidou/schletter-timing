@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using NLog;
 
-namespace Model {
+namespace SchletterTiming.Model {
     [Serializable]
     public class Group {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

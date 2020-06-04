@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using RunningContext;
-using Model;
-using ToBeRenamedLater.Dto;
+using SchletterTiming.RunningContext;
+using SchletterTiming.WebFrontend.Dto;
 
-namespace ToBeRenamedLater.Controllers {
+namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
     public class GroupController : Controller {
 
@@ -20,7 +17,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet()]
-        public IEnumerable<Dto.Group> Get() {
+        public IEnumerable<Group> Get() {
             var availableGroups = CurrentContext.AllAvailableGroups;
 
             if (availableGroups == null) {
@@ -62,7 +59,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpPost()]
-        public IEnumerable<Dto.Group> Post([FromBody] IEnumerable<Dto.Group> groups) {
+        public IEnumerable<Group> Post([FromBody] IEnumerable<Group> groups) {
             var groupsToAdd = groups.Where(x => x.ToAdd);
             var groupsToDelete = groups.Where(x => x.ToDelete);
             var groupsToUpdate = groups.Where(x => x.ToUpdate);
@@ -90,7 +87,7 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private IEnumerable<Model.Group> ConvertDtoToModel(IEnumerable<Dto.Group> updatedGroups) {
+        private IEnumerable<Model.Group> ConvertDtoToModel(IEnumerable<Group> updatedGroups) {
             var currentGroups = CurrentContext.AllAvailableGroups;
 
             foreach(var group in updatedGroups) {
@@ -114,9 +111,9 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private IEnumerable<Dto.Group> ConvertModelToDto(IEnumerable<Model.Group> availableGroups) {
+        private IEnumerable<Group> ConvertModelToDto(IEnumerable<Model.Group> availableGroups) {
             foreach (var group in availableGroups) {
-                yield return new Dto.Group {
+                yield return new Group {
                     Groupname = group.Groupname,
                     Class = group.Class,
                     GroupId = group.GroupId,

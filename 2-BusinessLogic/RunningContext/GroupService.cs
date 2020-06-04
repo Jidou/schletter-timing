@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using NLog;
+using SchletterTiming.FileRepo;
+using SchletterTiming.Model;
 
-namespace RunningContext {
+namespace SchletterTiming.RunningContext {
     public class GroupService {
         private const string SaveFileName = "Groups";
 
@@ -58,20 +59,20 @@ namespace RunningContext {
         }
 
 
-        public IEnumerable<Model.Group> Load() {
-            var groups = (IEnumerable<Model.Group>)CurrentContext.AllAvailableGroups;
+        public IEnumerable<Group> Load() {
+            var groups = (IEnumerable<Group>)CurrentContext.AllAvailableGroups;
             if (groups != null) {
                 return groups;
             }
 
-            groups = _repo.DeSerializeObject<IEnumerable<Model.Group>>(SaveFileName);
+            groups = _repo.DeSerializeObject<IEnumerable<Group>>(SaveFileName);
 
             if (groups != null) {
                 CurrentContext.AllAvailableGroups = groups.ToList();
                 return groups;
             }
 
-            groups = new List<Model.Group>();
+            groups = new List<Group>();
             CurrentContext.AllAvailableGroups = groups.ToList();
             return groups;
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ToBeRenamedLater.Dto {
+﻿namespace SchletterTiming.WebFrontend.Dto {
     public class Participant {
         public int ParticipantId { get; set; }
         public string Firstname { get; set; }

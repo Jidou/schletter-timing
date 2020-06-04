@@ -1,14 +1,12 @@
-﻿using Model;
-using RunningContext;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NLog;
 using Microsoft.Extensions.Configuration;
+using NLog;
+using SchletterTiming.FileRepo;
+using SchletterTiming.RunningContext;
 
-namespace ConsoleFrontend {
+namespace SchletterTiming.ConsoleFrontend {
     public class Console {
 
         private readonly ILogger logger = LogManager.GetCurrentClassLogger();

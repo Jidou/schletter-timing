@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using RunningContext;
-using Model;
-using ToBeRenamedLater.Dto;
+using SchletterTiming.RunningContext;
+using SchletterTiming.WebFrontend.Dto;
 
-namespace ToBeRenamedLater.Controllers {
+namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
     public class ParticipantController : Controller {
 
@@ -22,7 +19,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpGet()]
-        public IEnumerable<Dto.Participant> Get() {
+        public IEnumerable<Participant> Get() {
             var availableParticipants = CurrentContext.AllAvailableParticipants;
 
             if (availableParticipants == null) {
@@ -43,7 +40,7 @@ namespace ToBeRenamedLater.Controllers {
 
 
         [HttpPost()]
-        public IEnumerable<Dto.Participant> Post([FromBody] IEnumerable<Dto.Participant> participants) {
+        public IEnumerable<Participant> Post([FromBody] IEnumerable<Participant> participants) {
             var participantsToAdd = participants.Where(x => x.ToAdd);
             var participantsToDelete = participants.Where(x => x.ToDelete);
             var participantsToUpdate = participants.Where(x => x.ToUpdate);
@@ -58,7 +55,7 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private void UpdateGroups(IEnumerable<Dto.Participant> participantsToAdd, IEnumerable<Dto.Participant> participantsToUpdate, IEnumerable<Dto.Participant> participantsToDelete) {
+        private void UpdateGroups(IEnumerable<Participant> participantsToAdd, IEnumerable<Participant> participantsToUpdate, IEnumerable<Participant> participantsToDelete) {
             var allGroups = CurrentContext.AllAvailableGroups;
 
             CheckAndRemoveFromGroups(participantsToDelete, allGroups);
@@ -69,7 +66,7 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private void CheckAndAddToGroups(IEnumerable<Dto.Participant> participantsToAdd, List<Model.Group> allGroups) {
+        private void CheckAndAddToGroups(IEnumerable<Participant> participantsToAdd, List<Model.Group> allGroups) {
             foreach (var participantToAdd in participantsToAdd) {
                 var newGroup = allGroups.SingleOrDefault(x => x.GroupId == participantToAdd.GroupId);
 
@@ -88,7 +85,7 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private static void CheckAndUpdateGroups(IEnumerable<Dto.Participant> participantsToUpdate, List<Model.Group> allGroups) {
+        private static void CheckAndUpdateGroups(IEnumerable<Participant> participantsToUpdate, List<Model.Group> allGroups) {
             foreach (var participantToUpdate in participantsToUpdate) {
                 CheckAndRemoveFromGroupsSingle(allGroups, participantToUpdate);
             }
@@ -111,14 +108,14 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private static void CheckAndRemoveFromGroups(IEnumerable<Dto.Participant> participantsToDelete, List<Model.Group> allGroups) {
+        private static void CheckAndRemoveFromGroups(IEnumerable<Participant> participantsToDelete, List<Model.Group> allGroups) {
             foreach (var participantToDelete in participantsToDelete) {
                 CheckAndRemoveFromGroupsSingle(allGroups, participantToDelete);
             }
         }
 
 
-        private static void CheckAndRemoveFromGroupsSingle(List<Model.Group> allGroups, Dto.Participant participantToDelete) {
+        private static void CheckAndRemoveFromGroupsSingle(List<Model.Group> allGroups, Participant participantToDelete) {
             if (allGroups.Any(x => x.Participant1?.ParticipantId == participantToDelete.ParticipantId)) {
                 var toRemove = allGroups.Where(x => x.Participant1?.ParticipantId == participantToDelete.ParticipantId);
                 foreach (var tr in toRemove) {
@@ -134,7 +131,7 @@ namespace ToBeRenamedLater.Controllers {
             }
         }
 
-        private List<Model.Participant> UpdateParticipants(IEnumerable<Dto.Participant> participants, IEnumerable<Dto.Participant> participantsToAdd, IEnumerable<Dto.Participant> participantsToUpdate) {
+        private List<Model.Participant> UpdateParticipants(IEnumerable<Participant> participants, IEnumerable<Participant> participantsToAdd, IEnumerable<Participant> participantsToUpdate) {
             var newParticipants = new List<Model.Participant>();
             var i = CurrentContext.AllAvailableParticipants.Max(x => x.ParticipantId) + 1;
 
@@ -156,7 +153,7 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private IEnumerable<Model.Participant> ConvertDtoToModel(IEnumerable<Dto.Participant> newParticipants) {
+        private IEnumerable<Model.Participant> ConvertDtoToModel(IEnumerable<Participant> newParticipants) {
             var currentParticipants = CurrentContext.AllAvailableParticipants;
 
             foreach(var participant in newParticipants) {
@@ -165,7 +162,7 @@ namespace ToBeRenamedLater.Controllers {
         }
 
 
-        private static Model.Participant ConvertDtoToModelSingle(List<Model.Participant> currentParticipants, Dto.Participant participant) {
+        private static Model.Participant ConvertDtoToModelSingle(List<Model.Participant> currentParticipants, Participant participant) {
             var participantToUpdate = currentParticipants.SingleOrDefault(x => x.ParticipantId == participant.ParticipantId);
 
             if (participantToUpdate == null) {
@@ -188,9 +185,9 @@ namespace ToBeRenamedLater.Controllers {
             }
         }
 
-        private IEnumerable<Dto.Participant> ConvertModelToDto(IEnumerable<Model.Participant> availableParticipants, IEnumerable<Model.Group> availableGroups) {
+        private IEnumerable<Participant> ConvertModelToDto(IEnumerable<Model.Participant> availableParticipants, IEnumerable<Model.Group> availableGroups) {
             foreach (var participant in availableParticipants) {
-                yield return new Dto.Participant {
+                yield return new Participant {
                     Category = participant.Category,
                     ParticipantId = participant.ParticipantId,
                     Firstname = participant.Firstname,
