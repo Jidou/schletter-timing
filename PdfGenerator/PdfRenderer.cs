@@ -27,6 +27,35 @@ namespace PdfGenerator {
         }
 
 
+        public static void CreateStartList(Race race) {
+            try {
+                var renderer = new HtmlToPdf();
+                AddFooter(renderer, race);
+                var html = $"{BuildDocHeadersStartList(race)}{GenerateStartListHtml(race)}";
+                var PDF = renderer.RenderHtmlAsPdf(html);
+                var OutputPath = "Data/StartList.pdf";
+                PDF.SaveAs(OutputPath);
+            } catch (Exception ex) {
+                logger.Error(ex, "Error during creation of pdf");
+            }
+        }
+
+
+        private static object GenerateStartListHtml(Race race) {
+            var orderedByGroupNumber = race.Groups.OrderBy(x => x.Groupnumber);
+            var body = string.Empty;
+            AddTableHeadersStartList(ref body);
+
+            foreach (var group in orderedByGroupNumber) {
+                AddTableRowStartList(group, ref body);
+            }
+
+            body += "</table>";
+
+            return body;
+        }
+
+
         public static void Order(Race race) {
             try {
                 var renderer = new HtmlToPdf();
@@ -85,6 +114,23 @@ namespace PdfGenerator {
         }
 
 
+        private static string BuildDocHeadersStartList(Race race) {
+            return $@"
+<center>
+    <text>
+        <font size=""6"">
+            <b>{race.Titel}</b>
+        </font>
+        <br>
+        <font size=""4"">{race.RaceType}</font>
+        <br>
+        <font size=""4"">Offizielle Startliste</font>
+    </text>
+</center>
+<hr/>";
+        }
+
+
         private static string BuildDocHeaders(Race race) {
             return $@"
 <center>
@@ -122,6 +168,28 @@ namespace PdfGenerator {
     <th>Diff</th>
 </tr>
 ";
+        }
+
+
+        private static void AddTableHeadersStartList(ref string body) {
+            body += $@"<table style=""width:100%"">
+ <tr>
+    <th>Stnr</th> 
+    <th>Gruppenname</th>
+    <th>Kategorie</th>
+    <th>Teilnehmer</th>
+</tr>
+";
+        }
+
+
+        private static void AddTableRowStartList(Group group, ref string body) {
+            body += $@"<tr>
+    <td><b>{group.Groupnumber}<b></td> 
+    <td>{group.Groupname}</td>
+    <td>{group.Participant1.Category} <br> {group.Participant2.Category}</td>
+    <td>{group.Participant1.Firstname} {group.Participant1.Lastname} <br> {group.Participant2.Firstname} {group.Participant2.Lastname}</td>
+</tr>";
         }
 
 

@@ -10,6 +10,7 @@ namespace Model {
 
         public int GroupId { get; set; }
         public string Groupname { get; set; }
+        public int Groupnumber { get; set; }
         public Participant Participant1 { get; set; }
         public Participant Participant2 { get; set; }
         public string Class { get; set; }
@@ -22,16 +23,16 @@ namespace Model {
         public Group() { }
 
 
-        public Group(string groupname, int startnumber, string @class) {
+        public Group(string groupname, int groupnumber, string @class) {
             Groupname = groupname;
-            StartNumber = startnumber;
+            Groupnumber = groupnumber;
             Class = @class;
         }
 
 
         public Group(string[] input) {
             Groupname = input[0];
-            StartNumber = int.Parse(input[1]);
+            Groupnumber = int.Parse(input[1]);
             Class = input[2];
         }
     }
