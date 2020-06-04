@@ -1,9 +1,9 @@
 ﻿using Model;
-using ReaderInterfaces;
 using System.Collections.Generic;
 using System.IO.Ports;
 using NLog;
 using System.Threading;
+using SchletterTiming.ReaderInterfaces;
 
 namespace Timy3Reader {
     public class Timy3RS232Reader : ITimy3Reader {

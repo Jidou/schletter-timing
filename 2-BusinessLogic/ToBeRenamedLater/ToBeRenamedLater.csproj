@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\1-Frontend\PdfGenerator\PdfGenerator.csproj" />
+    <ProjectReference Include="..\..\3-DataReaders\ReaderInterfaces\ReaderInterfaces.csproj" />
+    <ProjectReference Include="..\..\3-DataReaders\Timy3Reader\Timy3Reader.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\PdfGenerator\PdfGenerator.csproj" />
-    <ProjectReference Include="..\ReaderInterfaces\ReaderInterfaces.csproj" />
     <ProjectReference Include="..\RunningContext\RunningContext.csproj" />
-    <ProjectReference Include="..\Timy3Reader\Timy3Reader.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

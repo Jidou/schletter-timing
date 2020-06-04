@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!--<TargetFramework>netstandard2.0</TargetFramework>-->
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>SchletterTiming.Timy3Reader</RootNamespace>
   </PropertyGroup>
 
@@ -12,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\..\2-BusinessLogic\Model\Model.csproj" />
     <ProjectReference Include="..\ReaderInterfaces\ReaderInterfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="AlgeTimyUsb.x64">
-      <HintPath>..\Dependencies\AlgeTimyUsb.x64.dll</HintPath>
+      <HintPath>..\..\Dependencies\AlgeTimyUsb.x64.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Model;
-using ReaderInterfaces;
+using SchletterTiming.ReaderInterfaces;
 
 namespace Timy3Reader {
     public class Timy3MockReader : ITimy3Reader {

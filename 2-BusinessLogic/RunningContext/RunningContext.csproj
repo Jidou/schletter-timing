@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!--<TargetFramework>netstandard2.0</TargetFramework>-->
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <RootNamespace>SchletterTiming.ConsoleFrontend</RootNamespace>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>SchletterTiming.RunningContext</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,10 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\3-DataReaders\ReaderInterfaces\ReaderInterfaces.csproj" />
+    <ProjectReference Include="..\..\3-DataReaders\Timy3Reader\Timy3Reader.csproj" />
+    <ProjectReference Include="..\..\4-Repos\FileRepo\FileRepo.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\PdfGenerator\PdfGenerator.csproj" />
-    <ProjectReference Include="..\ReaderInterfaces\ReaderInterfaces.csproj" />
-    <ProjectReference Include="..\RunningContext\RunningContext.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,5 +23,5 @@
       <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration.abstractions\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+  
 </Project>

@@ -1,10 +1,10 @@
-﻿using ReaderInterfaces;
-using System;
+﻿using System;
 using System.Threading;
 using Alge;
 using Model;
 using NLog;
 using System.Collections.Generic;
+using SchletterTiming.ReaderInterfaces;
 
 namespace Timy3Reader {
     public class Timy3UsbReader : ITimy3Reader {

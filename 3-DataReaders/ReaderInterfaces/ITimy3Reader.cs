@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model;
 
-namespace ReaderInterfaces {
+namespace SchletterTiming.ReaderInterfaces {
     public interface ITimy3Reader {
 
         void Init();
