@@ -42,6 +42,8 @@ namespace SchletterTiming.WebFrontend {
                 Directory.CreateDirectory($"{Environment.CurrentDirectory}/{Configuration["SaveFileDirectory"]}");
             }
 
+            app.UseHttpsRedirection();
+
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             } else {

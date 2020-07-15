@@ -1,13 +1,13 @@
 # schletter-timing
 
 1. [schletter-timing](#schletter-timing)
-	1. [TODO](#todo)
-	2. [Components](#components)
-	3. [Roadmap](#roadmap)
-		1. [Reading Data](#reading-data)
-		2. [Console Frontend](#console-frontend)
-		3. [Web Frontend](#web-frontend)
-	4. [Testing](#testing)
+   1. [TODO](#todo)
+   2. [Components](#components)
+   3. [Roadmap](#roadmap)
+      1. [Reading Data](#reading-data)
+      2. [Console Frontend](#console-frontend)
+      3. [Web Frontend](#web-frontend)
+   4. [Testing](#testing)
 
 ## TODO
 
@@ -72,6 +72,11 @@
   * [ ] Add Option to generate PDF(s)
   * [ ] Add Overview of all Participants ever, without groups
   * [ ] Add Overview of all Groups ever, without participants
+* [ ] i18n
+  * [ ] Basic Setup
+  * [ ] English
+  * [ ] German
+  * [ ] Tirol
 * [ ] Data Science Stuff ;)
   * [ ] Add Option to load multiple races for statistics
   * [ ] Add search and display options
