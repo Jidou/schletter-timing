@@ -9,10 +9,12 @@ namespace SchletterTiming.WebFrontend.Controllers {
     public class RaceGroupController : Controller {
 
         private readonly GroupService _groupService;
+        private readonly RaceService _raceService;
 
 
-        public RaceGroupController(GroupService groupService) {
+        public RaceGroupController(GroupService groupService, RaceService raceService) {
             _groupService = groupService;
+            _raceService = raceService;
         }
 
 
@@ -59,31 +61,19 @@ namespace SchletterTiming.WebFrontend.Controllers {
         [HttpPost()]
         public IEnumerable<Group> Post([FromBody] IEnumerable<Group> groups) {
             var groupsToAdd = groups.Where(x => x.ToAdd);
-            var groupsToDelete = groups.Where(x => x.ToDelete);
-            var groupsToUpdate = groups.Where(x => x.ToUpdate);
+            // TODO: delete
+            //var groupsToDelete = groups.Where(x => x.ToDelete);
 
             var newGroups = new List<Model.Group>();
-
-            var i = 0;
-
-            if (CurrentContext.AllAvailableGroups.Count > 0) {
-                i = CurrentContext.AllAvailableGroups.Max(x => x.GroupId) + 1;
-            }
-
-            foreach (var groupToAdd in groupsToAdd) {
-                groupToAdd.GroupId = i;
-                i++;
-            }
 
             var tmp = groups.Where(x => !x.ToAdd && !x.ToDelete && !x.ToUpdate);
             var groupsToKeep = CurrentContext.AllAvailableGroups.Where(x => tmp.Any(y => y.GroupId == x.GroupId));
 
             newGroups.AddRange(ConvertDtoToModel(groupsToAdd));
-            newGroups.AddRange(ConvertDtoToModel(groupsToUpdate));
             newGroups.AddRange(groupsToKeep);
 
-            CurrentContext.AllAvailableGroups = newGroups.ToList();
-            _groupService.Save();
+            CurrentContext.Race.Groups = newGroups.ToList();
+            _raceService.Save(CurrentContext.Race.Titel);
 
             return ConvertModelToDto(newGroups);
         }

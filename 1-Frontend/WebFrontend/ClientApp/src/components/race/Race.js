@@ -84,25 +84,31 @@ export class Race extends Component {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleLoad = this.handleLoad.bind(this);
         this.handleShuffle = this.handleShuffle.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
         this.onChange = this.onChange.bind(this);
         this.handleRemoveFromChild = this.handleRemoveFromChild.bind(this);
         this.handleChangeInChild = this.handleChangeInChild.bind(this);
-        this.state = { race: [], groups: [], suggestions: [], searchValue: "", loading: true };
+        this.state = { race: [], groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true };
 
         fetch('api/Race/')
             .then(response => response.json())
             .then(data => {
-                this.setState({ race: data, loading: false });
+                this.setState({ race: data });
             });
 
-        fetch('api/Group/GetIdAndNameOnly')
+        fetch('api/RaceGroup/GetIdAndNameOnly')
             .then(response => response.json())
             .then(data => {
-                this.setState({ groups: data, suggestions: data });
+                this.setState({ groups: data });
             });
+
+        fetch('api/Group/')
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ allgroups: data, suggestions: data, loading: false });
+            });
+
     }
 
 
@@ -135,7 +141,6 @@ export class Race extends Component {
                         <input type="text" className="form-control" id="TimingTool" onChange={this.handleChange} placeholder="AlgeTiming" value={this.state.race.timingTool} />
                     </div>
                     <button type="submit" className="btn btn-primary">Save</button>
-                    <button type="button" onClick={this.handleLoad} disabled={this.dirty} className="btn btn-primary">Load</button>
                     <button type="button" onClick={this.handleShuffle} disabled={this.dirty} className="btn btn-primary">Assign Startnumbers</button>
                 </div>
 
@@ -171,7 +176,7 @@ export class Race extends Component {
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
 
-        return inputLength === 0 ? [] : this.state.groups.filter(group =>
+        return inputLength === 0 ? [] : this.state.allgroups.filter(group =>
             group.groupname.toLowerCase().slice(0, inputLength) === inputValue
         );
     };
@@ -186,7 +191,7 @@ export class Race extends Component {
 
     onSuggestionsClearRequested = () => {
         this.setState({
-            suggestions: this.state.groups,
+            suggestions: this.state.allgroups,
         });
     };
 
@@ -287,15 +292,6 @@ export class Race extends Component {
         event.preventDefault();
         toast("Race saved successfully");
         this.dirty = false;
-    }
-
-
-    handleLoad() {
-        fetch('api/Race/Load/')
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ race: data, loading: false });
-            });
     }
 
 

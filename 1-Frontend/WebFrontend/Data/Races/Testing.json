@@ -8,6 +8,17 @@
   "TimingTool": 1,
   "Groups": [
     {
+      "GroupId": 4,
+      "Groupname": "AnotherGroup",
+      "Groupnumber": 0,
+      "Participant1": null,
+      "Participant2": null,
+      "Class": "ALittle",
+      "StartNumber": 1,
+      "FinishTime": "0001-01-01T00:00:00",
+      "TimeTaken": "00:00:00"
+    },
+    {
       "GroupId": 3,
       "Groupname": "Test003",
       "Groupnumber": 0,
@@ -21,18 +32,7 @@
       },
       "Participant2": null,
       "Class": "None",
-      "StartNumber": 0,
-      "FinishTime": "0001-01-01T00:00:00",
-      "TimeTaken": "00:00:00"
-    },
-    {
-      "GroupId": 4,
-      "Groupname": "AnotherGroup",
-      "Groupnumber": 0,
-      "Participant1": null,
-      "Participant2": null,
-      "Class": "ALittle",
-      "StartNumber": 0,
+      "StartNumber": 2,
       "FinishTime": "0001-01-01T00:00:00",
       "TimeTaken": "00:00:00"
     },
@@ -50,7 +50,7 @@
       },
       "Participant2": null,
       "Class": "None",
-      "StartNumber": 0,
+      "StartNumber": 3,
       "FinishTime": "0001-01-01T00:00:00",
       "TimeTaken": "00:00:00"
     }

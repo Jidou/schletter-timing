@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import Autosuggest from 'react-autosuggest';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -13,15 +15,23 @@ export class RaceGroups extends Component {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
 
-        this.state = { groups: [], loading: true };
+        this.state = { groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true };
 
         fetch('api/RaceGroup/')
             .then(response => response.json())
             .then(data => {
-                this.setState({ groups: data, loading: false, activePage: 1 });
+                this.setState({ groups: data});
             });
+
+        fetch('api/Group/')
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ allgroups: data, suggestions: data, loading: false, activePage: 1  });
+            });
+
     }
 
 
@@ -53,21 +63,38 @@ export class RaceGroups extends Component {
 
 
     handleAddGroup() {
-        var newGroup = {
-            groupId: this.newGroupsCounter,
-            groupname: "",
-            class: "",
-            toAdd: true,
+        var newGroup = this.state.allgroups.find((x) => x.groupname === this.state.searchValue);
+
+        if (!newGroup) {
+            return;
         }
 
-        this.newGroupsCounter--;
-
         var groups = this.state.groups;
+
+        var maxStartNumber = Math.max.apply(Math, groups.map(function (o) { return o.startNumber; }))
+        newGroup.startNumber = ++maxStartNumber;
+        newGroup.toAdd = true;
+
         groups.push(newGroup);
 
         this.setState({
             groups: groups
         });
+
+        fetch('api/RaceGroup/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(this.state.groups)
+        })
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ groups: data });
+            });
+
+        toast("Groups saved successfully");
     }
 
 
@@ -140,6 +167,59 @@ export class RaceGroups extends Component {
     }
 
 
+    getInputProps() {
+
+        return {
+            placeholder: "Groupname",
+            value: this.state.searchValue,
+            onChange: this.onChange
+        };
+    }
+
+
+    getSuggestions = value => {
+        const inputValue = value.trim().toLowerCase();
+        const inputLength = inputValue.length;
+
+        return inputLength === 0 ? [] : this.state.allgroups.filter(group =>
+            group.groupname.toLowerCase().slice(0, inputLength) === inputValue
+        );
+    };
+
+
+    onSuggestionsFetchRequested = ({ value }) => {
+        this.setState({
+            suggestions: this.getSuggestions(value)
+        });
+    };
+
+
+    onSuggestionsClearRequested = () => {
+        this.setState({
+            suggestions: this.state.allgroups,
+        });
+    };
+
+
+    getSuggestionValue(suggestion) {
+        return suggestion.groupname;
+    }
+
+
+    renderSuggestion(suggestion) {
+        return (
+            <span>{suggestion.groupname}</span>
+        );
+    }
+
+
+    onChange(proxy, { newValue }) {
+        this.setState({
+            searchValue: newValue
+        });
+    };
+
+
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
@@ -148,10 +228,17 @@ export class RaceGroups extends Component {
         return (
             <div>
                 <h1>Race Groups</h1>
-                <form onSubmit={this.handleSubmit}>
-                    <div>
-                        <button type="submit" className="btn btn-primary">Save</button>
-                        <button type="button" onClick={this.handleAddGroup} disabled={this.dirty} className="btn btn-primary">Add Group</button>
+                <form>
+                    <div className="form-group">
+                        <Autosuggest
+                            suggestions={this.state.suggestions}
+                            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                            getSuggestionValue={this.getSuggestionValue}
+                            renderSuggestion={this.renderSuggestion}
+                            inputProps={this.getInputProps()}
+                        />
+                        <button type="button" onClick={this.handleAddGroup} className="btn btn-primary">Add Group</button>
                     </div>
                     {contents}
                 </form>

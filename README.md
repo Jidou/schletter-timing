@@ -72,6 +72,7 @@
   * [ ] Add Option to generate PDF(s)
   * [ ] Add Overview of all Participants ever, without groups
   * [ ] Add Overview of all Groups ever, without participants
+  * [ ] Pagination
 * [ ] i18n
   * [ ] Basic Setup
   * [ ] English
