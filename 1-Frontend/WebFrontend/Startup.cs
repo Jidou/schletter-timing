@@ -38,9 +38,7 @@ namespace SchletterTiming.WebFrontend {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (!Directory.Exists($"{Environment.CurrentDirectory}/{Configuration["SaveFileDirectory"]}")) {
-                Directory.CreateDirectory($"{Environment.CurrentDirectory}/{Configuration["SaveFileDirectory"]}");
-            }
+            new SaveLoad(Configuration).Init();
 
             app.UseHttpsRedirection();
 

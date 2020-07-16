@@ -30,18 +30,8 @@ namespace SchletterTiming.WebFrontend.Controllers {
             var currentRace = CurrentContext.Race;
 
             if (currentRace == null) {
-                currentRace = new Model.Race {
-                    Date = DateTime.Today,
-                    Judge = string.Empty,
-                    Groups = new List<Model.Group>(),
-                    Place = string.Empty,
-                    RaceType = string.Empty,
-                    StartTime = DateTime.Now,
-                    TimingTool = TimingTools.AlgeTiming,
-                    Titel = string.Empty,
-                };
-
-                CurrentContext.Race = currentRace;
+                _raceService.Reset();
+                currentRace = CurrentContext.Race;
             }
 
             return ConvertModelToDto(currentRace);
@@ -50,6 +40,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         [HttpGet("[action]")]
         public Race Load() {
+            // TODO: find way to remove hard coded file name
             _raceService.Load("Testing");
             var currentRace = CurrentContext.Race;
             return ConvertModelToDto(currentRace);

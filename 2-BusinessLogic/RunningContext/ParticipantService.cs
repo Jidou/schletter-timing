@@ -24,7 +24,7 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public IEnumerable<Participant> Load() {
+        public IEnumerable<Participant> LoadAllAvailableParticipants() {
             var participants = (IEnumerable<Participant>)CurrentContext.AllAvailableParticipants;
             if (participants != null) {
                 return participants;

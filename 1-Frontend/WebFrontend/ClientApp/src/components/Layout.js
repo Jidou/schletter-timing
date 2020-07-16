@@ -24,13 +24,13 @@ export class Layout extends Component {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
               <Nav className="mr-auto">
-                <Nav.Link href="/races">Races</Nav.Link>
+                <Nav.Link href="/raceoverview">Races</Nav.Link>
                 <Nav.Link href="/groups">Groups</Nav.Link>
                 <Nav.Link href="/participants">Participants</Nav.Link>
                 <NavDropdown title="Race" id="basic-nav-dropdown">
-                  <NavDropdown.Item href="/race/overview">Overview</NavDropdown.Item>
-                  <NavDropdown.Item href="/race/groups">Groups</NavDropdown.Item>
-                  <NavDropdown.Item href="/race/participants">Participants</NavDropdown.Item>
+                  <NavDropdown.Item href="/race/race">Overview</NavDropdown.Item>
+                  <NavDropdown.Item href="/race/racegroups">Groups</NavDropdown.Item>
+                  {/* <NavDropdown.Item href="/race/raceparticipants">Participants</NavDropdown.Item> */}
                 </NavDropdown>
               </Nav>
               {/* <ThemeProvider theme={lightTheme}>

@@ -8,7 +8,6 @@ namespace SchletterTiming.Model {
         public string Lastname { get; set; }
         public string YearOfBirth { get; set; }
         public string Category { get; set; }
-        public int GroupId { get; set; }
 
         public DateTime? FinishTime { get; set; }
 

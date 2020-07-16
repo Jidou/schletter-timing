@@ -8,11 +8,38 @@ namespace SchletterTiming.FileRepo {
     public class SaveLoad {
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        // TODO: fix getting SaveFileDirectory from configuration
         private readonly IConfiguration _configuration;
 
 
         public SaveLoad(IConfiguration configuration) {
             _configuration = configuration;
+        }
+
+
+        /// <summary>
+        /// Checks and creates all files and directories needed
+        /// </summary>
+        public void Init() {
+            var path = $"{Environment.CurrentDirectory}\\Data";
+            if (!Directory.Exists(path)) {
+                Directory.CreateDirectory(path);
+            }
+
+            path = $"{Environment.CurrentDirectory}\\Data\\Races";
+            if (!Directory.Exists(path)) {
+                Directory.CreateDirectory(path);
+            }
+
+            path = $"{Environment.CurrentDirectory}\\Data\\Participants.json";
+            if (!File.Exists(path)) {
+                File.Create(path);
+            }
+
+            path = $"{Environment.CurrentDirectory}\\Data\\Groups.json";
+            if (!File.Exists(path)) {
+                File.Create(path);
+            }
         }
 
 
@@ -31,7 +58,9 @@ namespace SchletterTiming.FileRepo {
                 fileName += ".json";
             }
 
-            fileName = $"{Environment.CurrentDirectory}/{_configuration["SaveFileDirectory"]}/{fileName}";
+            if (!fileName.StartsWith($"{Environment.CurrentDirectory}\\Data")) {
+                fileName = $"{Environment.CurrentDirectory}\\Data\\{fileName}";
+            }
 
             try {
                 using (StreamWriter file = File.CreateText(fileName)) {
@@ -60,7 +89,10 @@ namespace SchletterTiming.FileRepo {
                 fileName += ".json";
             }
 
-            fileName = $"{Environment.CurrentDirectory}/{_configuration["SaveFileDirectory"]}/{fileName}";
+            if (!fileName.StartsWith($"{Environment.CurrentDirectory}\\Data")) {
+                fileName = $"{Environment.CurrentDirectory}\\Data\\{fileName}";
+            }
+
 
             T objectOut = default(T);
 

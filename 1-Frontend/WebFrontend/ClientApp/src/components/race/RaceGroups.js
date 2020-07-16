@@ -17,7 +17,7 @@ export class RaceGroups extends Component {
 
         this.state = { groups: [], loading: true };
 
-        fetch('api/Group/')
+        fetch('api/RaceGroup/')
             .then(response => response.json())
             .then(data => {
                 this.setState({ groups: data, loading: false, activePage: 1 });

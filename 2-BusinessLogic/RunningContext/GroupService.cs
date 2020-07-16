@@ -59,7 +59,7 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public IEnumerable<Group> Load() {
+        public IEnumerable<Group> LoadAllAvailableGroups() {
             var groups = (IEnumerable<Group>)CurrentContext.AllAvailableGroups;
             if (groups != null) {
                 return groups;

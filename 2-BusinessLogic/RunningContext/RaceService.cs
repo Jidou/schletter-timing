@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using NLog;
@@ -21,6 +23,21 @@ namespace SchletterTiming.RunningContext {
         public void SetStartTime(string startTime) {
             var time = DateTime.Parse(startTime);
             CurrentContext.Race.StartTime = time;
+        }
+
+
+        public IEnumerable<Race> GetAllRaces() {
+            var path = $"{Environment.CurrentDirectory}\\Data\\Races";
+
+            var allFiles = Directory.GetFiles(path);
+
+            var allRaces = new List<Race>();
+
+            foreach (var file in allFiles) {
+                allRaces.Add(_repo.DeSerializeObject<Race>(file));
+            }
+
+            return allRaces;
         }
 
 
@@ -126,6 +143,8 @@ namespace SchletterTiming.RunningContext {
                 filename = $"race_tmp_{CurrentContext.SaveCounter++}";
             }
 
+            filename = $"Races/{filename}";
+
             _repo.SerializeObject<Race>(CurrentContext.Race, filename);
         }
 
@@ -135,8 +154,24 @@ namespace SchletterTiming.RunningContext {
                 return;
             }
 
+            filename = $"Races/{filename}";
+
             var loadedScenario = _repo.DeSerializeObject<Race>(filename);
             CurrentContext.Race = loadedScenario;
+        }
+
+
+        public void Reset() {
+            CurrentContext.Race = new Race {
+                Date = DateTime.Today,
+                Judge = string.Empty,
+                Groups = new List<Group>(),
+                Place = string.Empty,
+                RaceType = string.Empty,
+                StartTime = DateTime.Now,
+                TimingTool = TimingTools.AlgeTiming,
+                Titel = string.Empty,
+            };
         }
     }
 }

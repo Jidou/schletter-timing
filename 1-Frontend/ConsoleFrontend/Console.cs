@@ -321,7 +321,7 @@ namespace SchletterTiming.ConsoleFrontend {
             }
 
             if (input[0] == "l") {
-                _participant.Load();
+                _participant.LoadAllAvailableParticipants();
                 return;
             }
 
@@ -357,7 +357,7 @@ namespace SchletterTiming.ConsoleFrontend {
                 }
 
                 if (input[0] == "l") {
-                    _participant.Load();
+                    _participant.LoadAllAvailableParticipants();
                     continue;
                 }
             } while (true);
@@ -395,7 +395,7 @@ namespace SchletterTiming.ConsoleFrontend {
             }
 
             if (input[0] == "l") {
-                _group.Load();
+                _group.LoadAllAvailableGroups();
                 return;
             }
 
@@ -441,7 +441,7 @@ namespace SchletterTiming.ConsoleFrontend {
                 }
 
                 if (input[0] == "l") {
-                    _group.Load();
+                    _group.LoadAllAvailableGroups();
                     continue;
                 }
 

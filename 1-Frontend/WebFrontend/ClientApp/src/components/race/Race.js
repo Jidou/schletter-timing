@@ -74,8 +74,8 @@ class SortableComponent extends Component {
 }
 
 
-export class RaceOverview extends Component {
-    static displayName = RaceOverview.name;
+export class Race extends Component {
+    static displayName = Race.name;
 
     dirty = false;
 
@@ -336,7 +336,7 @@ export class RaceOverview extends Component {
 
         return (
             <div>
-                <h1>Race Overview</h1>
+                <h1>Race</h1>
                 <form onSubmit={this.handleSubmit}>
                     {contents}
                 </form>

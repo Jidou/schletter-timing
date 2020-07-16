@@ -28,7 +28,7 @@ export class RaceParticipants extends Component {
                 this.setState({ groups: data, suggestions: data });
             });
 
-        fetch('api/Participant/')
+        fetch('api/RaceParticipant/')
             .then(response => response.json())
             .then(data => {
                 this.setState({ participants: data, loading: false, activePage: 1 });
