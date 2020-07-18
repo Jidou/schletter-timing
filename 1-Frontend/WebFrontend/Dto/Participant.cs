@@ -12,4 +12,10 @@
         public bool ToAdd { get; set; }
         public bool ToUpdate { get; set; }
     }
+
+
+    public class ParticipantSuggestions {
+        public int ParticipantId { get; set; }
+        public string Fullname { get; set; }
+    }
 }

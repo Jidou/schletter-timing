@@ -29,5 +29,10 @@ namespace SchletterTiming.Model {
             YearOfBirth = input[2];
             Category = input[3];
         }
+
+
+        public string Fullname() {
+            return $"{Firstname ?? string.Empty} {Lastname ?? string.Empty}";
+        }
     }
 }

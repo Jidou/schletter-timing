@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NLog.LayoutRenderers;
 using SchletterTiming.RunningContext;
 using SchletterTiming.WebFrontend.Dto;
 
@@ -19,7 +20,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         [HttpGet]
-        public IEnumerable<Group> Index() {
+        public IEnumerable<Group> Get() {
             var allAvailableGroups = _groupService.LoadAllAvailableGroups();
 
             return ConvertModelToDto(allAvailableGroups);
@@ -59,6 +60,80 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
+        [HttpPost("[action]")]
+        public Group AddGroup([FromBody] Group group) {
+            var currentMaxGroupId = CurrentContext.AllAvailableGroups.Max(x => x.GroupId);
+
+            var participants = LoadParticipants(group.Participant1Id, group.Participant2Id);
+            var newGroup = new Model.Group {
+                GroupId = ++currentMaxGroupId,
+                Groupname = group.Groupname,
+                Class = group.Class,
+                Participant1 = participants.Item1,
+                Participant2 = participants.Item2,
+            };
+            
+            CurrentContext.AllAvailableGroups.Add(newGroup);
+
+            _groupService.Save();
+
+            return ConvertModelToDto(newGroup);
+        }
+
+
+        [HttpPost("[action]")]
+        public Group UpdateGroup([FromBody] Group group) {
+            var groupToUpdate = CurrentContext.AllAvailableGroups.SingleOrDefault(x => x.GroupId == group.GroupId);
+
+            if (groupToUpdate is null) {
+                // TODO: someone fucked up somewhere, let him know
+                return null;
+            }
+
+            var indexOfGroup = CurrentContext.AllAvailableGroups.IndexOf(groupToUpdate);
+
+            groupToUpdate.Groupname = group.Groupname;
+            groupToUpdate.Class = group.Class;
+
+            CurrentContext.AllAvailableGroups[indexOfGroup] = groupToUpdate;
+
+            _groupService.Save();
+
+            return ConvertModelToDto(groupToUpdate);
+        }
+
+
+        [HttpPost("[action]")]
+        public Group UpdateGroupParticipants([FromBody] Group group) {
+            var groupToUpdate = CurrentContext.AllAvailableGroups.SingleOrDefault(x => x.GroupId == group.GroupId);
+
+            if (groupToUpdate is null) {
+                // TODO: someone fucked up somewhere, let him know
+                return null;
+            }
+
+            var indexOfGroup = CurrentContext.AllAvailableGroups.IndexOf(groupToUpdate);
+
+            var participants = LoadParticipants(group.Participant1Id, group.Participant2Id);
+            groupToUpdate.Participant1 = participants.Item1;
+            groupToUpdate.Participant2 = participants.Item2;
+
+            CurrentContext.AllAvailableGroups[indexOfGroup] = groupToUpdate;
+
+            _groupService.Save();
+
+            return ConvertModelToDto(groupToUpdate);
+        }
+
+
+        private Tuple<Model.Participant, Model.Participant> LoadParticipants(int participant1Id, int participant2Id) {
+            return new Tuple<Model.Participant, Model.Participant>(
+                CurrentContext.AllAvailableParticipants.SingleOrDefault(x => x.ParticipantId == participant1Id),
+                CurrentContext.AllAvailableParticipants.SingleOrDefault(x => x.ParticipantId == participant2Id));
+            
+        }
+
+
         private IEnumerable<Model.Group> ConvertDtoToModel(IEnumerable<Group> updatedGroups) {
             var currentGroups = CurrentContext.AllAvailableGroups;
 
@@ -85,16 +160,21 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         private IEnumerable<Group> ConvertModelToDto(IEnumerable<Model.Group> availableGroups) {
             foreach (var group in availableGroups) {
-                yield return new Group {
-                    Groupname = group.Groupname,
-                    GroupId = group.GroupId,
-                    Class = group.Class,
-                    Participant1Id = group.Participant1?.ParticipantId ?? 0,
-                    Participant1FullName = $"{group.Participant1?.Lastname ?? string.Empty} {group.Participant1?.Firstname ?? string.Empty}",
-                    Participant2Id = group.Participant2?.ParticipantId ?? 0,
-                    Participant2FullName = $"{group.Participant2?.Lastname ?? string.Empty} {group.Participant2?.Firstname ?? string.Empty}",
-                };
+                yield return ConvertModelToDto(group);
             }
+        }
+
+
+        private Group ConvertModelToDto(Model.Group group) {
+            return new Group {
+                Groupname = group.Groupname,
+                GroupId = group.GroupId,
+                Class = group.Class,
+                Participant1Id = group.Participant1?.ParticipantId ?? 0,
+                Participant1FullName = group.Participant1?.Fullname() ?? string.Empty,
+                Participant2Id = group.Participant2?.ParticipantId ?? 0,
+                Participant2FullName = group.Participant2?.Fullname() ?? string.Empty,
+            };
         }
     }
 }
