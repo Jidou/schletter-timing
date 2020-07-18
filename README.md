@@ -65,20 +65,27 @@
   * [x] Add Groups
   * [x] Add Participants to Group
   * [x] Add Groups to Race
-  * [x] Assign Start Numbers
-    * [x] Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server
-    * [x] Can be triggered multiple times with different results
-  * [ ] Add Option to trigger timing value load from device
-  * [ ] Add Option to generate PDF(s)
-  * [ ] Add Overview of all Participants ever, without groups
-  * [ ] Add Overview of all Groups ever, without participants
-  * [ ] Pagination
-* [ ] i18n
+  * [ ] (**IMPORTANT**) Assign Start Numbers
+    * [ ] Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server
+    * [ ] Can be triggered multiple times with different results
+  * [ ] (**IMPORTANT**) Add Option to trigger timing value load from device
+  * [ ] (**IMPORTANT**) Add Option to generate PDF(s)
+  * [x] Add Overview of all Participants ever, without groups
+  * [x] Add Overview of all Groups ever, with latest Participants
+  * [x] Add Overview of all Races
+  * [x] Add Option to load old Races
+  * [x] Add Option to create new Races
+    * [ ] (**IMPORTANT**) Add new CRU(D) functionality to Race detail page
+  * [x] Add Overview of Current Groups in loaded Race (old or new)
+  * [ ] Remove `CurrentContext` to enable easier live reload
+  * [ ] (Optional) Add Option to Add Groups via the Race Overview page
+  * [ ] (Optional) Pagination
+* [ ] (Optional) i18n
   * [ ] Basic Setup
   * [ ] English
   * [ ] German
   * [ ] Tirol
-* [ ] Data Science Stuff ;)
+* [ ] (Very Optional) Data Science Stuff ;)
   * [ ] Add Option to load multiple races for statistics
   * [ ] Add search and display options
     * [ ] Fastest group ever
