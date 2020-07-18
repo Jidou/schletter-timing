@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SchletterTiming.Model;
 using SchletterTiming.RunningContext;
 using SchletterTiming.WebFrontend.Dto;
+using Group = SchletterTiming.Model.Group;
 using Race = SchletterTiming.WebFrontend.Dto.Race;
 
 namespace SchletterTiming.WebFrontend.Controllers {
@@ -25,16 +26,52 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
-        [HttpGet()]
-        public Race Get() {
+        [HttpGet("[action]")]
+        public Race LoadRace(string racename) {
+            if (string.IsNullOrEmpty(racename) && !(CurrentContext.Race is null)) {
+                return ConvertModelToDto(CurrentContext.Race);
+            }
+
+            _raceService.Load(racename);
+
             var currentRace = CurrentContext.Race;
 
-            if (currentRace == null) {
-                _raceService.Reset();
-                currentRace = CurrentContext.Race;
+            if (currentRace is null) {
+                // TODO: check for error and return it.
+                return null;
             }
 
             return ConvertModelToDto(currentRace);
+        }
+
+
+        [HttpGet()]
+        public Race Get() {
+            if (!(CurrentContext.Race is null)) {
+                return ConvertModelToDto(CurrentContext.Race);
+            } else {
+                // TODO: check for error and return it.
+                return null;
+            }
+        }
+
+
+        [HttpPut("[action]")]
+        public Race CreateNewRace() {
+            var newRace = new Model.Race {
+                Titel = string.Empty,
+                RaceType = string.Empty,
+                Place = string.Empty,
+                Judge = string.Empty,
+                Date = DateTime.Today,
+                TimingTool = TimingTools.Unknown,
+                StartTime = DateTime.Today,
+                Groups = new List<Group>(),
+            };
+
+            CurrentContext.Race = newRace;
+
+            return ConvertModelToDto(newRace);
         }
 
 

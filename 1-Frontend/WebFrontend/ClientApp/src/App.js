@@ -17,6 +17,8 @@ export default class App extends Component {
     return (
       <Layout>
         <Route exact path='/' component={Home} />
+        <Route path='/race/loadrace/:name' component={Race} />
+        <Route path='/race/newrace/' component={Race} />
         <Route path='/race/race' component={Race} />
         <Route path='/race/racegroups' component={RaceGroups} />
         {/* <Route path='/race/raceparticipants' component={RaceParticipants} /> */}

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Table } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -30,7 +31,7 @@ export class RaceOverview extends Component {
     renderOverviewTable(races) {
         return (
             <div>
-                <table className="table table-striped table-hover">
+                <Table striped hover>
                     <thead>
                         <tr>
                             <th>Racename</th>
@@ -49,7 +50,7 @@ export class RaceOverview extends Component {
                             </tr>
                         )}
                     </tbody>
-                </table>
+                </Table>
 
                 {/* <div>
                     <nav aria-label="Page navigation example">
@@ -68,31 +69,12 @@ export class RaceOverview extends Component {
 
 
     handleSubmit(event) {
-        fetch('api/RaceOverview/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify("")
-        })
-        .then(response => response.status)
-        .then(this.props.history.push("/race/race"));
+        this.props.history.push("/race/newrace/");
     }
 
 
     handleLoad(racename, event) {
-        fetch('api/RaceOverview/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(racename)
-        })
-        .then(response => response.status)
-        .then(this.props.history.push("/race/race"));
-
+        this.props.history.push("/race/loadrace/" + racename);
     }
 
 

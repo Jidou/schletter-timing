@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Table } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -82,26 +83,62 @@ export class Race extends Component {
 
     constructor(props) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleChangeInForm.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleShuffle = this.handleShuffle.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
         this.onChange = this.onChange.bind(this);
         this.handleRemoveFromChild = this.handleRemoveFromChild.bind(this);
         this.handleChangeInChild = this.handleChangeInChild.bind(this);
+        this.handleChangeInTable = this.handleChangeInTable.bind(this);
+        this.handleTableBlur = this.handleTableBlur.bind(this);
         this.state = { race: [], groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true };
 
-        fetch('api/Race/')
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ race: data });
-            });
+        if (this.props.match.path === '/race/loadrace/:name') {
+            var racename = this.props.match.params.name;
 
-        fetch('api/RaceGroup/GetIdAndNameOnly')
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ groups: data });
-            });
+            fetch('api/Race/LoadRace?racename=' + racename)
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({ race: data });
+                });
+
+            fetch('api/RaceGroup/GetGroupInfoForRace?racename=' + racename)
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({ groups: data });
+                });
+
+        } else if (this.props.match.url === '/race/newrace/') {
+            fetch('api/Race/CreateNewRace', {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify()
+            })
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({ race: data });
+                });
+
+        } else if (this.props.match.url === '/race/race/') {
+            fetch('api/Race')
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({ race: data });
+                });
+
+            fetch('api/RaceGroup/GetGroupInfoForRace')
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({ groups: data });
+                });
+        } else {
+            // TODO
+        }
 
         fetch('api/Group/')
             .then(response => response.json())
@@ -118,33 +155,33 @@ export class Race extends Component {
                 <div>
                     <div className="form-group">
                         <label htmlFor="Titel">Racename</label>
-                        <input type="text" className="form-control" id="Titel" onChange={this.handleChange} value={this.state.race.titel}></input>
+                        <input type="text" className="form-control" id="Titel" onChange={this.handleChangeInForm} onBlur={this.handleBlur} value={this.state.race.titel}></input>
                     </div>
                     <div className="form-group">
                         <label htmlFor="RaceType">RaceType</label>
-                        <input type="text" className="form-control" id="RaceType" onChange={this.handleChange} placeholder="Some name" value={this.state.race.raceType} />
+                        <input type="text" className="form-control" id="RaceType" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="Some name" value={this.state.race.raceType} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="Place">Place</label>
-                        <input type="text" className="form-control" id="Place" onChange={this.handleChange} placeholder="Some name" value={this.state.race.place} />
+                        <input type="text" className="form-control" id="Place" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="Some name" value={this.state.race.place} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="Date">Date</label>
-                        <input type="date" className="form-control" id="Date" onChange={this.handleChange} placeholder="2019-05-26" value={this.state.race.date} />
+                        <input type="date" className="form-control" id="Date" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="2019-05-26" value={this.state.race.date} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="Judge">Judge</label>
-                        <input type="text" className="form-control" id="Judge" onChange={this.handleChange} placeholder="Some name" value={this.state.race.judge} />
+                        <input type="text" className="form-control" id="Judge" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="Some name" value={this.state.race.judge} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="TimingTool">TimingTool</label>
-                        <input type="text" className="form-control" id="TimingTool" onChange={this.handleChange} placeholder="AlgeTiming" value={this.state.race.timingTool} />
+                        <input type="text" className="form-control" id="TimingTool" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="AlgeTiming" value={this.state.race.timingTool} />
                     </div>
-                    <button type="submit" className="btn btn-primary">Save</button>
+                    {/* <button type="submit" className="btn btn-primary">Save</button> */}
                     <button type="button" onClick={this.handleShuffle} disabled={this.dirty} className="btn btn-primary">Assign Startnumbers</button>
                 </div>
 
-                <div className="form-group">
+                {/* <div className="form-group">
                     <Autosuggest
                         suggestions={this.state.suggestions}
                         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
@@ -154,9 +191,28 @@ export class Race extends Component {
                         inputProps={this.getInputProps()}
                     />
                     <button type="button" onClick={this.handleAddGroup} disabled={this.dirty} className="btn btn-primary">Add Group</button>
-                </div>
+                </div> */}
 
-                <SortableComponent items={this.state.race.groups} removeHandler={this.handleRemoveFromChild} changeHandler={this.handleChangeInChild} />
+                <Table striped hover>
+                    <thead>
+                        <tr>
+                            <th>Start Number</th>
+                            <th>Group Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.groups.map(group =>
+                            <tr key={group.groupId}>
+                                <td>
+                                    <input type="text" id="groupname" onChange={this.handleChangeInTable.bind(this, group.groupId)} onBlur={this.handleTableBlur.bind(this, group.groupId)} value={group.startNumber}></input>
+                                </td>
+                                <td>{group.groupname}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </Table>
+                {/* <SortableComponent items={this.state.race.groups} removeHandler={this.handleRemoveFromChild} changeHandler={this.handleChangeInChild} /> */}
             </div>
         );
     }
@@ -250,7 +306,7 @@ export class Race extends Component {
     }
 
 
-    handleChange(event) {
+    handleChangeInForm(event) {
         var tmp = this.state.race;
         var target = event.target.id;
         var value = event.target.value;
@@ -279,6 +335,10 @@ export class Race extends Component {
     }
 
 
+    handleBlur(groupId, event) {
+
+    }
+
     handleSubmit(event) {
         fetch('api/Race/', {
             method: 'POST',
@@ -301,6 +361,16 @@ export class Race extends Component {
             .then(data => {
                 this.setState({ race: data, loading: false });
             });
+    }
+
+
+    handleChangeInTable(groupId, event) {
+        
+    }
+
+
+    handleTableBlur(groupId, event) {
+
     }
 
 

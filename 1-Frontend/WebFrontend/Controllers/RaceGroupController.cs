@@ -31,30 +31,20 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         [HttpGet("[action]")]
-        public IEnumerable<GroupInfoForRace> GetGroupInfoForRace() {
-            var availableGroups = CurrentContext.AllAvailableGroups;
-
-            if (availableGroups == null) {
-                availableGroups = _groupService.LoadAllAvailableGroups().ToList();
-                CurrentContext.AllAvailableGroups = availableGroups;
+        public IEnumerable<GroupInfoForRace> GetGroupInfoForRace(string racename) {
+            if (string.IsNullOrEmpty(racename) && !(CurrentContext.Race is null)) {
+                return ConvertModelToDtoGroupInfoForRace(CurrentContext.Race.Groups);
             }
 
-            var dtos = ConvertModelToDtoGroupInfoForRace(availableGroups);
-            return dtos;
-        }
+            _raceService.Load(racename);
 
+            var raceGroups = CurrentContext.Race.Groups;
 
-        [HttpGet("[action]")]
-        public IEnumerable<GroupIdAndNameOnly> GetIdAndNameOnly() {
-            var availableGroups = CurrentContext.AllAvailableGroups;
-
-            if (availableGroups == null) {
-                availableGroups = _groupService.LoadAllAvailableGroups().ToList();
-                CurrentContext.AllAvailableGroups = availableGroups;
+            if (raceGroups == null) {
+                raceGroups = new List<Model.Group>();
             }
 
-            var dtos = ConvertModelToDtoIdAndNameOnly(availableGroups);
-            return dtos;
+            return ConvertModelToDtoGroupInfoForRace(raceGroups);
         }
 
 
@@ -76,6 +66,28 @@ namespace SchletterTiming.WebFrontend.Controllers {
             _raceService.Save(CurrentContext.Race.Titel);
 
             return ConvertModelToDto(newGroups);
+        }
+
+
+        [HttpPost()]
+        public IEnumerable<Group> UpdateStartNumbers([FromBody] IEnumerable<GroupInfoForRace> groups) {
+            var raceGroups = CurrentContext.Race.Groups;
+
+            var enumerable = raceGroups as Model.Group[] ?? raceGroups.ToArray();
+
+            foreach (var @group in groups) {
+                foreach (var raceGroup in enumerable) {
+                    if (raceGroup.GroupId == @group.GroupId) {
+                        raceGroup.StartNumber = @group.StartNumber;
+                        break;
+                    }
+                }
+            }
+
+            CurrentContext.Race.Groups = enumerable;
+            _raceService.Save(CurrentContext.Race.Titel);
+
+            return ConvertModelToDto(enumerable);
         }
 
 
