@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Table } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,7 +15,7 @@ export class Participants extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleAddParticipant = this.handleAddParticipant.bind(this);
-        this.onChange = this.onChange.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
         this.state = { participants: [], suggestions: [], value: "", loading: true };
 
         fetch('api/Participant/')
@@ -56,6 +57,23 @@ export class Participants extends Component {
     }
 
 
+    handleBlur(participantId) {
+        var participants = this.state.participants;
+        var index = participants.findIndex((x) => x.participantId === participantId);
+        var participant = participants[index];
+
+        if (participant.toAdd) {
+            this.addParticipant(participant);
+        } else if (participant.toUpdate) {
+            this.updateParticipant(participant);
+        } else if (participant.toDelete) {
+
+        } else {
+            // TODO
+        }
+    }
+
+
     handleAddParticipant() {
         var newParticipant = {
             participantId: this.newParticipantsCounter,
@@ -74,6 +92,58 @@ export class Participants extends Component {
         this.setState({
             participants: participants
         });
+    }
+
+
+    addParticipant(participant) {
+        fetch('api/Participant/AddParticipant', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(participant)
+        })
+            .then(response => response.json())
+            .then(data => {
+                var participants = this.state.participants;
+                var index = participants.findIndex((x) => x.participantId === participant.participantId);
+                var oldParticipant = participants[index];
+                oldParticipant = data;
+                participants[index] = oldParticipant;
+
+                this.setState({
+                    participants: participants
+                });
+
+                toast("Participant: " + participant.firstname + " " + participant.lastname + " added successfully");
+            });
+    }
+
+
+    updateParticipant(participant) {
+        fetch('api/Participant/UpdateParticipant', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(participant)
+        })
+            .then(response => response.json())
+            .then(data => {
+                var participants = this.state.participants;
+                var index = participants.findIndex((x) => x.participantId === data.participantId);
+                var oldParticipant = participants[index];
+                oldParticipant = data;
+                participants[index] = oldParticipant;
+
+                this.setState({
+                    participants: participants
+                });
+
+                toast("Participant: " + participant.firstname + " " + participant.lastname + " updated successfully");
+            });
     }
 
 
@@ -99,7 +169,7 @@ export class Participants extends Component {
     renderParticipantsTable(participants) {
         return (
             <div>
-                <table className="table table-striped table-hover">
+                <Table striped hover>
                     <thead>
                         <tr>
                             <th>Firstname</th>
@@ -112,21 +182,21 @@ export class Participants extends Component {
                         {participants.map(participant =>
                             <tr key={participant.participantId}>
                                 <td>
-                                    <input type="text" id="Firstname" onChange={this.handleChange.bind(this, participant.participantId)} value={participant.firstname}></input>
+                                    <input type="text" id="Firstname" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.firstname}></input>
                                 </td>
                                 <td>
-                                    <input type="text" id="Lastname" onChange={this.handleChange.bind(this, participant.participantId)} value={participant.lastname}></input>
+                                    <input type="text" id="Lastname" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.lastname}></input>
                                 </td>
                                 <td>
-                                    <input type="text" id="Category" onChange={this.handleChange.bind(this, participant.participantId)} value={participant.category}></input>
+                                    <input type="text" id="Category" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.category}></input>
                                 </td>
                                 <td>
-                                    <input type="text" id="YearOfBirth" onChange={this.handleChange.bind(this, participant.participantId)} value={participant.yearOfBirth}></input>
+                                    <input type="text" id="YearOfBirth" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.yearOfBirth}></input>
                                 </td>
                             </tr>
                         )}
                     </tbody>
-                </table>
+                </Table>
 
                 {/* <div>
                     <nav aria-label="Page navigation example">
@@ -144,23 +214,6 @@ export class Participants extends Component {
     }
 
 
-    onChange(participantId, proxy, { newValue, method }) {
-        var participants = this.state.participants;
-        var index = participants.findIndex((x) => x.participantId === participantId);
-        var tmp = participants[index];
-
-        if (tmp.toAdd === false && tmp.toDelete === false) {
-            tmp.toUpdate = true;
-        }
-
-        participants[index] = tmp;
-
-        this.setState({
-            participants: participants
-        });
-    };
-
-
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
@@ -171,7 +224,7 @@ export class Participants extends Component {
                 <h1>Participants</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div>
-                        <button type="submit" className="btn btn-primary">Save</button>
+                        {/* <button type="submit" className="btn btn-primary">Save</button> */}
                         <button type="button" onClick={this.handleAddParticipant} disabled={this.dirty} className="btn btn-primary">Add Participant</button>
                     </div>
                     {contents}

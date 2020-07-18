@@ -123,15 +123,10 @@ export class Groups extends Component {
     }
 
 
-    showGroupDetails() {
-
-    }
-
-
     renderGroupsTable(groups) {
         return (
             <div>
-                <Table striped bordered hover>
+                <Table striped hover>
                     <thead>
                         <tr>
                             <th>Groupname</th>
@@ -395,7 +390,7 @@ export class Groups extends Component {
                 <h1>Groups</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div>
-                        <button type="submit" className="btn btn-primary">Save</button>
+                        {/* <button type="submit" className="btn btn-primary">Save</button> */}
                         <button type="button" onClick={this.handleAddGroup} disabled={this.dirty} className="btn btn-primary">Add Group</button>
                     </div>
                     {contents}

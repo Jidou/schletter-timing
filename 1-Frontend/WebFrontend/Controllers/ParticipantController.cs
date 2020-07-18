@@ -69,6 +69,48 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
+        [HttpPost("[action]")]
+        public Participant AddParticipant([FromBody] Participant participant) {
+            var currentMaxId = CurrentContext.AllAvailableParticipants.Max(x => x.ParticipantId);
+
+            var newParticipant = new Model.Participant {
+                ParticipantId = ++currentMaxId,
+                Firstname = participant.Firstname,
+                Lastname = participant.Lastname,
+                Category = participant.Category,
+                YearOfBirth = participant.YearOfBirth,
+            };
+
+            CurrentContext.AllAvailableParticipants.Add(newParticipant);
+
+            _participantService.Save();
+
+            return ConvertModelToParticipantDto(newParticipant);
+        }
+
+
+        [HttpPost("[action]")]
+        public Participant UpdateParticipant([FromBody] Participant participant) {
+            var oldParticipant =
+                CurrentContext.AllAvailableParticipants.SingleOrDefault(x =>
+                    x.ParticipantId == participant.ParticipantId);
+
+            if (oldParticipant is null) {
+                // TODO: someone fucked up somewhere, let him know
+                return null;
+            }
+
+            oldParticipant.Firstname = participant.Firstname;
+            oldParticipant.Lastname = participant.Lastname;
+            oldParticipant.Category = participant.Category;
+            oldParticipant.YearOfBirth = participant.YearOfBirth;
+            
+            _participantService.Save();
+
+            return ConvertModelToParticipantDto(oldParticipant);
+        }
+
+
         private List<Model.Participant> UpdateParticipants(IEnumerable<Participant> participants, IEnumerable<Participant> participantsToAdd, IEnumerable<Participant> participantsToUpdate) {
             var newParticipants = new List<Model.Participant>();
 
@@ -115,14 +157,19 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         private IEnumerable<Participant> ConvertModelToParticipantDto(IEnumerable<Model.Participant> allAvailableParticipants) {
             foreach (var participant in allAvailableParticipants) {
-                yield return new Participant {
-                    Category = participant.Category,
-                    ParticipantId = participant.ParticipantId,
-                    Firstname = participant.Firstname,
-                    Lastname = participant.Lastname,
-                    YearOfBirth = participant.YearOfBirth,
-                };
+                yield return ConvertModelToParticipantDto(participant);
             }
+        }
+
+
+        private Participant ConvertModelToParticipantDto(Model.Participant participant) {
+            return new Participant {
+                Category = participant.Category,
+                ParticipantId = participant.ParticipantId,
+                Firstname = participant.Firstname,
+                Lastname = participant.Lastname,
+                YearOfBirth = participant.YearOfBirth,
+            };
         }
     }
 }

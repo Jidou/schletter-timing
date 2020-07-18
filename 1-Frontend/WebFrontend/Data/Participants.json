@@ -38,5 +38,13 @@
     "YearOfBirth": "1996",
     "Category": "C1",
     "FinishTime": null
+  },
+  {
+    "ParticipantId": 6,
+    "Firstname": "Franz",
+    "Lastname": "Test",
+    "YearOfBirth": "1983",
+    "Category": "ASDF",
+    "FinishTime": null
   }
 ]
