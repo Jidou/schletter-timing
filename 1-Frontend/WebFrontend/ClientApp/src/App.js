@@ -5,6 +5,7 @@ import { Home } from './components/Home';
 import { Race } from './components/race/Race';
 import { RaceGroups } from './components/race/RaceGroups';
 import { RaceParticipants } from './components/race/RaceParticipants';
+import { Timing } from './components/race/Timing';
 import { RaceOverview } from './components/RaceOverview';
 import { Groups } from './components/Groups';
 import { Participants } from './components/Participants';
@@ -25,6 +26,7 @@ export default class App extends Component {
         <Route path='/raceoverview' component={RaceOverview} />
         <Route path='/groups' component={Groups} />
         <Route path='/participants' component={Participants} />
+        <Route path='/race/timing' component={Timing} />
       </Layout>
     );
   }

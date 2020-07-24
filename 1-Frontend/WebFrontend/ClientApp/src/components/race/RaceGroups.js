@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Table } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import Autosuggest from 'react-autosuggest';
 
@@ -126,7 +127,7 @@ export class RaceGroups extends Component {
     renderGroupsTable(groups) {
         return (
             <div>
-                <table className="table table-striped table-hover">
+                <Table striped hover>
                     <thead>
                         <tr>
                             <th>Groupname</th>
@@ -149,7 +150,7 @@ export class RaceGroups extends Component {
                             </tr>
                         )}
                     </tbody>
-                </table>
+                </Table>
 
                 {/* <div>
                     <nav aria-label="Page navigation example">

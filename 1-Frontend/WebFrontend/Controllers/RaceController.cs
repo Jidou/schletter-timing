@@ -76,18 +76,13 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         [HttpGet("[action]")]
-        public Race Load() {
-            // TODO: find way to remove hard coded file name
-            _raceService.Load("Testing");
-            var currentRace = CurrentContext.Race;
-            return ConvertModelToDto(currentRace);
-        }
-
-
-        [HttpGet("[action]")]
         public IEnumerable<GroupInfoForRace> GetGroupInfoForRace(string racename) {
             if (string.IsNullOrEmpty(racename) && !(CurrentContext.Race is null)) {
                 return ConvertGroupModelsToDto(CurrentContext.Race.Groups);
+            }
+
+            if (string.IsNullOrEmpty(racename) && CurrentContext.Race is null) {
+                return null;
             }
 
             _raceService.Load(racename);
