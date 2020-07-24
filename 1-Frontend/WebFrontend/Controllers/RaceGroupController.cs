@@ -8,12 +8,10 @@ namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
     public class RaceGroupController : Controller {
 
-        private readonly GroupService _groupService;
         private readonly RaceService _raceService;
 
 
-        public RaceGroupController(GroupService groupService, RaceService raceService) {
-            _groupService = groupService;
+        public RaceGroupController(RaceService raceService) {
             _raceService = raceService;
         }
 
@@ -30,22 +28,6 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
-        [HttpGet("[action]")]
-        public IEnumerable<GroupInfoForRace> GetGroupInfoForRace(string racename) {
-            if (string.IsNullOrEmpty(racename) && !(CurrentContext.Race is null)) {
-                return ConvertModelToDtoGroupInfoForRace(CurrentContext.Race.Groups);
-            }
-
-            _raceService.Load(racename);
-
-            var raceGroups = CurrentContext.Race.Groups;
-
-            if (raceGroups == null) {
-                raceGroups = new List<Model.Group>();
-            }
-
-            return ConvertModelToDtoGroupInfoForRace(raceGroups);
-        }
 
 
         [HttpPost()]
@@ -125,27 +107,6 @@ namespace SchletterTiming.WebFrontend.Controllers {
                     Participant1FullName = $"{group.Participant1?.Firstname} {group.Participant1?.Lastname}",
                     Participant2Id = group.Participant2?.ParticipantId ?? 0,
                     Participant2FullName = $"{group.Participant2?.Firstname} {group.Participant2?.Lastname}",
-                };
-            }
-        }
-
-
-        private IEnumerable<GroupIdAndNameOnly> ConvertModelToDtoIdAndNameOnly(IEnumerable<Model.Group> availableGroups) {
-            foreach (var group in availableGroups) {
-                yield return new GroupIdAndNameOnly {
-                    Groupname = group.Groupname,
-                    GroupId = group.GroupId,
-                };
-            }
-        }
-
-
-        private IEnumerable<GroupInfoForRace> ConvertModelToDtoGroupInfoForRace(IEnumerable<Model.Group> availableGroups) {
-            foreach (var group in availableGroups) {
-                yield return new GroupInfoForRace {
-                    Groupname = group.Groupname,
-                    GroupId = group.GroupId,
-                    StartNumber = group.StartNumber,
                 };
             }
         }

@@ -84,7 +84,25 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
-        [HttpPost()]
+        [HttpGet("[action]")]
+        public IEnumerable<GroupInfoForRace> GetGroupInfoForRace(string racename) {
+            if (string.IsNullOrEmpty(racename) && !(CurrentContext.Race is null)) {
+                return ConvertGroupModelsToDto(CurrentContext.Race.Groups);
+            }
+
+            _raceService.Load(racename);
+
+            var raceGroups = CurrentContext.Race.Groups;
+
+            if (raceGroups == null) {
+                raceGroups = new List<Group>();
+            }
+
+            return ConvertGroupModelsToDto(raceGroups);
+        }
+
+
+        [HttpPost("[action]")]
         public void Post([FromBody] Race race) {
             var currentRace = ConvertDtoToModel(race);
             CurrentContext.Race = currentRace;
@@ -92,12 +110,12 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
-        [HttpGet("[action]")]
-        public Race AssignStartNumbers() {
+        [HttpPost("[action]")]
+        public IEnumerable<GroupInfoForRace> AssignStartNumbers() {
             _raceService.AssingStartNumbers();
             var currentRace = CurrentContext.Race;
-            _raceService.Save("Testing");
-            return ConvertModelToDto(currentRace);
+            _raceService.Save(currentRace.Titel);
+            return ConvertGroupModelsToDto(currentRace.Groups);
         }
         
 
@@ -111,15 +129,15 @@ namespace SchletterTiming.WebFrontend.Controllers {
             currentRace.Place = race.Place;
             currentRace.Judge = race.Judge;
             currentRace.TimingTool = race.TimingTool;
-            currentRace.Groups = ConvertGroupDtosToModel(race.Groups, currentRace.Groups);
+            currentRace.Groups = currentRace.Groups;
 
             return currentRace;
         }
 
 
-        private IEnumerable<Model.Group> ConvertGroupDtosToModel(IEnumerable<GroupInfoForRace> groups, IEnumerable<Model.Group> currentGroups) {
+        private IEnumerable<Group> ConvertGroupDtosToModel(IEnumerable<GroupInfoForRace> groups, IEnumerable<Group> currentGroups) {
             var availableGroups = CurrentContext.AllAvailableGroups;
-            var allGroups = new List<Model.Group>();
+            var allGroups = new List<Group>();
 
             foreach (var group in groups) {
                 if (currentGroups.Any(x => x.GroupId == group.GroupId)) {
@@ -147,12 +165,11 @@ namespace SchletterTiming.WebFrontend.Controllers {
                 Date = currentRace.Date,
                 TimingTool = currentRace.TimingTool,
                 StartTime = currentRace.StartTime,
-                Groups = ConvertGroupModelsToDto(currentRace.Groups)
             };
         }
 
 
-        private IEnumerable<GroupInfoForRace> ConvertGroupModelsToDto(IEnumerable<Model.Group> groups) {
+        private IEnumerable<GroupInfoForRace> ConvertGroupModelsToDto(IEnumerable<Group> groups) {
             var allGroups = new List<GroupInfoForRace>();
 
             foreach (var group in groups) {

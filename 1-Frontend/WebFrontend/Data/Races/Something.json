@@ -21,7 +21,7 @@
       },
       "Participant2": null,
       "Class": "None",
-      "StartNumber": 1,
+      "StartNumber": 3,
       "FinishTime": "0001-01-01T00:00:00",
       "TimeTaken": "00:00:00"
     },
@@ -32,7 +32,7 @@
       "Participant1": null,
       "Participant2": null,
       "Class": "ALittle",
-      "StartNumber": 2,
+      "StartNumber": 1,
       "FinishTime": "0001-01-01T00:00:00",
       "TimeTaken": "00:00:00"
     },
@@ -50,7 +50,7 @@
       },
       "Participant2": null,
       "Class": "None",
-      "StartNumber": 3,
+      "StartNumber": 2,
       "FinishTime": "0001-01-01T00:00:00",
       "TimeTaken": "00:00:00"
     }

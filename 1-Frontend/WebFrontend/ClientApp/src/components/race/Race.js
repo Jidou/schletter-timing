@@ -104,7 +104,7 @@ export class Race extends Component {
                     this.setState({ race: data });
                 });
 
-            fetch('api/RaceGroup/GetGroupInfoForRace?racename=' + racename)
+            fetch('api/Race/GetGroupInfoForRace?racename=' + racename)
                 .then(response => response.json())
                 .then(data => {
                     this.setState({ groups: data });
@@ -155,7 +155,7 @@ export class Race extends Component {
                 <div>
                     <div className="form-group">
                         <label htmlFor="Titel">Racename</label>
-                        <input type="text" className="form-control" id="Titel" onChange={this.handleChangeInForm} onBlur={this.handleBlur} value={this.state.race.titel}></input>
+                        <input type="text" className="form-control" id="Titel" onChange={this.handleChangeInForm} onBlur={this.handleBlur} value={this.state.race.titel} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="RaceType">RaceType</label>
@@ -359,7 +359,7 @@ export class Race extends Component {
         fetch('api/Race/AssignStartNumbers/')
             .then(response => response.json())
             .then(data => {
-                this.setState({ race: data, loading: false });
+                this.setState({ groups: data, loading: false });
             });
     }
 
@@ -382,7 +382,7 @@ export class Race extends Component {
             return;
         }
 
-        var groups = this.state.race.groups;
+        var groups = this.state.groups;
 
         var maxStartNumber = Math.max.apply(Math, groups.map(function (o) { return o.startNumber; }))
         newGroup.startNumber = ++maxStartNumber;

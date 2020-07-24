@@ -65,9 +65,9 @@
   * [x] Add Groups
   * [x] Add Participants to Group
   * [x] Add Groups to Race
-  * [ ] (**IMPORTANT**) Assign Start Numbers
-    * [ ] Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server
-    * [ ] Can be triggered multiple times with different results
+  * [x] (**IMPORTANT**) Assign Start Numbers
+    * [ ] ~~Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server~~
+    * [x] Can be triggered multiple times with different results
   * [ ] (**IMPORTANT**) Add Option to trigger timing value load from device
   * [ ] (**IMPORTANT**) Add Option to generate PDF(s)
   * [x] Add Overview of all Participants ever, without groups
