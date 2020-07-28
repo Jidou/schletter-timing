@@ -14,7 +14,7 @@ export class Timing extends Component {
         super(props);
 
         this.handleLoad = this.handleLoad.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleAssign = this.handleAssign.bind(this);
         this.handleChange = this.handleChange.bind(this);
 
         this.state = { groups: [], times: [], loading: true };
@@ -100,22 +100,20 @@ export class Timing extends Component {
     }
 
 
-    handleSubmit() {
+    handleAssign() {
         fetch('api/Timing/Assign', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(this.state.groups)
+            body: JSON.stringify(this.state.times)
         })
             .then(response => response.json())
             .then(data => {
                 this.setState({ groups: data });
+                toast("Times saved successfully");
             });
-
-
-        toast("Times saved successfully");
     }
 
 
@@ -144,7 +142,7 @@ export class Timing extends Component {
                 <h1>Timing</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div>
-                        <button type="submit" className="btn btn-primary">Assign</button>
+                        <button type="button" onClick={this.handleAssign} className="btn btn-primary">Assign</button>
                         <button type="button" onClick={this.handleLoad} className="btn btn-primary">Get Times</button>
                     </div>
                     {contents}

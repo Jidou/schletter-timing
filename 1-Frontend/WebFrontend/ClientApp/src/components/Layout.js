@@ -31,6 +31,7 @@ export class Layout extends Component {
                   <NavDropdown.Item href="/race/race">Overview</NavDropdown.Item>
                   <NavDropdown.Item href="/race/racegroups">Groups</NavDropdown.Item>
                   <NavDropdown.Item href="/race/timing">Timing</NavDropdown.Item>
+                  <NavDropdown.Item href="/race/result">Result</NavDropdown.Item>
                   {/* <NavDropdown.Item href="/race/raceparticipants">Participants</NavDropdown.Item> */}
                 </NavDropdown>
               </Nav>

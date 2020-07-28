@@ -167,7 +167,7 @@ export class Race extends Component {
                     </div>
                     <div className="form-group">
                         <label htmlFor="Date">Date</label>
-                        <input type="date" className="form-control" id="Date" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="2019-05-26" value={this.state.race.date} />
+                        <input type="text" className="form-control" id="Date" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="2019-05-26" value={this.state.race.date} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="Judge">Judge</label>
