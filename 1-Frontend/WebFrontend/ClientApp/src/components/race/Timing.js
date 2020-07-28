@@ -101,7 +101,7 @@ export class Timing extends Component {
 
 
     handleSubmit() {
-        fetch('api/Timing/Save', {
+        fetch('api/Timing/Assign', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -144,7 +144,7 @@ export class Timing extends Component {
                 <h1>Timing</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div>
-                        <button type="submit" className="btn btn-primary">Save</button>
+                        <button type="submit" className="btn btn-primary">Assign</button>
                         <button type="button" onClick={this.handleLoad} className="btn btn-primary">Get Times</button>
                     </div>
                     {contents}

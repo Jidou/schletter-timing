@@ -74,6 +74,12 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
+        [HttpPost("[action]")]
+        public IEnumerable<GroupWithTime> Assign([FromBody] IEnumerable<Dto.TimingValue> timingValues) {
+            throw new NotImplementedException();
+        }
+
+
         private IEnumerable<Dto.TimingValue> ConvertTimingValuesModelToDto(List<TimingValue> timingValues) {
             foreach (var timingValue in timingValues) {
                 yield return new Dto.TimingValue {
