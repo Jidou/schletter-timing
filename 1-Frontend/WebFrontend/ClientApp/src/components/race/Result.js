@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Table, Form, Row, Col } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
+
+import { generatePdf, test} from './../../util/pdfGenerator';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -12,6 +15,8 @@ export class Result extends Component {
 
     constructor(props) {
         super(props);
+
+        this.handleGenerate = this.handleGenerate.bind(this);
 
         this.state = { race: [], loading: true };
 
@@ -113,6 +118,11 @@ export class Result extends Component {
     }
 
 
+    handleGenerate() {
+        generatePdf(this.state.race);
+    }
+
+
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
@@ -122,10 +132,10 @@ export class Result extends Component {
             <div>
                 <h1>Result</h1>
                 <form onSubmit={this.handleSubmit}>
-                    {/* <div>
-                        <button type="button" onClick={this.handleAssign} className="btn btn-primary">Assign</button>
-                        <button type="button" onClick={this.handleLoad} className="btn btn-primary">Get Times</button>
-                    </div> */}
+                    <div>
+                        <button type="button" onClick={this.handleGenerate} className="btn btn-primary">Generate</button>
+                        {/* <button type="button" onClick={this.handleLoad} className="btn btn-primary">Get Times</button> */}
+                    </div>
                     {contents}
                 </form>
                 <ToastContainer />

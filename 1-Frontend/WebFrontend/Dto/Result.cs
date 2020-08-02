@@ -20,9 +20,12 @@ namespace SchletterTiming.WebFrontend.Dto {
         public int GroupId { get; set; }
         public string Groupname { get; set; }
         public string Participant1Name { get; set; }
+        public string Participant1Category { get; set; }
         public string Participant2Name { get; set; }
+        public string Participant2Category { get; set; }
         public int Startnumber { get; set; }
         public DateTime FinishTime { get; set; }
         public string TimeTaken { get; set; }
+        public string TimeDiff { get; set; }
     }
 }

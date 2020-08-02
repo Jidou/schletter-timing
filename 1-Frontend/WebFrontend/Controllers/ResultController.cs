@@ -54,19 +54,25 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         private IEnumerable<GroupResult> ConvertGroupModelToGroupResultDto(IEnumerable<Group> raceGroups) {
-            return raceGroups.Select(ConvertGroupModelToGroupResultDto).OrderBy(x => x.FinishTime);
+            var bestTime = raceGroups.Min(x => x.TimeTaken);
+
+            return raceGroups.Select(raceGroup => ConvertGroupModelToGroupResultDto(raceGroup, bestTime))
+                .OrderBy(x => x.FinishTime);
         }
 
 
-        private GroupResult ConvertGroupModelToGroupResultDto(Group raceGroup) {
+        private GroupResult ConvertGroupModelToGroupResultDto(Group raceGroup, TimeSpan bestTime) {
             return new GroupResult {
                 GroupId = raceGroup.GroupId,
                 FinishTime = raceGroup.FinishTime,
                 Groupname = raceGroup.Groupname,
                 Startnumber = raceGroup.StartNumber,
                 Participant1Name = $"{raceGroup.Participant1?.Firstname} {raceGroup.Participant1?.Lastname}",
+                Participant1Category = $"{raceGroup.Participant1?.Category}",
                 Participant2Name = $"{raceGroup.Participant2?.Firstname} {raceGroup.Participant2?.Lastname}",
+                Participant2Category = $"{raceGroup.Participant1?.Category}",
                 TimeTaken = raceGroup.TimeTaken.ToString(@"c"),
+                TimeDiff = (raceGroup.TimeTaken - bestTime).ToString(@"c")
             };
         }
     }
