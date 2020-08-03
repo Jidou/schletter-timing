@@ -39,14 +39,36 @@ namespace SchletterTiming.WebFrontend.Controllers {
             return ConvertModelToDto(CurrentContext.Race);
         }
 
-        private Dto.Result ConvertModelToDto(Race race) {
-            return new Dto.Result() {
+
+        [HttpGet("[action]")]
+        public IEnumerable<Dto.Class> GetAllClasses() {
+            if (CurrentContext.Race is null || CurrentContext.Race.Groups is null) {
+                return null;
+            }
+
+            var groups = CurrentContext.Race.Groups;
+
+            var uniqueClasses = groups.Select(x => x.Class).Distinct();
+
+            return ConvertClassModelToClassDto(uniqueClasses);
+        }
+
+
+        private IEnumerable<Dto.Class> ConvertClassModelToClassDto(IEnumerable<string> uniqueClasses) {
+            return uniqueClasses.Select(uniqueClass => new Dto.Class {
+                CN = uniqueClass
+            });
+        }
+
+
+        private Result ConvertModelToDto(Race race) {
+            return new Result() {
                 Titel = race.Titel,
                 Date = race.Date.Date.ToLongDateString(),
                 Judge = race.Judge,
                 Place = race.Place,
                 RaceType = race.RaceType,
-                StartTime = race.StartTime.TimeOfDay.ToString(),
+                StartTime = race.StartTime,
                 TimingTool = race.TimingTool,
                 Groups = ConvertGroupModelToGroupResultDto(race.Groups)
             };
@@ -64,13 +86,15 @@ namespace SchletterTiming.WebFrontend.Controllers {
         private GroupResult ConvertGroupModelToGroupResultDto(Group raceGroup, TimeSpan bestTime) {
             return new GroupResult {
                 GroupId = raceGroup.GroupId,
+                Selected = true,
                 FinishTime = raceGroup.FinishTime,
                 Groupname = raceGroup.Groupname,
+                GroupClass = raceGroup.Class,
                 Startnumber = raceGroup.StartNumber,
                 Participant1Name = $"{raceGroup.Participant1?.Firstname} {raceGroup.Participant1?.Lastname}",
                 Participant1Category = $"{raceGroup.Participant1?.Category}",
                 Participant2Name = $"{raceGroup.Participant2?.Firstname} {raceGroup.Participant2?.Lastname}",
-                Participant2Category = $"{raceGroup.Participant1?.Category}",
+                Participant2Category = $"{raceGroup.Participant2?.Category}",
                 TimeTaken = raceGroup.TimeTaken.ToString(@"c"),
                 TimeDiff = (raceGroup.TimeTaken - bestTime).ToString(@"c")
             };

@@ -1,10 +1,56 @@
 import { saveAs } from 'file-saver';
+import moment from 'moment';
 
 let blobStream = require('blob-stream');
 let pdf = require('pdfjs');
 let fonts = require('pdfjs/font/Helvetica');
+// let boldFonts = require('pdfjs/font/HelveticaBold');
 
-export function generatePdf(race) {
+
+export function calcuateTimeDiffs(groups) {
+    let minTime;
+
+    groups.forEach(group => {
+        let tmp = moment(group.timeTaken);
+
+        if (!minTime) {
+            minTime = tmp;
+        } else if (minTime.isAfter(tmp)) {
+            minTime = tmp;
+        }
+    });
+
+    groups.forEach(group => {
+        let tmp = moment(group.timeTaken);
+        var tmp2 = tmp
+            .subtract(minTime.format("SSS"), 'ms')
+            .subtract(minTime.format("ss"), 's')
+            .subtract(minTime.format("mm"), 'm')
+            .subtract(minTime.format("HH"), 'h');
+        group.timeDiff = tmp2;
+    });
+}
+
+
+export function generatePdf(race, groups) {
+    var doc = new pdf.Document({ font: fonts.Helvetica })
+
+    addHeader(doc, race);
+    addFooter(doc);
+
+    doc.cell({ paddingBottom: 0.5 * pdf.cm });
+    doc.cell({ font: fonts.HelveticaBold, fontSize: 16, textAlign: 'left' }).text('Gesamtwertung');
+    doc.cell({ paddingBottom: 0.5 * pdf.cm });
+
+    addTable(doc, groups);
+
+    download(doc, race.titel)
+
+    doc.end();
+}
+
+
+export function generatePdfWithFilter(race, groups, filter, filterValues) {
     var doc = new pdf.Document({ font: fonts.Helvetica })
 
     addHeader(doc, race);
@@ -12,7 +58,16 @@ export function generatePdf(race) {
 
     doc.cell({ paddingBottom: 0.5 * pdf.cm })
 
-    addTable(doc, race);
+    filter(groups, filterValues)
+
+    filterValues.forEach(value => {
+        doc.cell({ font: fonts.HelveticaBold, fontSize: 16, textAlign: 'left' }).text(value.cn);
+        doc.cell({ paddingBottom: 0.5 * pdf.cm });
+        let filteredGroups = filter(groups, value);
+        calcuateTimeDiffs(filteredGroups);
+        addTable(doc, filteredGroups);
+        doc.cell({ paddingBottom: 0.5 * pdf.cm });
+    });
 
     download(doc, race.titel)
 
@@ -97,9 +152,9 @@ function addFooter(doc) {
 }
 
 
-function addTable(doc, race) {
+function addTable(doc, groups) {
     var table = doc.table({
-        widths: [1.5 * pdf.cm, 1.3 * pdf.cm, 4.5 * pdf.cm, 2.5 * pdf.cm, 4.5 * pdf.cm, 2.75 * pdf.cm, 2.5 * pdf.cm],
+        widths: [1.5 * pdf.cm, 1.3 * pdf.cm, 4.5 * pdf.cm, 2.5 * pdf.cm, 4.5 * pdf.cm, 2.75 * pdf.cm, 2.75 * pdf.cm],
         borderHorizontalWidths: function (i) { return i < 2 ? 1 : 0.1 },
         padding: 5,
     });
@@ -115,9 +170,9 @@ function addTable(doc, race) {
 
     var realRank = 1;
 
-    for (let rank = 0; rank < race.groups.length; rank++) {
-        const group = race.groups[rank];
-        addRow(table, realRank, group.startnumber, group.groupname, group.participant1Category, group.participant1Category, group.participant1Name, group.participant2Name, group.timeTaken, group.timeDiff);
+    for (let rank = 0; rank < groups.length; rank++) {
+        const group = groups[rank];
+        addRow(table, realRank, group.startnumber, group.groupname, group.participant1Category, group.participant2Category, group.participant1Name, group.participant2Name, group.timeTaken, group.timeDiff);
         realRank++;
     }
 }
@@ -125,13 +180,13 @@ function addTable(doc, race) {
 
 function addRow(table, rank, startNr, groupname, categorie1, categorie2, participant1, participant2, total, diff) {
     var tr = table.row();
-    tr.cell(rank);
-    tr.cell(startNr);
+    tr.cell(rank.toString());
+    tr.cell(startNr.toString());
     tr.cell(groupname);
     tr.cell(categorie1 + '\n' + categorie2);
     tr.cell(participant1 + '\n' + participant2);
-    tr.cell(total);
-    tr.cell(diff);
+    tr.cell(total.format('HH:mm:ss.SSS'));
+    tr.cell(diff.format('HH:mm:ss.SSS'));
 }
 
 
@@ -149,6 +204,3 @@ function download(doc, racetile) {
         // download('test.pdf', blob);
     });
 }
-
-// Start file download.
-// download("hello.txt", "This is the content of my file :)");

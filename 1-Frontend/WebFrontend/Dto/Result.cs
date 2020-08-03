@@ -8,7 +8,7 @@ namespace SchletterTiming.WebFrontend.Dto {
         public string RaceType { get; set; }
         public string Titel { get; set; }
         public string Date { get; set; }
-        public string StartTime { get; set; }
+        public DateTime StartTime { get; set; }
         public string Place { get; set; }
         public string Judge { get; set; }
         public TimingTools TimingTool { get; set; }
@@ -17,8 +17,10 @@ namespace SchletterTiming.WebFrontend.Dto {
 
 
     public class GroupResult {
+        public bool Selected { get; set; }
         public int GroupId { get; set; }
         public string Groupname { get; set; }
+        public string GroupClass { get; set; }
         public string Participant1Name { get; set; }
         public string Participant1Category { get; set; }
         public string Participant2Name { get; set; }
