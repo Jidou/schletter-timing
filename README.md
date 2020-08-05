@@ -65,18 +65,22 @@
   * [x] Add Groups
   * [x] Add Participants to Group
   * [x] Add Groups to Race
-  * [x] (**IMPORTANT**) Assign Start Numbers
+  * [x] Assign Start Numbers
     * [ ] ~~Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server~~
     * [x] Can be triggered multiple times with different results
-  * [ ] (**IMPORTANT**) Add Option to trigger timing value load from device
-  * [ ] (**IMPORTANT**) Add Option to generate PDF(s)
+  * [x] Add Option to trigger timing value load from device
+    * [x] (**IMPORTANT**) Test load from device with Web Frontend
+  * [x] (**IMPORTANT**) Add Option to generate PDF(s)
+    * [x] Implement PDF generation in javascript
+    * [x] Add different options (by Group, by Class, ...)
   * [x] Add Overview of all Participants ever, without groups
   * [x] Add Overview of all Groups ever, with latest Participants
   * [x] Add Overview of all Races
   * [x] Add Option to load old Races
   * [x] Add Option to create new Races
-    * [ ] (**IMPORTANT**) Add new CRU(D) functionality to Race detail page
+    * [x] (**IMPORTANT**) Add new CRU(D) functionality to Race detail page
   * [x] Add Overview of Current Groups in loaded Race (old or new)
+  * [ ] (**IMPORTANT**) Test everything done up to this point
   * [ ] Remove `CurrentContext` to enable easier live reload
   * [ ] (Optional) Add Option to Add Groups via the Race Overview page
   * [ ] (Optional) Pagination
