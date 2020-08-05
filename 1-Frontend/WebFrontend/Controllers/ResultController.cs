@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -53,6 +54,24 @@ namespace SchletterTiming.WebFrontend.Controllers {
             return ConvertClassModelToClassDto(uniqueClasses);
         }
 
+
+        [HttpGet("[action]")]
+        public byte[] GetLogo() {
+            var path = $"{Environment.CurrentDirectory}\\Data\\Logo\\Logo.jpg";
+
+            // Load file meta data with FileInfo
+            var fileInfo = new FileInfo(path);
+
+            // The byte[] to save the data in
+            var data = new byte[fileInfo.Length];
+
+            // Load a filestream and put its content into the byte[]
+            using (var fs = fileInfo.OpenRead()) {
+                fs.Read(data, 0, data.Length);
+            }
+
+            return data;
+        }
 
         private IEnumerable<Dto.Class> ConvertClassModelToClassDto(IEnumerable<string> uniqueClasses) {
             return uniqueClasses.Select(uniqueClass => new Dto.Class {
