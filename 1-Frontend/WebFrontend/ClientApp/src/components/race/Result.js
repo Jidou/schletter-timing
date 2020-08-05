@@ -3,7 +3,7 @@ import { Table, Form, Row, Col } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import moment from 'moment';
 
-import { generatePdf, generatePdfWithFilter, calcuateTimeDiffs } from './../../util/pdfGenerator';
+import { generatePdf, generatePdfWithFilter, generatePdfWithCustomResult, calcuateTimeDiffs } from './../../util/pdfGenerator';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,9 +19,18 @@ export class Result extends Component {
 
         this.handleGenerate = this.handleGenerate.bind(this);
         this.toggleGrouping = this.toggleGrouping.bind(this);
+        this.toggleCustomResult = this.toggleCustomResult.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
+        this.handleCustomResultTitelChange = this.handleCustomResultTitelChange.bind(this);
 
-        this.state = { race: [], classes: [], groupByClass: false, loading: true };
+        this.state = { race: [], classes: [], logo: [], customResultTitel: "", groupByClass: false, customResult: false, loading: true };
+
+        // fetch('api/Result/GetLogo')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         this.setState({ logo: "data:image/jpg;base64," + data });
+        //     });
+
 
         fetch('api/Result/LoadResult')
             .then(response => response.json())
@@ -50,7 +59,15 @@ export class Result extends Component {
         });
     }
 
-    renderForm(race){
+    renderForm(race, customResult, customResultTitel){
+        if (customResult) {
+            return this.renderCustomForm(race, customResultTitel);
+        } else {
+            return this.renderNormalForm(race);
+        }
+    }
+
+    renderNormalForm(race) {
         return (
             <div>
                 <Form>
@@ -115,6 +132,75 @@ export class Result extends Component {
         );
     }
 
+
+    renderCustomForm(race, customResultTitel) {
+        return (
+            <div>
+                <Form>
+                    <Form.Group as={Row} controlId="formRacename">
+                        <Form.Label column sm="2">
+                            Racename
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control plaintext readOnly defaultValue={race.titel} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} controlId="formRaceType">
+                        <Form.Label column sm="2">
+                            RaceType
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control plaintext readOnly defaultValue={race.raceType} />
+                        </Col>
+                    </Form.Group>
+                    {/* <Form.Group as={Row} controlId="formPlace">
+                        <Form.Label column sm="2">
+                            Place
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control plaintext readOnly defaultValue={race.place} />
+                        </Col>
+                    </Form.Group> */}
+                    <Form.Group as={Row} controlId="formDate">
+                        <Form.Label column sm="2">
+                            Date
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control plaintext readOnly defaultValue={race.date} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} controlId="formStartTime">
+                        <Form.Label column sm="2">
+                            Start Time
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control plaintext readOnly defaultValue={race.startTime.format("YYYY MM D HH:mm:ss.SSS")} />
+                        </Col>
+                    </Form.Group>
+                    {/* <Form.Group as={Row} controlId="formJudge">
+                        <Form.Label column sm="2">
+                            Judge
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control plaintext readOnly defaultValue={race.judge} />
+                        </Col>
+                    </Form.Group> */}
+                    {/* <Form.Group as={Row} controlId="formTimingTool">
+                        <Form.Label column sm="2">
+                            Timing Tool
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control plaintext readOnly defaultValue={race.timingTool} />
+                        </Col>
+                    </Form.Group> */}
+                </Form>
+                <div className="form-group">
+                    <label htmlFor="CustomResultTitel">Custom Result Titel</label>
+                    <input type="text" className="form-control" id="CustomResultTitel" onChange={this.handleCustomResultTitelChange} placeholder="Some name" value={customResultTitel} />
+                </div>
+            </div>
+        );
+    }
 
     renderGroupedTable(groups, classes) {
         return (
@@ -192,9 +278,11 @@ export class Result extends Component {
 
         if (this.state.groupByClass) {
             var filterFunction = function (groups, c) { return groups.filter(x => x.groupClass == c.cn)}
-            generatePdfWithFilter(this.state.race, groups, filterFunction, this.state.classes);
+            generatePdfWithFilter(this.state.race, groups, filterFunction, this.state.classes, this.state.logo);
+        } else if (this.state.customResult) {
+            generatePdfWithCustomResult(this.state.race, groups, this.state.customResultTitel, this.state.logo);
         } else {
-            generatePdf(this.state.race, groups);
+            generatePdf(this.state.race, groups, this.state.logo);
         }
     }
 
@@ -218,10 +306,18 @@ export class Result extends Component {
 
         this.setState({
             race: race,
-            groupByClass: !this.state.groupByClass
+            groupByClass: !this.state.groupByClass,
+            customResult: false
         });
     }
 
+
+    toggleCustomResult() {
+        this.setState({
+            customResult: !this.state.customResult,
+            groupByClass: false
+        });
+    }
 
     handleSelect(groupId, event) {
         let race = this.state.race;
@@ -240,17 +336,26 @@ export class Result extends Component {
     }
 
 
+    handleCustomResultTitelChange(event) {
+        var value = event.target.value;
+
+        this.setState({
+            customResultTitel: value
+        });
+    }
+
+
     render() {
         let contents;
 
         if (this.state.loading) {
             contents = <p><em>Loading...</em></p>;
         } else if (this.state.groupByClass) {
-            let form = this.renderForm(this.state.race);
+            let form = this.renderForm(this.state.race, this.state.customResult, this.state.customResultTitel);
             let table = this.renderGroupedTable(this.state.race.groups, this.state.classes);
             contents = <div>{form}{table}</div>;
         } else {
-            let form = this.renderForm(this.state.race);
+            let form = this.renderForm(this.state.race, this.state.customResult, this.state.customResultTitel);
             let table = this.renderTable(this.state.race.groups);
             contents = <div>{form}{table}</div>;
         }
@@ -262,6 +367,7 @@ export class Result extends Component {
                     <div>
                         <button type="button" onClick={this.handleGenerate} className="btn btn-primary">Generate</button>
                         <button type="button" onClick={this.toggleGrouping} className="btn btn-primary">Toggle Grouping</button>
+                        <button type="button" onClick={this.toggleCustomResult} className="btn btn-primary">Custom Result</button>
                     </div>
                     {contents}
                 </form>

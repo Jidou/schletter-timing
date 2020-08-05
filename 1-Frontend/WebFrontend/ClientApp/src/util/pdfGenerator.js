@@ -32,10 +32,10 @@ export function calcuateTimeDiffs(groups) {
 }
 
 
-export function generatePdf(race, groups) {
+export function generatePdf(race, groups, logo) {
     var doc = new pdf.Document({ font: fonts.Helvetica })
 
-    addHeader(doc, race);
+    addHeader(doc, race, logo);
     addFooter(doc);
 
     doc.cell({ paddingBottom: 0.5 * pdf.cm });
@@ -50,10 +50,10 @@ export function generatePdf(race, groups) {
 }
 
 
-export function generatePdfWithFilter(race, groups, filter, filterValues) {
+export function generatePdfWithFilter(race, groups, filter, filterValues, logo) {
     var doc = new pdf.Document({ font: fonts.Helvetica })
 
-    addHeader(doc, race);
+    addHeader(doc, race, logo);
     addFooter(doc);
 
     doc.cell({ paddingBottom: 0.5 * pdf.cm })
@@ -61,13 +61,35 @@ export function generatePdfWithFilter(race, groups, filter, filterValues) {
     filter(groups, filterValues)
 
     filterValues.forEach(value => {
-        doc.cell({ font: fonts.HelveticaBold, fontSize: 16, textAlign: 'left' }).text(value.cn);
-        doc.cell({ paddingBottom: 0.5 * pdf.cm });
         let filteredGroups = filter(groups, value);
-        calcuateTimeDiffs(filteredGroups);
-        addTable(doc, filteredGroups);
-        doc.cell({ paddingBottom: 0.5 * pdf.cm });
+
+        if (filteredGroups.length > 0) {
+            doc.cell({ font: fonts.HelveticaBold, fontSize: 16, textAlign: 'left' }).text(value.cn);
+            doc.cell({ paddingBottom: 0.5 * pdf.cm });
+            calcuateTimeDiffs(filteredGroups);
+            addTable(doc, filteredGroups);
+            doc.cell({ paddingBottom: 0.5 * pdf.cm });
+        }
+
     });
+
+    download(doc, race.titel)
+
+    doc.end();
+}
+
+
+export function generatePdfWithCustomResult(race, groups, customResultTitle, logo) {
+    var doc = new pdf.Document({ font: fonts.Helvetica })
+
+    addHeader(doc, race, logo);
+    addFooter(doc);
+
+    doc.cell({ paddingBottom: 0.5 * pdf.cm });
+    doc.cell({ font: fonts.HelveticaBold, fontSize: 16, textAlign: 'left' }).text(customResultTitle);
+    doc.cell({ paddingBottom: 0.5 * pdf.cm });
+
+    addTable(doc, groups);
 
     download(doc, race.titel)
 
@@ -127,12 +149,33 @@ export function test () {
 }
 
 
-function addHeader(doc, race) {
-    var header = doc.header();
-    var headerTable = header.table({ widths: [null] })
-    headerTable.row().cell({ font: fonts.HelveticaBold }).text({ textAlign: 'center', fontSize: 21 }).add(race.titel);
-    headerTable.row().cell().text({ textAlign: 'center' }).add(race.raceType);
-    headerTable.row().cell().text({ textAlign: 'center' }).add("Offizielle Ergebnissliste");
+function addHeader(doc, race, logo) {
+    if (!logo || logo.length <= 0) {
+        var header = doc.header();
+        var headerTable = header.table({ widths: [null] });
+        headerTable.row().cell({ font: fonts.HelveticaBold }).text({ textAlign: 'center', fontSize: 21 }).add(race.titel);
+        headerTable.row().cell().text({ textAlign: 'center' }).add(race.raceType);
+        headerTable.row().cell().text({ textAlign: 'center' }).add("Offizielle Ergebnissliste");
+    } else {
+        var img = new pdf.Image(byteToUint8Array(logo));
+        var header = doc.header();
+        var headerTable = header.table({ widths: [null, null] });
+        var row = headerTable.row();
+        row.cell({ font: fonts.HelveticaBold }).text({ textAlign: 'center', fontSize: 21 }).add(race.titel);
+        row.cell().image(img, { height: 2 * pdf.cm });
+        headerTable.row().cell().text({ textAlign: 'center' }).add(race.raceType);
+        headerTable.row().cell().text({ textAlign: 'center' }).add("Offizielle Ergebnissliste");
+    }
+}
+
+
+function byteToUint8Array(byteArray) {
+    var uint8Array = new ArrayBuffer(byteArray.length);
+    for (var i = 0; i < uint8Array.length; i++) {
+        uint8Array[i] = byteArray[i];
+    }
+
+    return uint8Array;
 }
 
 
