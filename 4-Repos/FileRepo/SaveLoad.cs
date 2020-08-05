@@ -40,6 +40,16 @@ namespace SchletterTiming.FileRepo {
             if (!File.Exists(path)) {
                 File.Create(path);
             }
+
+            path = $"{Environment.CurrentDirectory}\\Data\\Categories.json";
+            if (!File.Exists(path)) {
+                File.Create(path);
+            }
+
+            path = $"{Environment.CurrentDirectory}\\Data\\Classes.json";
+            if (!File.Exists(path)) {
+                File.Create(path);
+            }
         }
 
 

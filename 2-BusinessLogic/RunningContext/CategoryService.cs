@@ -1,45 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using SchletterTiming.FileRepo;
+using SchletterTiming.Model;
 
 namespace SchletterTiming.RunningContext {
     public class CategoryService {
 
+        private const string SaveFileName = "Categories";
+
         private readonly IConfiguration _configuration;
+        private readonly SaveLoad _repo;
 
-        public static IEnumerable<string> AvailableCategories { get; private set; }
 
-
-        public CategoryService(IConfiguration configuration) {
+        public CategoryService(IConfiguration configuration, SaveLoad repo) {
             _configuration = configuration;
+            _repo = repo;
         }
 
 
-        public void InitCategories(IEnumerable<string> categories) {
-            AvailableCategories = categories;
+        public AvailableCategories LoadCategories() {
+            return _repo.DeSerializeObject<AvailableCategories>(SaveFileName);
         }
 
 
         public void AddCategory(string newCategory) {
-            var tmp = AvailableCategories.ToList();
-            tmp.Add(newCategory);
-            AvailableCategories = tmp;
+            var currentCategories = LoadCategories();
+            var categoriesAsList = currentCategories.Categories.ToList();
+            categoriesAsList.Add(newCategory);
+            currentCategories.Categories = categoriesAsList;
+            _repo.SerializeObject(currentCategories, SaveFileName);
         }
 
 
         public void DeleteCategory(string category) {
-            var tmp = AvailableCategories.ToList();
-            tmp.Remove(category);
-            AvailableCategories = tmp;
+            var currentCategories = LoadCategories();
+            var categoriesAsList = currentCategories.Categories.ToList();
+            categoriesAsList.Remove(category);
+            currentCategories.Categories = categoriesAsList;
+            _repo.SerializeObject(currentCategories, SaveFileName);
         }
 
 
         public void ShowCategories() {
-            var allCategories = "";
-            foreach (var category in AvailableCategories) {
-                allCategories += $"{category}\n";
-            }
+            var availableCategories = _repo.DeSerializeObject<AvailableCategories>(SaveFileName);
+            var allCategories = availableCategories.Categories.Aggregate("", (current, category) => current + $"{category}\n");
             Console.WriteLine(allCategories);
         }
     }
