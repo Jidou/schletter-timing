@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Autosuggest from 'react-autosuggest';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export class RaceParticipants extends Component {
@@ -151,18 +151,6 @@ export class RaceParticipants extends Component {
                         )}
                     </tbody>
                 </table>
-
-                {/* <div>
-                    <nav aria-label="Page navigation example">
-                        <ul className="pagination">
-                            <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                            <li className="page-item"><a className="page-link" href="#">1</a></li>
-                            <li className="page-item"><a className="page-link" href="#">2</a></li>
-                            <li className="page-item"><a className="page-link" href="#">3</a></li>
-                            <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div> */}
             </div>
         );
     }
@@ -189,9 +177,13 @@ export class RaceParticipants extends Component {
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
 
-        return inputLength === 0 ? [] : this.state.groups.filter(group =>
-            group.groupname.toLowerCase().slice(0, inputLength) === inputValue
+        var result = inputLength === 0 
+            ? [] 
+            : this.state.groups.filter(group =>
+                group.groupname.toLowerCase().slice(0, inputLength) === inputValue
         );
+
+        return result;
     };
 
 
@@ -248,13 +240,13 @@ export class RaceParticipants extends Component {
         var index = participants.findIndex((x) => x.participantId === participantId);
         var tmp = participants[index];
 
-        tmp.groupName = newValue;
-
         if (group) {
             tmp.groupId = group.groupId;
         } else {
             tmp.groupId = 0;
         }
+
+        tmp.groupName = newValue;
 
         if (tmp.toAdd === false && tmp.toDelete === false) {
             tmp.toUpdate = true;

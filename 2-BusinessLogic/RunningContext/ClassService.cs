@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Configuration;
 using SchletterTiming.FileRepo;
 using SchletterTiming.Model;
@@ -19,32 +21,66 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public AvailableClasses LoadClasses() {
-            return _repo.DeSerializeObject<AvailableClasses>(SaveFileName);
+        public IEnumerable<AvailableClass> LoadClasses() {
+            return _repo.DeSerializeObject<IEnumerable<AvailableClass>>(SaveFileName);
         }
 
 
         public void AddClass(string newClass) {
             var availableClasses = LoadClasses();
-            var availableClassesAsList = availableClasses.Classes.ToList();
-            availableClassesAsList.Add(newClass);
-            availableClasses.Classes = availableClassesAsList;
-            _repo.SerializeObject(availableClasses, SaveFileName);
+
+            if (availableClasses.Any(x => x.ClassName == newClass)) {
+                return;
+            }
+
+            var nextId = 0;
+
+            if (availableClasses.Any()) {
+                nextId = availableClasses.Max(x => x.ClassId) + 1;
+            }
+
+            var availableClassesAsList = availableClasses.ToList();
+
+            availableClassesAsList.Add(new AvailableClass {
+                ClassId = nextId,
+                ClassName = newClass
+            });
+
+            _repo.SerializeObject(availableClassesAsList, SaveFileName);
+        }
+
+
+        public void UpdateClass(AvailableClass @class) {
+            var currentClasses = LoadClasses();
+            var oldClass = currentClasses.SingleOrDefault(x => x.ClassId == @class.ClassId);
+
+            if (oldClass is null) {
+                // TODO: Error handling
+                return;
+            }
+
+            oldClass.ClassName = @class.ClassName;
+            _repo.SerializeObject(currentClasses, SaveFileName);
         }
 
 
         public void DeleteClass(string @class) {
             var availableClasses = LoadClasses();
-            var availableClassesAsList = availableClasses.Classes.ToList();
-            availableClassesAsList.Remove(@class);
-            availableClasses.Classes = availableClassesAsList;
-            _repo.SerializeObject(availableClasses, SaveFileName);
+            var availableClassesAsList = availableClasses.ToList();
+            var classToDelete = availableClassesAsList.Find(x => x.ClassName == @class);
+
+            if (classToDelete is null) {
+                return;
+            }
+
+            availableClassesAsList.Remove(classToDelete);
+            _repo.SerializeObject(availableClassesAsList, SaveFileName);
         }
 
 
         public void ShowClasses() {
-            var availableClasses = LoadClasses().Classes;
-            var allClasses = availableClasses.Aggregate("", (current, @class) => current + $"{@class}\n");
+            var availableClasses = LoadClasses();
+            var allClasses = availableClasses.Aggregate("", (current, @class) => current + $"{@class.ClassName}\n");
             Console.WriteLine(allClasses);
         }
     }

@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\CurrentDB\" />
     <Folder Include="Data\Logo\" />
     <Folder Include="Data\Races\" />
   </ItemGroup>

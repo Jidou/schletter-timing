@@ -34,21 +34,25 @@ namespace SchletterTiming.FileRepo {
             path = $"{Environment.CurrentDirectory}\\Data\\Participants.json";
             if (!File.Exists(path)) {
                 File.Create(path);
+                File.WriteAllText(path, "[]");
             }
 
             path = $"{Environment.CurrentDirectory}\\Data\\Groups.json";
             if (!File.Exists(path)) {
                 File.Create(path);
+                File.WriteAllText(path, "[]");
             }
 
             path = $"{Environment.CurrentDirectory}\\Data\\Categories.json";
             if (!File.Exists(path)) {
                 File.Create(path);
+                File.WriteAllText(path,"[]");
             }
 
             path = $"{Environment.CurrentDirectory}\\Data\\Classes.json";
             if (!File.Exists(path)) {
                 File.Create(path);
+                File.WriteAllText(path, "[]");
             }
         }
 

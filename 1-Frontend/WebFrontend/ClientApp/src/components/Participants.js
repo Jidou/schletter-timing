@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
+import Autosuggest from 'react-autosuggest';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -16,12 +17,25 @@ export class Participants extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleAddParticipant = this.handleAddParticipant.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
-        this.state = { participants: [], suggestions: [], value: "", loading: true };
+
+        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.getSuggestionValue = this.getSuggestionValue.bind(this);
+        this.getInputProps = this.getInputProps.bind(this);
+
+
+        this.state = { participants: [], categories: [], suggestions: [], value: "", loading: true };
 
         fetch('api/Participant/')
             .then(response => response.json())
             .then(data => {
-                this.setState({ participants: data, loading: false, activePage: 1 });
+                this.setState({ participants: data, activePage: 1 });
+                fetch('api/Category/GetAvailableCategories')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.setState({ categories: data, suggestions : data, loading: false, activePage: 1 });
+                    });
             });
     }
 
@@ -166,6 +180,101 @@ export class Participants extends Component {
     }
 
 
+    getInputProps(category, participantId) {
+        var categoryName = "";
+
+        if (!category) {
+            categoryName = "";
+        } else {
+            categoryName = category;
+        }
+
+        return {
+            placeholder: "Lauf/Rad",
+            value: categoryName,
+            onChange: this.onChange.bind(this, participantId)
+        };
+    }
+
+
+    getSuggestions = value => {
+        const inputValue = value.trim().toLowerCase();
+        const inputLength = inputValue.length;
+
+        var result = inputLength === 0 
+            ? [] 
+            : this.state.categories.filter(category =>
+                category.categoryName.toLowerCase().slice(0, inputLength) === inputValue
+        );
+
+        return result;
+    };
+
+
+    onSuggestionsFetchRequested = ({ value }) => {
+        this.setState({
+            suggestions: this.getSuggestions(value)
+        });
+    };
+
+
+    onSuggestionsClearRequested = () => {
+        this.setState({
+            suggestions: this.state.categories,
+        });
+    };
+
+
+    getSuggestionValue(participantId, suggestion) {
+        var categories = this.state.categories;
+        var category = categories.find((x) => x.categoryName === suggestion.categoryName);
+
+        var participants = this.state.participants;
+        var index = participants.findIndex((x) => x.participantId === participantId);
+        var tmp = participants[index];
+
+        if (tmp.toAdd === false && tmp.toDelete === false) {
+            tmp.toUpdate = true;
+        }
+
+        tmp.category = category.groupId;
+
+        participants[index] = tmp;
+
+        this.setState({
+            participants: participants
+        });
+
+        return suggestion.categoryName;
+    }
+
+
+    renderSuggestion(suggestion) {
+        return (
+            <span>{suggestion.categoryName}</span>
+        );
+    }
+
+
+    onChange(participantId, proxy, { newValue, method }) {
+        var participants = this.state.participants;
+        var index = participants.findIndex((x) => x.participantId === participantId);
+        var tmp = participants[index];
+
+        tmp.category = newValue;
+
+        if (tmp.toAdd === false && tmp.toDelete === false) {
+            tmp.toUpdate = true;
+        }
+
+        participants[index] = tmp;
+
+        this.setState({
+            participants: participants
+        });
+    };
+
+
     renderParticipantsTable(participants) {
         return (
             <div>
@@ -188,7 +297,16 @@ export class Participants extends Component {
                                     <input type="text" id="Lastname" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.lastname}></input>
                                 </td>
                                 <td>
-                                    <input type="text" id="Category" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.category}></input>
+                                    <Autosuggest
+                                        suggestions={this.state.suggestions}
+                                        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                                        onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                                        getSuggestionValue={this.getSuggestionValue.bind(this, participant.participantId)}
+                                        renderSuggestion={this.renderSuggestion}
+                                        inputProps={this.getInputProps(participant.category, participant.participantId)}
+                                    />
+
+                                    {/* <input type="text" id="Category" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.category}></input> */}
                                 </td>
                                 <td>
                                     <input type="text" id="YearOfBirth" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.yearOfBirth}></input>
@@ -197,18 +315,6 @@ export class Participants extends Component {
                         )}
                     </tbody>
                 </Table>
-
-                {/* <div>
-                    <nav aria-label="Page navigation example">
-                        <ul className="pagination">
-                            <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                            <li className="page-item"><a className="page-link" href="#">1</a></li>
-                            <li className="page-item"><a className="page-link" href="#">2</a></li>
-                            <li className="page-item"><a className="page-link" href="#">3</a></li>
-                            <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div> */}
             </div>
         );
     }
@@ -224,7 +330,6 @@ export class Participants extends Component {
                 <h1>Participants</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div>
-                        {/* <button type="submit" className="btn btn-primary">Save</button> */}
                         <button type="button" onClick={this.handleAddParticipant} disabled={this.dirty} className="btn btn-primary">Add Participant</button>
                     </div>
                     {contents}

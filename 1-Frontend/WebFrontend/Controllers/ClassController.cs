@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using SchletterTiming.Model;
 using SchletterTiming.RunningContext;
+using AvailableCategory = SchletterTiming.WebFrontend.Dto.AvailableCategory;
 
 namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
@@ -17,23 +20,43 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         [HttpGet("[action]")]
-        public IEnumerable<string> GetAvailableClasses() {
-            var availableCategories = _classService.LoadClasses();
-            return availableCategories.Classes;
+        public IEnumerable<Dto.AvailableClass> GetAvailableClasses() {
+            var availableClasses = _classService.LoadClasses();
+            return ConvertModelToDto(availableClasses);
         }
 
 
         [HttpPost("[action]")]
-        public IEnumerable<string> AddClass([FromBody] string @class) {
-            _classService.AddClass(@class);
-            return _classService.LoadClasses().Classes;
+        public IEnumerable<Dto.AvailableClass> AddClass([FromBody] AvailableClass @class) {
+            _classService.AddClass(@class.ClassName);
+            return ConvertModelToDto(_classService.LoadClasses());
         }
 
 
         [HttpPost("[action]")]
-        public IEnumerable<string> DeleteClass([FromBody] string @class) {
+        public IEnumerable<Dto.AvailableClass> UpdateClass([FromBody] AvailableClass @class) {
+            _classService.UpdateClass(@class);
+            return ConvertModelToDto(_classService.LoadClasses());
+        }
+
+
+        [HttpPost("[action]")]
+        public IEnumerable<Dto.AvailableClass> DeleteClass([FromBody] string @class) {
             _classService.DeleteClass(@class);
-            return _classService.LoadClasses().Classes;
+            return ConvertModelToDto(_classService.LoadClasses());
+        }
+
+
+        private IEnumerable<Dto.AvailableClass> ConvertModelToDto(IEnumerable<Model.AvailableClass> availableClasses) {
+            return availableClasses.Select(ConvertModelToDto);
+        }
+
+
+        private Dto.AvailableClass ConvertModelToDto(Model.AvailableClass availableClass) {
+            return new Dto.AvailableClass {
+                ClassId = availableClass.ClassId,
+                ClassName = availableClass.ClassName
+            };
         }
     }
 }

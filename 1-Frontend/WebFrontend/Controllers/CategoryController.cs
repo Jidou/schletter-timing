@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchletterTiming.RunningContext;
+using SchletterTiming.WebFrontend.Dto;
 
 namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
@@ -21,23 +19,56 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         [HttpGet("[action]")]
-        public IEnumerable<string> GetAvailableCategories() {
+        public IEnumerable<Dto.AvailableCategory> GetAvailableCategories() {
             var availableCategories = _categoryService.LoadCategories();
-            return availableCategories.Categories;
+            return ConvertModelToDto(availableCategories);
         }
 
 
         [HttpPost("[action]")]
-        public IEnumerable<string> AddCategory([FromBody] string category) {
-            _categoryService.AddCategory(category);
-            return _categoryService.LoadCategories().Categories;
+        public IEnumerable<Dto.AvailableCategory> AddCategory([FromBody] Dto.AvailableCategory category) {
+            _categoryService.AddCategory(category.CategoryName);
+            return ConvertModelToDto(_categoryService.LoadCategories());
         }
 
 
         [HttpPost("[action]")]
-        public IEnumerable<string> DeleteCategory([FromBody] string category) {
+        public IEnumerable<Dto.AvailableCategory> UpdateCategory([FromBody] Dto.AvailableCategory category) {
+            _categoryService.UpdateCategory(ConvertDtoToModel(category));
+            return ConvertModelToDto(_categoryService.LoadCategories());
+        }
+
+
+        [HttpPost("[action]")]
+        public IEnumerable<Dto.AvailableCategory> DeleteCategory([FromBody] string category) {
             _categoryService.DeleteCategory(category);
-            return _categoryService.LoadCategories().Categories;
+            return ConvertModelToDto(_categoryService.LoadCategories());
+        }
+
+
+        private IEnumerable<Dto.AvailableCategory> ConvertModelToDto(IEnumerable<Model.AvailableCategory> availableCategories) {
+            return availableCategories.Select(ConvertModelToDto);
+        }
+
+
+        private Dto.AvailableCategory ConvertModelToDto(Model.AvailableCategory availableCategory) {
+            return new AvailableCategory {
+                CategoryId = availableCategory.CategoryId,
+                CategoryName = availableCategory.CategoryName,
+            };
+        }
+
+
+        private IEnumerable<Model.AvailableCategory> ConvertDtoToModel(IEnumerable<Dto.AvailableCategory> availableCategories) {
+            return availableCategories.Select(ConvertDtoToModel);
+        }
+
+
+        private Model.AvailableCategory ConvertDtoToModel(Dto.AvailableCategory availableCategory) {
+            return new Model.AvailableCategory {
+                CategoryId = availableCategory.CategoryId,
+                CategoryName = availableCategory.CategoryName,
+            };
         }
     }
 }

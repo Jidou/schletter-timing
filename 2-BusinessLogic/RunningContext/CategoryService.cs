@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using SchletterTiming.FileRepo;
@@ -19,32 +20,66 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public AvailableCategories LoadCategories() {
-            return _repo.DeSerializeObject<AvailableCategories>(SaveFileName);
+        public IEnumerable<AvailableCategory> LoadCategories() {
+            return _repo.DeSerializeObject<IEnumerable<AvailableCategory>>(SaveFileName);
         }
 
 
         public void AddCategory(string newCategory) {
             var currentCategories = LoadCategories();
-            var categoriesAsList = currentCategories.Categories.ToList();
-            categoriesAsList.Add(newCategory);
-            currentCategories.Categories = categoriesAsList;
+
+            if (currentCategories.Any(x => x.CategoryName == newCategory)) {
+                return;
+            }
+
+            var nextId = 0;
+
+            if (currentCategories.Any()) {
+                nextId = currentCategories.Max(x => x.CategoryId) + 1;
+            }
+
+            var categoriesAsList = currentCategories.ToList();
+
+            categoriesAsList.Add(new AvailableCategory() {
+                CategoryId = nextId,
+                CategoryName = newCategory
+            });
+            
+            _repo.SerializeObject(categoriesAsList, SaveFileName);
+        }
+
+
+        public void UpdateCategory(AvailableCategory category) {
+            var currentCategories = LoadCategories();
+            var oldCategory = currentCategories.SingleOrDefault(x => x.CategoryId == category.CategoryId);
+
+            if (oldCategory is null) {
+                // TODO: Error handling
+                return;
+            }
+
+            oldCategory.CategoryName = category.CategoryName;
             _repo.SerializeObject(currentCategories, SaveFileName);
         }
 
 
         public void DeleteCategory(string category) {
             var currentCategories = LoadCategories();
-            var categoriesAsList = currentCategories.Categories.ToList();
-            categoriesAsList.Remove(category);
-            currentCategories.Categories = categoriesAsList;
-            _repo.SerializeObject(currentCategories, SaveFileName);
+            var categoriesAsList = currentCategories.ToList();
+            var categoryToDelete = categoriesAsList.Find(x => x.CategoryName == category);
+
+            if (categoryToDelete is null) {
+                return;
+            }
+
+            categoriesAsList.Remove(categoryToDelete);
+            _repo.SerializeObject(categoriesAsList, SaveFileName);
         }
 
 
         public void ShowCategories() {
-            var availableCategories = _repo.DeSerializeObject<AvailableCategories>(SaveFileName);
-            var allCategories = availableCategories.Categories.Aggregate("", (current, category) => current + $"{category}\n");
+            var availableCategories = LoadCategories();
+            var allCategories = availableCategories.Aggregate("", (current, category) => current + $"{category.CategoryName}\n");
             Console.WriteLine(allCategories);
         }
     }
