@@ -9,6 +9,7 @@
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\\PdfGenerator\PdfGenerator.csproj" />
     <ProjectReference Include="..\..\3-DataReaders\ReaderInterfaces\ReaderInterfaces.csproj" />
     <ProjectReference Include="..\..\3-DataReaders\Timy3Reader\Timy3Reader.csproj" />
     <ProjectReference Include="..\..\2-BusinessLogic\Model\Model.csproj" />

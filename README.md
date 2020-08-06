@@ -116,6 +116,7 @@
           * [x] Toggle Custom result
             * [x] Custom Result title is used for PDF
             * [x] Unselect is working
+    * [ ] Release Preparations
   * [ ] next Release
     * [ ] Check if `Model.Group.Groupnumber` is still needed
     * [ ] Make `FinishTime` in Group nullable

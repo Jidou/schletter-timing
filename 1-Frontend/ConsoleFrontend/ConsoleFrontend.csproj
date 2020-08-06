@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>SchletterTiming.ConsoleFrontend</RootNamespace>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +17,6 @@
     <ProjectReference Include="..\..\2-BusinessLogic\Model\Model.csproj" />
     <ProjectReference Include="..\..\2-BusinessLogic\RunningContext\RunningContext.csproj" />
     <ProjectReference Include="..\..\3-DataReaders\ReaderInterfaces\ReaderInterfaces.csproj" />
-    <ProjectReference Include="..\PdfGenerator\PdfGenerator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
