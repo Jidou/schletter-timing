@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>SchletterTiming.FileRepo</RootNamespace>
     <Nullable>enable</Nullable>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

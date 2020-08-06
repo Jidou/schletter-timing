@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using SchletterTiming.Model;
 using SchletterTiming.RunningContext;
 using SchletterTiming.WebFrontend.Dto;
 using Group = SchletterTiming.Model.Group;
@@ -27,127 +25,75 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         [HttpGet("[action]")]
-        public Race LoadRace(string racename) {
-            if (string.IsNullOrEmpty(racename) && !(CurrentContext.Race is null)) {
-                return ConvertModelToDto(CurrentContext.Race);
-            }
-
-            _raceService.Load(racename);
-
-            var currentRace = CurrentContext.Race;
-
-            if (currentRace is null) {
-                // TODO: check for error and return it.
-                return null;
-            }
-
-            return ConvertModelToDto(currentRace);
-        }
-
-
-        [HttpGet()]
-        public Race Get() {
-            if (!(CurrentContext.Race is null)) {
-                return ConvertModelToDto(CurrentContext.Race);
+        public Race LoadRace() {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
+                return ConvertModelToDto(_raceService.CreateEmptyRace());
             } else {
-                // TODO: check for error and return it.
-                return null;
+                return ConvertModelToDto(_raceService.LoadCurrentRace());
             }
-        }
-
-
-        [HttpPut("[action]")]
-        public Race CreateNewRace() {
-            var newRace = new Model.Race {
-                Titel = string.Empty,
-                RaceType = string.Empty,
-                Place = string.Empty,
-                Judge = string.Empty,
-                Date = DateTime.Today,
-                TimingTool = TimingTools.Unknown,
-                StartTime = DateTime.Today,
-                Groups = new List<Group>(),
-            };
-
-            CurrentContext.Race = newRace;
-
-            return ConvertModelToDto(newRace);
         }
 
 
         [HttpGet("[action]")]
-        public IEnumerable<GroupInfoForRace> GetGroupInfoForRace(string racename) {
-            if (string.IsNullOrEmpty(racename) && !(CurrentContext.Race is null)) {
-                return ConvertGroupModelsToDto(CurrentContext.Race.Groups);
+        public bool SetCurrentRace(string racename) {
+            _raceService.SetCurrentRace(racename);
+            return true;
+        }
+
+
+        [HttpGet("[action]")]
+        public Race CreateNewRace() {
+            _raceService.UnsetCurrentRace();
+            return ConvertModelToDto(_raceService.CreateEmptyRace());
+        }
+
+
+        [HttpGet("[action]")]
+        public IEnumerable<GroupInfoForRace> GetGroupInfoForRace() {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
+                return new List<GroupInfoForRace>();
             }
 
-            if (string.IsNullOrEmpty(racename) && CurrentContext.Race is null) {
-                return null;
-            }
-
-            _raceService.Load(racename);
-
-            var raceGroups = CurrentContext.Race.Groups;
-
-            if (raceGroups == null) {
-                raceGroups = new List<Group>();
-            }
-
+            var currentRace = _raceService.LoadCurrentRace();
+            var raceGroups = currentRace.Groups ?? new List<Group>();
             return ConvertGroupModelsToDto(raceGroups);
         }
 
 
         [HttpPost("[action]")]
-        public void Post([FromBody] Race race) {
+        public void UpdateRace([FromBody] Race race) {
             var currentRace = ConvertDtoToModel(race);
-            CurrentContext.Race = currentRace;
-            _raceService.Save("Testing");
+            _raceService.UpdateRace(currentRace);
         }
 
 
         [HttpPost("[action]")]
         public IEnumerable<GroupInfoForRace> AssignStartNumbers() {
             _raceService.AssingStartNumbers();
-            var currentRace = CurrentContext.Race;
-            _raceService.Save(currentRace.Titel);
+            var currentRace = _raceService.LoadCurrentRace();
             return ConvertGroupModelsToDto(currentRace.Groups);
         }
-        
+
 
         private Model.Race ConvertDtoToModel(Race race) {
-            var currentRace = CurrentContext.Race;
-
-            currentRace.Date = race.Date;
-            currentRace.RaceType = race.RaceType;
-            currentRace.Titel = race.Titel;
-            currentRace.StartTime = race.StartTime;
-            currentRace.Place = race.Place;
-            currentRace.Judge = race.Judge;
-            currentRace.TimingTool = race.TimingTool;
-            currentRace.Groups = currentRace.Groups;
-
-            return currentRace;
-        }
+            var currentRace = _raceService.LoadCurrentRace();
+            var groups = new List<Model.Group>();
 
 
-        private IEnumerable<Group> ConvertGroupDtosToModel(IEnumerable<GroupInfoForRace> groups, IEnumerable<Group> currentGroups) {
-            var availableGroups = CurrentContext.AllAvailableGroups;
-            var allGroups = new List<Group>();
-
-            foreach (var group in groups) {
-                if (currentGroups.Any(x => x.GroupId == group.GroupId)) {
-                    var tmp = currentGroups.Single(x => x.GroupId == group.GroupId);
-                    tmp.StartNumber = group.StartNumber;
-                    allGroups.Add(tmp);
-                } else {
-                    var tmp = availableGroups.Single(x => x.GroupId == group.GroupId);
-                    tmp.StartNumber = group.StartNumber;
-                    allGroups.Add(tmp);
-                }
+            if (currentRace?.Groups != null) {
+                groups = currentRace.Groups.ToList();
             }
 
-            allGroups = allGroups.OrderBy(x => x.StartNumber).ToList();
-            return allGroups;
+            return new Model.Race {
+                Date = race.Date,
+                RaceType = race.RaceType,
+                Titel = race.Titel,
+                StartTime = race.StartTime,
+                Place = race.Place,
+                Judge = race.Judge,
+                TimingTool = race.TimingTool,
+                Groups = groups,
+            };
         }
 
 
@@ -165,17 +111,11 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         private IEnumerable<GroupInfoForRace> ConvertGroupModelsToDto(IEnumerable<Group> groups) {
-            var allGroups = new List<GroupInfoForRace>();
+            var allGroups = groups
+                .Select(@group => new GroupInfoForRace {GroupId = @group.GroupId, Groupname = @group.Groupname, StartNumber = @group.StartNumber,})
+                .OrderBy(x => x.StartNumber)
+                .ToList();
 
-            foreach (var group in groups) {
-                allGroups.Add(new GroupInfoForRace {
-                    GroupId = group.GroupId,
-                    Groupname = group.Groupname,
-                    StartNumber = group.StartNumber,
-                });
-            }
-
-            allGroups = allGroups.OrderBy(x => x.StartNumber).ToList();
             return allGroups;
         }
     }

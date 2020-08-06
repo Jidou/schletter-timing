@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SchletterTiming.RunningContext;
+using SchletterTiming.WebFrontend.Converter;
 using SchletterTiming.WebFrontend.Dto;
 
 namespace SchletterTiming.WebFrontend.Controllers {
@@ -20,12 +21,10 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
-        [HttpGet]
-        public IEnumerable<Participant> Get() {
-
+        [HttpGet("[action]")]
+        public IEnumerable<Participant> GetAllAvailableParticipants() {
             var allAvailableParticipants = _participantService.LoadAllAvailableParticipants();
-
-            return ConvertModelToParticipantDto(allAvailableParticipants);
+            return ParticipantConverter.ConvertModelToDto(allAvailableParticipants);
         }
 
 
@@ -54,122 +53,27 @@ namespace SchletterTiming.WebFrontend.Controllers {
         }
 
 
-        [HttpPost()]
-        public IEnumerable<Participant> Post([FromBody] IEnumerable<Participant> participants) {
-            var participantsToAdd = participants.Where(x => x.ToAdd).ToList();
-            // TODO: Implement delete
-            var participantsToDelete = participants.Where(x => x.ToDelete).ToList();
-            var participantsToUpdate = participants.Where(x => x.ToUpdate).ToList();
-
-            var newParticipants = UpdateParticipants(participants, participantsToAdd, participantsToUpdate);
-
-            _participantService.Save();
-
-            return ConvertModelToParticipantDto(newParticipants);
-        }
-
-
         [HttpPost("[action]")]
         public Participant AddParticipant([FromBody] Participant participant) {
-            var currentMaxId = CurrentContext.AllAvailableParticipants.Max(x => x.ParticipantId);
-
-            var newParticipant = new Model.Participant {
-                ParticipantId = ++currentMaxId,
-                Firstname = participant.Firstname,
-                Lastname = participant.Lastname,
-                Category = participant.Category,
-                YearOfBirth = participant.YearOfBirth,
-            };
-
-            CurrentContext.AllAvailableParticipants.Add(newParticipant);
-
-            _participantService.Save();
-
-            return ConvertModelToParticipantDto(newParticipant);
+            var participantToAdd = ParticipantConverter.ConvertDtoToModel(participant);
+            var newParticipant = _participantService.AddParticipant(participantToAdd);
+            return ParticipantConverter.ConvertModelToDto(newParticipant);
         }
 
 
         [HttpPost("[action]")]
         public Participant UpdateParticipant([FromBody] Participant participant) {
-            var oldParticipant =
-                CurrentContext.AllAvailableParticipants.SingleOrDefault(x =>
-                    x.ParticipantId == participant.ParticipantId);
-
-            if (oldParticipant is null) {
-                // TODO: someone fucked up somewhere, let him know
-                return null;
-            }
-
-            oldParticipant.Firstname = participant.Firstname;
-            oldParticipant.Lastname = participant.Lastname;
-            oldParticipant.Category = participant.Category;
-            oldParticipant.YearOfBirth = participant.YearOfBirth;
-            
-            _participantService.Save();
-
-            return ConvertModelToParticipantDto(oldParticipant);
-        }
-
-
-        private List<Model.Participant> UpdateParticipants(IEnumerable<Participant> participants, IEnumerable<Participant> participantsToAdd, IEnumerable<Participant> participantsToUpdate) {
-            var newParticipants = new List<Model.Participant>();
-
-            var i = 0;
-
-            if (CurrentContext.AllAvailableParticipants.Count > 0) {
-                i = CurrentContext.AllAvailableParticipants.Max(x => x.ParticipantId) + 1;
-            }
-
-            foreach (var participantToAdd in participantsToAdd) {
-                participantToAdd.ParticipantId = i;
-                i++;
-            }
-
-            var tmp = participants.Where(x => !x.ToAdd && !x.ToDelete && !x.ToUpdate);
-            var participantsToKeep = CurrentContext.AllAvailableParticipants.Where(x => tmp.Any(y => y.ParticipantId == x.ParticipantId));
-
-
-            newParticipants.AddRange(ConvertParticipantDtoToModel(participantsToAdd));
-            newParticipants.AddRange(ConvertParticipantDtoToModel(participantsToUpdate));
-            newParticipants.AddRange(participantsToKeep);
-
-            CurrentContext.AllAvailableParticipants = newParticipants.ToList();
-            return newParticipants;
-        }
-
-
-        private IEnumerable<Model.Participant> ConvertParticipantDtoToModel(IEnumerable<Participant> participantsToUpdate) {
-            foreach (var participant in participantsToUpdate) {
-                yield return new Model.Participant(participant.Firstname, participant.Lastname, participant.YearOfBirth, participant.Category);
-            }
+            var participantToUpdate = ParticipantConverter.ConvertDtoToModel(participant);
+            _participantService.UpdateParticipant(participantToUpdate);
+            return ParticipantConverter.ConvertModelToDto(participantToUpdate);
         }
 
 
         private IEnumerable<ParticipantSuggestions> ConvertModelToOtherParticipantSuggestionsDto(IEnumerable<Model.Participant> participantsWithoutGroup) {
-            foreach (var participant in participantsWithoutGroup) {
-                yield return new ParticipantSuggestions {
-                    ParticipantId = participant.ParticipantId,
-                    Fullname = participant.Fullname(),
-                };
-            }
-        }
-
-
-        private IEnumerable<Participant> ConvertModelToParticipantDto(IEnumerable<Model.Participant> allAvailableParticipants) {
-            foreach (var participant in allAvailableParticipants) {
-                yield return ConvertModelToParticipantDto(participant);
-            }
-        }
-
-
-        private Participant ConvertModelToParticipantDto(Model.Participant participant) {
-            return new Participant {
-                Category = participant.Category,
+            return participantsWithoutGroup.Select(participant => new ParticipantSuggestions {
                 ParticipantId = participant.ParticipantId,
-                Firstname = participant.Firstname,
-                Lastname = participant.Lastname,
-                YearOfBirth = participant.YearOfBirth,
-            };
+                Fullname = participant.Fullname(),
+            });
         }
     }
 }

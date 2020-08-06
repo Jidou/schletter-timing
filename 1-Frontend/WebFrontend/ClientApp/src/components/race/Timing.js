@@ -7,8 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 export class Timing extends Component {
     static displayName = Timing.name;
 
-    dirty = false;
-
 
     constructor(props) {
         super(props);
@@ -25,7 +23,7 @@ export class Timing extends Component {
                 this.setState({ groups: data });
             });
 
-        fetch('api/Timing/GetTimes')
+        fetch('api/Timing/GetTimes?getLiveData=false')
             .then(response => response.json())
             .then(data => {
                 this.setState({ times: data, loading: false });
@@ -44,8 +42,6 @@ export class Timing extends Component {
                                     <tr>
                                         <th>Groupname</th>
                                         <th>Start Number</th>
-                                        {/* <th>Runner</th>
-                                        <th>Cyclist</th> */}
                                         <th>Finish Time</th>
                                     </tr>
                                 </thead>
@@ -54,8 +50,6 @@ export class Timing extends Component {
                                         <tr key={group.groupId}>
                                             <td>{group.groupname}</td>
                                             <td>{group.startnumber}</td>
-                                            {/* <td>{group.participant1Time}</td>
-                                            <td>{group.participant2Time}</td> */}
                                             <td>{group.finishTime}</td>
                                         </tr>
                                     )}
@@ -73,9 +67,9 @@ export class Timing extends Component {
                                 </thead>
                                 <tbody>
                                     {times.map(time =>
-                                        <tr key={time.measurementNumber}>
+                                        <tr key={time.internalId}>
                                             <td>
-                                                <input type="text" onChange={this.handleChange.bind(this, time.measurementNumber)} value={time.startNumber}></input>
+                                                <input type="text" onChange={this.handleChange.bind(this, time.internalId)} value={time.startNumber}></input>
                                             </td>
                                             <td>{time.time}</td>
                                             <td>{time.measurementNumber}</td>
@@ -92,7 +86,7 @@ export class Timing extends Component {
 
 
     handleLoad() {
-        fetch('api/Timing/GetTimes')
+        fetch('api/Timing/GetTimes?getLiveData=true')
             .then(response => response.json())
             .then(data => {
                 this.setState({ times: data });
@@ -117,9 +111,9 @@ export class Timing extends Component {
     }
 
 
-    handleChange(measurementNumber, event) {
+    handleChange(internalId, event) {
         var times = this.state.times;
-        var index = times.findIndex((x) => x.measurementNumber === measurementNumber);
+        var index = times.findIndex((x) => x.internalId === internalId);
         var value = event.target.value;
         var tmp = times[index];
 

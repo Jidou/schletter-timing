@@ -7,7 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SchletterTiming.FileRepo;
+using SchletterTiming.ReaderInterfaces;
 using SchletterTiming.RunningContext;
+using SchletterTiming.Timy3Reader;
 
 namespace SchletterTiming.WebFrontend {
     public class Startup {
@@ -27,6 +29,8 @@ namespace SchletterTiming.WebFrontend {
             services.AddTransient<ParticipantService>();
             services.AddTransient<TimingValueService>();
             services.AddTransient<SaveLoad>();
+
+            services.AddSingleton<ITimy3Reader, Timy3RS232Reader>();
 
             services.AddControllersWithViews();
 

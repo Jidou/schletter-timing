@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SchletterTiming.WebFrontend.Controllers {
+namespace SchletterTiming.WebFrontend.Dto {
     public class GroupWithTime {
         public string Groupname { get; set; }
         public int Startnumber { get; set; }

@@ -14,7 +14,6 @@ export class Groups extends Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
         this.onChange = this.onChange.bind(this);
         this.updateGroupParticipants = this.updateGroupParticipants.bind(this);
@@ -22,16 +21,15 @@ export class Groups extends Component {
 
         this.state = { groups: [], allParticipants: [], suggestions: [], searchValue: "", loading: true };
 
-        fetch('api/Group/')
+        fetch('api/Group/GetAllAvailableGroups')
             .then(response => response.json())
             .then(data => {
                 this.setState({ groups: data });
-            });
-
-        fetch('api/Participant/GetAllParticipantsWithoutGroup')
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ allParticipants: data, suggestions: data, loading: false, activePage: 1 });
+                fetch('api/Participant/GetAllParticipantsWithoutGroup')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.setState({ allParticipants: data, suggestions: data, loading: false, activePage: 1 });
+                    });
             });
     }
 
@@ -103,26 +101,6 @@ export class Groups extends Component {
     }
 
 
-    handleSubmit(event) {
-        fetch('api/Group/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.state.groups)
-        })
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ groups: data });
-            });
-
-
-        event.preventDefault();
-        toast("Groups saved successfully");
-    }
-
-
     renderGroupsTable(groups) {
         return (
             <div>
@@ -168,18 +146,6 @@ export class Groups extends Component {
                         )}
                     </tbody>
                 </Table>
-
-                {/* <div>
-                    <nav aria-label="Page navigation example">
-                        <ul className="pagination">
-                            <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                            <li className="page-item"><a className="page-link" href="#">1</a></li>
-                            <li className="page-item"><a className="page-link" href="#">2</a></li>
-                            <li className="page-item"><a className="page-link" href="#">3</a></li>
-                            <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div> */}
             </div>
         );
     }
@@ -351,7 +317,7 @@ export class Groups extends Component {
 
 
     updateGroupParticipants(group) {
-        fetch('api/Group/UpdateGroupParticipants', {
+        fetch('api/Group/UpdateGroup', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -371,13 +337,13 @@ export class Groups extends Component {
                 });
 
                 toast("Participants of Group: " + group.groupname + " successfully updated");
-            })
-            .then(fetch('api/Participant/GetAllParticipantsWithoutGroup')
-                .then(response => response.json())
-                .then(data => {
-                    this.setState({ allParticipants: data, suggestions: data });
-                })
-            );
+
+                fetch('api/Participant/GetAllParticipantsWithoutGroup')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.setState({ allParticipants: data, suggestions: data });
+                    })
+            });
     }
 
     render() {
@@ -388,9 +354,8 @@ export class Groups extends Component {
         return (
             <div>
                 <h1>Groups</h1>
-                <form onSubmit={this.handleSubmit}>
+                <form>
                     <div>
-                        {/* <button type="submit" className="btn btn-primary">Save</button> */}
                         <button type="button" onClick={this.handleAddGroup} disabled={this.dirty} className="btn btn-primary">Add Group</button>
                     </div>
                     {contents}

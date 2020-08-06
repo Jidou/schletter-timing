@@ -12,7 +12,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
     public class RaceOverviewController : Controller {
 
-        private RaceService _raceService;
+        private readonly RaceService _raceService;
 
 
         public RaceOverviewController(RaceService raceService) {
@@ -22,30 +22,16 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         [HttpGet()]
         public IEnumerable<RaceOverview> Get() {
-
             var allRaces = _raceService.GetAllRaces();
-
             return ConvertModelToDto(allRaces);
         }
 
 
-        [HttpPost]
-        public void Post([FromBody] string raceName) {
-            if (string.IsNullOrEmpty(raceName)) {
-                _raceService.Reset();
-            } else {
-                _raceService.Load(raceName);
-            }
-        }
-
-
         private IEnumerable<RaceOverview> ConvertModelToDto(IEnumerable<Race> allRaces) {
-            foreach (var race in allRaces) {
-                yield return new RaceOverview {
-                    Name = race.Titel,
-                    Date = race.Date,
-                };
-            }
+            return allRaces.Select(race => new RaceOverview {
+                Name = race.Titel,
+                Date = race.Date,
+            });
         }
     }
 }

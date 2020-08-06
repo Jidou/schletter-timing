@@ -35,7 +35,7 @@
   <ItemGroup>
     <Folder Include="Data\CurrentDB\" />
     <Folder Include="Data\Logo\" />
-    <Folder Include="Data\Races\" />
+    <Folder Include="Data\Races\Test Race 001\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

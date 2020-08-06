@@ -12,21 +12,21 @@ namespace SchletterTiming.ConsoleFrontend {
         private readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private readonly SaveLoad _repo;
         private readonly IConfiguration _configuration;
-        private readonly TimingValueService _timingValue;
-        private readonly RaceService _race;
-        private readonly ParticipantService _participant;
-        private readonly GroupService _group;
+        private readonly TimingValueService _timingValueService;
+        private readonly RaceService _raceService;
+        private readonly ParticipantService _participantService;
+        private readonly GroupService _groupService;
         private readonly CategoryService _categoryService;
         private readonly ClassService _classService;
 
 
-        public Console(IConfiguration configuration, SaveLoad repo, TimingValueService timingValue, RaceService race, ParticipantService participant, GroupService group, CategoryService categoryService, ClassService classService) {
+        public Console(IConfiguration configuration, SaveLoad repo, TimingValueService timingValueService, RaceService raceService, ParticipantService participantService, GroupService groupService, CategoryService categoryService, ClassService classService) {
             _configuration = configuration;
             _repo = repo;
-            _timingValue = timingValue;
-            _race = race;
-            _participant = participant;
-            _group = group;
+            _timingValueService = timingValueService;
+            _raceService = raceService;
+            _participantService = participantService;
+            _groupService = groupService;
             _categoryService = categoryService;
             _classService = classService;
         }
@@ -220,28 +220,25 @@ namespace SchletterTiming.ConsoleFrontend {
                 return;
             }
 
-            if (input[0] == "s") {
-                DoAction(_race.Save, input.Skip(1));
-                return;
-            }
-
             if (input[0] == "l") {
-                DoAction(_race.Load, input.Skip(1));
+                DoAction(_raceService.SetCurrentRace, input.Skip(1));
                 return;
             }
 
             if (input[0] == "t") {
-                DoAction(_race.SetStartTime, input.Skip(1));
+                DoAction(_raceService.SetStartTime, input.Skip(1));
                 return;
             }
 
             if (input[0] == "ag") {
-                _race.AddGroup(input.Skip(1).ToArray());
+                AddGroup(input.Skip(1).ToArray());
                 return;
             }
 
             if (input[0] == "at") {
-                _race.AddTimingValues();
+                var currentRace = _raceService.LoadCurrentRace();
+                var timingValues = _timingValueService.LoadLatestValuesFromRaceFolder(currentRace.Titel);
+                _raceService.AddTimingValues(currentRace, timingValues);
                 return;
             }
 
@@ -266,23 +263,20 @@ namespace SchletterTiming.ConsoleFrontend {
                     continue;
                 }
 
-                if (input[0] == "s") {
-                    DoAction(_race.Save, input.Skip(1));
-                    continue;
-                }
-
                 if (input[0] == "l") {
-                    DoAction(_race.Load, input.Skip(1));
+                    DoAction(_raceService.SetCurrentRace, input.Skip(1));
                     continue;
                 }
 
                 if (input[0] == "ag") {
-                    _race.AddGroup(input.Skip(1).ToArray());
+                    AddGroup(input.Skip(1).ToArray());
                     continue;
                 }
 
                 if (input[0] == "at") {
-                    _race.AddTimingValues();
+                    var currentRace = _raceService.LoadCurrentRace();
+                    var timingValues = _timingValueService.LoadLatestValuesFromRaceFolder(currentRace.Titel);
+                    _raceService.AddTimingValues(currentRace, timingValues);
                     continue;
                 }
 
@@ -296,12 +290,42 @@ namespace SchletterTiming.ConsoleFrontend {
 
         private void TryCreateNewRace(string[] input) {
             if (input.Length == 5) {
-                CurrentContext.Race = new Model.Race(input);
+                _raceService.AddRace(new Model.Race(input));
                 logger.Info("Race created");
                 return;
             }
 
             logger.Info("Could not create race, wrong number of arguments");
+        }
+
+
+        private void AddGroup(string[] input) {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
+                logger.Info($"No race created yet");
+                return;
+            }
+
+            var currentGroups = _raceService.LoadCurrentRace().Groups.ToList();
+            var availableGroups = _groupService.LoadAllAvailableGroups();
+
+            foreach (var groupIdentifier in input) {
+                int.TryParse(groupIdentifier, out int startNumber);
+                var group = availableGroups.SingleOrDefault(x => x.Groupname == groupIdentifier || x.StartNumber == startNumber);
+
+                if (group == null) {
+                    logger.Info($"Unable to find group {groupIdentifier}");
+                    return;
+                }
+
+                if (currentGroups.Contains(group)) {
+                    logger.Info($"Group {groupIdentifier} is already part of this race");
+                    continue;
+                }
+
+                _raceService.AddGroup(group);
+
+                logger.Info($"Group {groupIdentifier} successfully added to race");
+            }
         }
 
         #endregion
@@ -315,13 +339,8 @@ namespace SchletterTiming.ConsoleFrontend {
                 return;
             }
 
-            if (input[0] == "s") {
-                _participant.Save();
-                return;
-            }
-
             if (input[0] == "l") {
-                _participant.LoadAllAvailableParticipants();
+                _participantService.LoadAllAvailableParticipants();
                 return;
             }
 
@@ -351,13 +370,8 @@ namespace SchletterTiming.ConsoleFrontend {
                     continue;
                 }
 
-                if (input[0] == "s") {
-                    _participant.Save();
-                    continue;
-                }
-
                 if (input[0] == "l") {
-                    _participant.LoadAllAvailableParticipants();
+                    _participantService.LoadAllAvailableParticipants();
                     continue;
                 }
             } while (true);
@@ -366,11 +380,7 @@ namespace SchletterTiming.ConsoleFrontend {
 
         private void TryCreateNewParticipant(string[] input) {
             if (input.Length == 4) {
-                if (CurrentContext.AllAvailableParticipants == null) {
-                    CurrentContext.AllAvailableParticipants = new List<Model.Participant>();
-                }
-
-                CurrentContext.AllAvailableParticipants.Add(new Model.Participant(input));
+                _participantService.AddParticipant(new Model.Participant(input));
                 logger.Info("Added new Participant");
                 return;
             }
@@ -389,13 +399,8 @@ namespace SchletterTiming.ConsoleFrontend {
                 return;
             }
 
-            if (input[0] == "s") {
-                DoAction(_group.Save);
-                return;
-            }
-
             if (input[0] == "l") {
-                _group.LoadAllAvailableGroups();
+                _groupService.LoadAllAvailableGroups();
                 return;
             }
 
@@ -410,7 +415,7 @@ namespace SchletterTiming.ConsoleFrontend {
             }
 
             if (input[0] == "ap") {
-                _group.AddParticipants(input.Skip(1).ToArray());
+                AddParticipants(input.Skip(1).ToArray());
             }
         }
 
@@ -435,18 +440,13 @@ namespace SchletterTiming.ConsoleFrontend {
                     continue;
                 }
 
-                if (input[0] == "s") {
-                    DoAction(_group.Save);
-                    continue;
-                }
-
                 if (input[0] == "l") {
-                    _group.LoadAllAvailableGroups();
+                    _groupService.LoadAllAvailableGroups();
                     continue;
                 }
 
                 if (input[0] == "ap") {
-                    _group.AddParticipants(input.Skip(1).ToArray());
+                    AddParticipants(input.Skip(1).ToArray());
                     continue;
                 }
             } while (true);
@@ -455,16 +455,47 @@ namespace SchletterTiming.ConsoleFrontend {
 
         private void TryCreateNewGroup(string[] input) {
             if (input.Length == 3) {
-                if (CurrentContext.AllAvailableGroups == null) {
-                    CurrentContext.AllAvailableGroups = new List<Model.Group>();
-                }
-
-                CurrentContext.AllAvailableGroups.Add(new Model.Group(input));
+                _groupService.AddGroup(new Model.Group(input));
                 logger.Info("Added new Group");
                 return;
             }
 
             logger.Info("Could not add group, wrong number of arguments");
+        }
+
+
+        private void AddParticipants(string[] input) {
+            int.TryParse(input[0], out int groupId);
+            var part1Ident = input[1];
+            var part2Ident = input[2];
+
+            var group = _groupService.LoadGroupById(groupId);
+
+            if (group == null) {
+                logger.Info($"Unable to find group {input[0]}");
+                return;
+            }
+
+            var part1 = _participantService.LoadParticipantByName(part1Ident);
+
+            if (part1 == null) {
+                logger.Info($"Unable to find participant {input[1]}");
+                return;
+            }
+
+            var part2 = _participantService.LoadParticipantByName(part2Ident);
+
+            if (part2 == null) {
+                logger.Info($"Unable to find participant {input[2]}");
+                return;
+            }
+
+            group.Participant1 = part1;
+            group.Participant2 = part2;
+
+            _groupService.Update(group);
+
+            logger.Info($"Group successfully updated");
         }
 
         #endregion
@@ -473,9 +504,9 @@ namespace SchletterTiming.ConsoleFrontend {
 
         private void Timing(string[] input) {
             if (input[0] == "rm") {
-                var memoryDump = CurrentContext.Reader.WaitForBulk();
-                CurrentContext.Timing = memoryDump;
-                _timingValue.Save();
+                var memoryDump = _timingValueService.WaitForBulk();
+                var currentRace = _raceService.LoadCurrentRace();
+                _timingValueService.SaveChangesToRaceFolder(currentRace, memoryDump);
                 return;
             }
 
@@ -485,13 +516,15 @@ namespace SchletterTiming.ConsoleFrontend {
                 return;
             }
 
-            if (input[0] == "s") {
-                DoAction(_timingValue.Save);
-                return;
-            }
+            //if (input[0] == "s") {
+            //    var currentRace = _raceService.LoadCurrentRace();
+            //    _timingValueService.SaveChangesToRaceFolder(currentRace);
+            //    return;
+            //}
 
             if (input[0] == "l") {
-                DoAction(_timingValue.Load, input.Skip(1));
+                var currentRace = _raceService.LoadCurrentRace();
+                _timingValueService.LoadLatestValuesFromRaceFolder(currentRace.Titel);
                 return;
             }
 
@@ -519,19 +552,21 @@ namespace SchletterTiming.ConsoleFrontend {
                 }
 
                 if (input[0] == "rm") {
-                    var memoryDump = CurrentContext.Reader.WaitForBulk();
-                    CurrentContext.Timing = memoryDump;
-                    _timingValue.Save();
+                    var memoryDump = _timingValueService.WaitForBulk();
+                    var currentRace = _raceService.LoadCurrentRace();
+                    _timingValueService.SaveChangesToRaceFolder(currentRace, memoryDump);
                     continue;
                 }
 
-                if (input[0] == "s") {
-                    DoAction(_timingValue.Save);
-                    continue;
-                }
+                //if (input[0] == "s") {
+                //    var currentRace = _raceService.LoadCurrentRace();
+                //    _timingValueService.SaveChangesToRaceFolder(currentRace);
+                //    continue;
+                //}
 
                 if (input[0] == "l") {
-                    DoAction(_timingValue.Load, input.Skip(1));
+                    var currentRace = _raceService.LoadCurrentRace();
+                    _timingValueService.LoadLatestValuesFromRaceFolder(currentRace.Titel);
                     continue;
                 }
             } while (true);
@@ -562,20 +597,21 @@ namespace SchletterTiming.ConsoleFrontend {
                 }
 
                 if (input[0] == "c") {
-                    DoAction(_race.CalculateFinishTimes);
+                    var currentRace = _raceService.LoadCurrentRace();
+                    DoAction(() => _raceService.CalculateFinishTimes(currentRace));
                 }
 
-                if (input[0] == "pg") {
-                    PdfGenerator.PdfRenderer.GroupByClassAndOrder(CurrentContext.Race);
-                }
+                //if (input[0] == "pg") {
+                //    PdfGenerator.PdfRenderer.GroupByClassAndOrder(CurrentContext.Race);
+                //}
 
-                if (input[0] == "pa") {
-                    PdfGenerator.PdfRenderer.Order(CurrentContext.Race);
-                }
+                //if (input[0] == "pa") {
+                //    PdfGenerator.PdfRenderer.Order(CurrentContext.Race);
+                //}
 
-                if (input[0] == "sl") {
-                    PdfGenerator.PdfRenderer.CreateStartList(CurrentContext.Race);
-                }
+                //if (input[0] == "sl") {
+                //    PdfGenerator.PdfRenderer.CreateStartList(CurrentContext.Race);
+                //}
 
             } while (true);
 
@@ -657,8 +693,8 @@ s: Show current Classes");
             logger.Info(@"
 q: Quit Menu
 h: Show this text
-s <Filename>: Save current Race to file
-l <Filename>: Load race from file
+s <Filename>: SaveChangesToRaceFolder current Race to file
+l <Filename>: LoadRace race from file
 t <Time>: Set the start time of the race
 ag <Group1> [Group2 Group3 ...]: Adds Groups to current race
 at: Combines the Timing values with the Groups by matching the groupnumbers
@@ -680,8 +716,8 @@ pa: order result and print to pdf");
             logger.Info(@"
 q: Quit Menu
 h: Show this text
-s <Filename>: Save all participants to file
-l <Filename>: Load participants from file
+s <Filename>: SaveChangesToRaceFolder all participants to file
+l <Filename>: LoadRace participants from file
 c <Firstname Lastname YearOfBirth Class>: Create new Participant with the given parameters");
         }
 
@@ -690,8 +726,8 @@ c <Firstname Lastname YearOfBirth Class>: Create new Participant with the given 
             logger.Info(@"
 q: Quit Menu
 h: Show this text
-s <Filename>: Save all groups to file
-l <Filename>: Load groups from file
+s <Filename>: SaveChangesToRaceFolder all groups to file
+l <Filename>: LoadRace groups from file
 c <Groupname Groupnumber Category>: Creates new group with the given parameters
 ap <(Groupname|Groupnumber) Participant1 Participant2>: Adds Participants to groups");
         }
@@ -701,8 +737,8 @@ ap <(Groupname|Groupnumber) Participant1 Participant2>: Adds Participants to gro
             logger.Info(@"
 q: Quit Menu
 h: Show this text
-s: Save current Timing Values to a new file
-l <Filename>: Load Timing Values from file
+s: SaveChangesToRaceFolder current Timing Values to a new file
+l <Filename>: LoadRace Timing Values from file
 rm: Start waiting for memory dump from Timy");
         }
 

@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export class Classes extends Component {
     static displayName = Classes.name;
 
-
+    newClassCounter = -1;
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
@@ -51,9 +51,11 @@ export class Classes extends Component {
 
     handleAdd() {
         var newClass = {
-            classId: 0,
+            classId: this.newClassCounter,
             className: "",
         }
+
+        this.newClassCounter--;
 
         var classes = this.state.classes;
         classes.push(newClass);

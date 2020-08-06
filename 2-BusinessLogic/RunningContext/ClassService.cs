@@ -22,7 +22,7 @@ namespace SchletterTiming.RunningContext {
 
 
         public IEnumerable<AvailableClass> LoadClasses() {
-            return _repo.DeSerializeObject<IEnumerable<AvailableClass>>(SaveFileName);
+            return _repo.DeSerializeObjectFilename<IEnumerable<AvailableClass>>(SaveFileName);
         }
 
 
@@ -46,7 +46,7 @@ namespace SchletterTiming.RunningContext {
                 ClassName = newClass
             });
 
-            _repo.SerializeObject(availableClassesAsList, SaveFileName);
+            _repo.SerializeObjectFilename(availableClassesAsList, SaveFileName);
         }
 
 
@@ -60,7 +60,7 @@ namespace SchletterTiming.RunningContext {
             }
 
             oldClass.ClassName = @class.ClassName;
-            _repo.SerializeObject(currentClasses, SaveFileName);
+            _repo.SerializeObjectFilename(currentClasses, SaveFileName);
         }
 
 
@@ -74,7 +74,7 @@ namespace SchletterTiming.RunningContext {
             }
 
             availableClassesAsList.Remove(classToDelete);
-            _repo.SerializeObject(availableClassesAsList, SaveFileName);
+            _repo.SerializeObjectFilename(availableClassesAsList, SaveFileName);
         }
 
 

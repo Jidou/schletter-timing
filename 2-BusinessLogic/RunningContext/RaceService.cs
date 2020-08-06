@@ -9,89 +9,125 @@ using SchletterTiming.Model;
 
 namespace SchletterTiming.RunningContext {
     public class RaceService {
-        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private const string RacesBaseFolder = "Races";
+        private const string DefaultRaceTitel = "Titel";
+
+        private static readonly string RacesBasePath = $"{Environment.CurrentDirectory}\\Data\\Races";
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly IConfiguration _configuration;
         private readonly SaveLoad _repo;
+        private readonly TimingValueService _timingValueService;
 
 
-        public RaceService(IConfiguration configuration, SaveLoad repo) {
+        public RaceService(IConfiguration configuration, SaveLoad repo, TimingValueService timingValueService) {
             _configuration = configuration;
             _repo = repo;
+            _timingValueService = timingValueService;
         }
 
 
-        public void SetStartTime(string startTime) {
-            var time = DateTime.Parse(startTime);
-            CurrentContext.Race.StartTime = time;
+        public Race AddRace(Race race) {
+            _repo.SerializeObjectFilename(race, $"{RacesBaseFolder}/{race.Titel}");
+            SetCurrentRace(race.Titel);
+            return race;
         }
 
 
         public IEnumerable<Race> GetAllRaces() {
-            var path = $"{Environment.CurrentDirectory}\\Data\\Races";
+            var allFiles = Directory.GetFiles(RacesBasePath);
 
-            var allFiles = Directory.GetFiles(path);
-
-            var allRaces = new List<Race>();
-
-            foreach (var file in allFiles) {
-                allRaces.Add(_repo.DeSerializeObject<Race>(file));
-            }
-
-            return allRaces;
+            return allFiles.Select(file => _repo.DeSerializeObjectFilename<Race>(file)).ToList();
         }
 
 
-        public void AddGroup(string[] input) {
-            if (CurrentContext.Race == null) {
-                logger.Info($"No race created yet");
+        public void SetCurrentRace(string raceName) {
+            CurrentContext.CurrentRaceTitle = raceName;
+        }
+
+
+        public void UnsetCurrentRace() {
+            CurrentContext.CurrentRaceTitle = string.Empty;
+        }
+
+
+        public Race LoadCurrentRace() =>
+            !string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle) 
+                ? LoadRace(CurrentContext.CurrentRaceTitle) 
+                : null;
+
+
+        public Race LoadRace(string filename) {
+            if (string.IsNullOrEmpty(filename)) {
+                return null;
+            }
+
+            filename = $"{RacesBaseFolder}/{filename}";
+
+            return _repo.DeSerializeObjectFilename<Race>(filename);
+        }
+
+
+        public void SetStartTime(string startTime) {
+            var race = LoadRace(CurrentContext.CurrentRaceTitle);
+            var time = DateTime.Parse(startTime);
+            race.StartTime = time;
+            Update(race);
+        }
+
+
+        public void AddGroup(Group group) {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
+                Logger.Info($"No race created yet");
                 return;
             }
 
-            var currentRaceParticipants = CurrentContext.Race.Groups.ToList();
+            var currentRace = LoadCurrentRace();
+            var currentGroups = currentRace.Groups;
+            var currentGroupsAsList = currentGroups.ToList();
+            currentGroupsAsList.Add(group);
 
-            foreach (var groupIdentifier in input) {
-                int.TryParse(groupIdentifier, out int startNumber);
-                var group = CurrentContext.AllAvailableGroups.SingleOrDefault(x => x.Groupname == groupIdentifier || x.StartNumber == startNumber);
-
-                if (group == null) {
-                    logger.Info($"Unable to find group {groupIdentifier}");
-                    return;
-                }
-
-                if (currentRaceParticipants.Contains(group)) {
-                    logger.Info($"Group {groupIdentifier} is already part of this race");
-                    continue;
-                }
-
-                currentRaceParticipants.Add(group);
-                logger.Info($"Group {groupIdentifier} successfully added to race");
-            }
-
-            CurrentContext.Race.Groups = currentRaceParticipants;
+            currentRace.Groups = currentGroupsAsList;
+            Update(currentRace);
         }
 
 
-        public void AddTimingValues() {
-            var race = CurrentContext.Race;
-            var allGroups = race.Groups;
+        public void AddTimingValues(Race currentRace, IEnumerable<TimingValue> timingValues) {
+            var allGroups = currentRace.Groups;
 
             foreach (var group in allGroups) {
-                var finishTimeOfGroup = CurrentContext.Timing.SingleOrDefault(x => x.StartNumber == group.StartNumber);
+                var finishTimeOfGroup = timingValues.FirstOrDefault(x => x.StartNumber == group.StartNumber);
 
                 if (finishTimeOfGroup == null) {
-                    logger.Info($"Could not find finish time for group {group.Groupname}");
+                    Logger.Info($"Could not find finish time for group {group.Groupname}");
                     continue;
                 }
 
                 group.FinishTime = DateTime.Parse(finishTimeOfGroup.Time);
-                group.TimeTaken = group.FinishTime - race.StartTime;
+                group.TimeTaken = group.FinishTime - currentRace.StartTime;
             }
         }
 
 
         public void AssingStartNumbers() {
-            var race = CurrentContext.Race;
+            var race = LoadCurrentRace();
             Shuffle(race, true);
+            Update(race);
+        }
+
+
+        public void CalculateFinishTimes(Race currentRace) {
+            var allGroups = currentRace.Groups;
+
+            foreach (var group in allGroups) {
+                group.TimeTaken = group.FinishTime - currentRace.StartTime;
+            }
+        }
+
+
+        private void Update(Race race) {
+            var filename = $"{RacesBaseFolder}/{race.Titel}";
+            _repo.SerializeObjectFilename<Race>(race, filename);
         }
 
 
@@ -124,54 +160,41 @@ namespace SchletterTiming.RunningContext {
             }
 
             race.Groups = groups.ToList();
-            CurrentContext.Race = race;
         }
 
 
-        public void CalculateFinishTimes() {
-            var race = CurrentContext.Race;
-            var allGroups = race.Groups;
-
-            foreach (var group in allGroups) {
-                group.TimeTaken = group.FinishTime - race.StartTime;
-            }
-        }
-
-
-        public void Save(string filename) {
-            if (string.IsNullOrEmpty(filename)) {
-                filename = $"race_tmp_{CurrentContext.SaveCounter++}";
-            }
-
-            filename = $"Races/{filename}";
-
-            _repo.SerializeObject<Race>(CurrentContext.Race, filename);
-        }
-
-
-        public void Load(string filename) {
-            if (string.IsNullOrEmpty(filename)) {
+        public void UpdateRace(Race currentRace) {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
+                Update(currentRace);
+            } else if (CurrentContext.CurrentRaceTitle != currentRace.Titel) {
                 return;
+            } else {
+                Update(currentRace);
             }
-
-            filename = $"Races/{filename}";
-
-            var loadedScenario = _repo.DeSerializeObject<Race>(filename);
-            CurrentContext.Race = loadedScenario;
         }
 
 
-        public void Reset() {
-            CurrentContext.Race = new Race {
-                Date = DateTime.Today,
+        public Race CreateEmptyRace() {
+            _repo.RemoveTmpFiles(DefaultRaceTitel);
+            return new Race {
+                Titel = DefaultRaceTitel,
                 Judge = string.Empty,
-                Groups = new List<Group>(),
                 Place = string.Empty,
                 RaceType = string.Empty,
+                Date = DateTime.Today,
                 StartTime = DateTime.Now,
                 TimingTool = TimingTools.AlgeTiming,
-                Titel = string.Empty,
+                Groups = new List<Group>(),
             };
+        }
+
+
+        public void UpdateGroups(Race currentRace, Group groupToUpdate) {
+            var currentGroups = currentRace.Groups.ToList();
+            var oldGroup = currentGroups.Find(x => x.GroupId == groupToUpdate.GroupId);
+            currentGroups[currentGroups.IndexOf(oldGroup)] = groupToUpdate;
+            currentRace.Groups = currentGroups;
+            Update(currentRace);
         }
     }
 }

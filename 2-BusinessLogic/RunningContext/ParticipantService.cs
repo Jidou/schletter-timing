@@ -18,28 +18,43 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public void Save() {
-            var allParticipants = CurrentContext.AllAvailableParticipants;
-            _repo.SerializeObject(allParticipants, SaveFileName);
-        }
-
-
         public IEnumerable<Participant> LoadAllAvailableParticipants() {
-            var participants = (IEnumerable<Participant>)CurrentContext.AllAvailableParticipants;
-            if (participants != null) {
-                return participants;
-            }
-
-            participants = _repo.DeSerializeObject<IEnumerable<Participant>>(SaveFileName);
+            var participants = _repo.DeSerializeObjectFilename<IEnumerable<Participant>>(SaveFileName);
 
             if (participants != null) {
-                CurrentContext.AllAvailableParticipants = participants.ToList();
                 return participants;
             }
 
             participants = new List<Participant>();
-            CurrentContext.AllAvailableParticipants = participants.ToList();
             return participants;
+        }
+
+
+        public Participant LoadParticipantById(int participantId) {
+            return LoadAllAvailableParticipants().SingleOrDefault(x => x.ParticipantId == participantId);
+        }
+
+
+        public Participant LoadParticipantByName(string partIdent) {
+            return LoadAllAvailableParticipants().SingleOrDefault(x => $"{x.Firstname}_{x.Lastname}" == partIdent);
+        }
+
+
+        public Participant AddParticipant(Participant participant) {
+            var allParticipants = LoadAllAvailableParticipants().ToList();
+            var nextId = allParticipants.Max(x => x.ParticipantId) + 1;
+            participant.ParticipantId = nextId;
+            allParticipants.Add(participant);
+            _repo.SerializeObjectFilename(allParticipants, SaveFileName);
+            return participant;
+        }
+
+
+        public void UpdateParticipant(Participant participantToUpdate) {
+            var allParticipants = LoadAllAvailableParticipants().ToList();
+            var oldParticipant = allParticipants.Find(x => x.ParticipantId == participantToUpdate.ParticipantId);
+            allParticipants[allParticipants.IndexOf(oldParticipant)] = participantToUpdate;
+            _repo.SerializeObjectFilename(allParticipants, SaveFileName);
         }
     }
 }

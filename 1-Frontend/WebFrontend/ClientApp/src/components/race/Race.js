@@ -78,14 +78,11 @@ class SortableComponent extends Component {
 export class Race extends Component {
     static displayName = Race.name;
 
-    dirty = false;
-
 
     constructor(props) {
         super(props);
-        this.handleChange = this.handleChangeInForm.bind(this);
+        this.handleChangeInForm = this.handleChangeInForm.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleShuffle = this.handleShuffle.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -95,57 +92,53 @@ export class Race extends Component {
         this.handleTableBlur = this.handleTableBlur.bind(this);
         this.state = { race: [], groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true };
 
-        if (this.props.match.path === '/race/loadrace/:name') {
+        if (this.props.match.path === '/race/race/:name') {
             var racename = this.props.match.params.name;
 
-            fetch('api/Race/LoadRace?racename=' + racename)
+            fetch('api/Race/SetCurrentRace?racename=' + racename)
+                .then(_ => {
+                    fetch('api/Race/LoadRace')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.setState({ race: data });
+                            fetch('api/Race/GetGroupInfoForRace')
+                                .then(response => response.json())
+                                .then(data => {
+                                    this.setState({ groups: data, loading: false });
+                                });
+                        });
+                });
+                            
+        } else if (this.props.match.url === '/race/race') {
+            fetch('api/Race/LoadRace')
                 .then(response => response.json())
                 .then(data => {
                     this.setState({ race: data });
+                    fetch('api/RaceGroup/GetGroupInfoForRace')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.setState({ groups: data, loading: false });
+                        });
                 });
 
-            fetch('api/Race/GetGroupInfoForRace?racename=' + racename)
-                .then(response => response.json())
-                .then(data => {
-                    this.setState({ groups: data });
-                });
-
-        } else if (this.props.match.url === '/race/newrace/') {
-            fetch('api/Race/CreateNewRace', {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify()
-            })
+        } else if (this.props.match.url === '/race/newrace') {
+            fetch('api/Race/CreateNewRace')
                 .then(response => response.json())
                 .then(data => {
                     this.setState({ race: data });
+                    fetch('api/Race/GetGroupInfoForRace')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.setState({ groups: data, loading: false });
+                        });
                 });
-
-        } else if (this.props.match.url === '/race/race/') {
-            fetch('api/Race')
-                .then(response => response.json())
-                .then(data => {
-                    this.setState({ race: data });
-                });
-
-            fetch('api/RaceGroup/GetGroupInfoForRace')
-                .then(response => response.json())
-                .then(data => {
-                    this.setState({ groups: data });
-                });
-        } else {
-            // TODO
         }
 
-        fetch('api/Group/')
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ allgroups: data, suggestions: data, loading: false });
-            });
-
+        // fetch('api/Group/')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         this.setState({ allgroups: data, suggestions: data, loading: false });
+        //     });
     }
 
 
@@ -177,8 +170,7 @@ export class Race extends Component {
                         <label htmlFor="TimingTool">TimingTool</label>
                         <input type="text" className="form-control" id="TimingTool" onChange={this.handleChangeInForm} onBlur={this.handleBlur} placeholder="AlgeTiming" value={this.state.race.timingTool} />
                     </div>
-                    {/* <button type="submit" className="btn btn-primary">Save</button> */}
-                    <button type="button" onClick={this.handleShuffle} disabled={this.dirty} className="btn btn-primary">Assign Startnumbers</button>
+                    <button type="button" onClick={this.handleShuffle} className="btn btn-primary">Assign Startnumbers</button>
                 </div>
 
                 {/* <div className="form-group">
@@ -190,7 +182,7 @@ export class Race extends Component {
                         renderSuggestion={this.renderSuggestion}
                         inputProps={this.getInputProps()}
                     />
-                    <button type="button" onClick={this.handleAddGroup} disabled={this.dirty} className="btn btn-primary">Add Group</button>
+                    <button type="button" onClick={this.handleAddGroup} className="btn btn-primary">Add Group</button>
                 </div> */}
 
                 <Table striped hover>
@@ -330,36 +322,35 @@ export class Race extends Component {
         this.setState({
             race: tmp
         });
-
-        this.dirty = true;
     }
 
 
-    handleBlur(groupId, event) {
-
-    }
-
-    handleSubmit(event) {
-        fetch('api/Race/', {
+    handleBlur(event) {
+        fetch('api/Race/UpdateRace', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(this.state.race)
-        });
-
-        event.preventDefault();
-        toast("Race saved successfully");
-        this.dirty = false;
+        })
+        .then(toast("Race saved successfully"));
     }
 
 
     handleShuffle() {
-        fetch('api/Race/AssignStartNumbers/')
+        fetch('api/Race/AssignStartNumbers', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(this.state.race)
+        })
             .then(response => response.json())
             .then(data => {
                 this.setState({ groups: data, loading: false });
+                toast("Startnumbers have been assigned");
             });
     }
 
@@ -403,7 +394,7 @@ export class Race extends Component {
         return (
             <div>
                 <h1>Race</h1>
-                <form onSubmit={this.handleSubmit}>
+                <form>
                     {contents}
                 </form>
                 <ToastContainer />

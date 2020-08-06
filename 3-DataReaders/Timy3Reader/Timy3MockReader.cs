@@ -2,7 +2,7 @@
 using SchletterTiming.Model;
 using SchletterTiming.ReaderInterfaces;
 
-namespace Timy3Reader {
+namespace SchletterTiming.Timy3Reader {
     public class Timy3MockReader : ITimy3Reader {
         public void Init() {
             return;

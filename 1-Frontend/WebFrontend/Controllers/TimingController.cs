@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchletterTiming.Model;
 using SchletterTiming.RunningContext;
+using SchletterTiming.WebFrontend.Dto;
+using Group = SchletterTiming.Model.Group;
+using TimingValue = SchletterTiming.Model.TimingValue;
 
 namespace SchletterTiming.WebFrontend.Controllers {
     [Route("api/[controller]")]
@@ -14,15 +13,11 @@ namespace SchletterTiming.WebFrontend.Controllers {
     public class TimingController : ControllerBase {
 
         private readonly RaceService _raceService;
-        private readonly GroupService _groupService;
-        private readonly ParticipantService _participantService;
         private readonly TimingValueService _timingValueService;
 
 
-        public TimingController(RaceService raceService, GroupService groupService, ParticipantService participantService, TimingValueService timingValueService) {
+        public TimingController(RaceService raceService, TimingValueService timingValueService) {
             _raceService = raceService;
-            _groupService = groupService;
-            _participantService = participantService;
             _timingValueService = timingValueService;
         }
 
@@ -30,26 +25,33 @@ namespace SchletterTiming.WebFrontend.Controllers {
         [HttpGet("[action]")]
         public IEnumerable<GroupWithTime> LoadTimingValues() {
 
-            if (CurrentContext.Race is null) {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
                 return null;
             }
 
-            if (CurrentContext.Race.Groups is null) {
-                return null;
-            }
-
-            return ConvertModelToDto(CurrentContext.Race.Groups);
+            return ConvertModelToDto(_raceService.LoadCurrentRace().Groups);
         }
 
 
         [HttpGet("[action]")]
-        public IEnumerable<Dto.TimingValue> GetTimes() {
-            var tmpValues = GetTmpValues();
+        public IEnumerable<Dto.TimingValue> GetTimes(bool getLiveData) {
+            List<TimingValue> timingValues;
+            var currentRace = _raceService.LoadCurrentRace();
 
-            //var timingValues = CurrentContext.Reader.WaitForBulk();
-            //_timingValueService.Save();
+            if (getLiveData) {
+                timingValues = _timingValueService.WaitForBulk();
+                _timingValueService.SaveChangesToRaceFolder(currentRace, timingValues);
+            } else {
+                timingValues = _timingValueService.LoadLatestValuesFromRaceFolder(currentRace.Titel).ToList();
 
-            return ConvertTimingValuesModelToDto(tmpValues);
+                if (!timingValues.Any()) {
+                    timingValues = _timingValueService.WaitForBulk();
+                    _timingValueService.SaveChangesToRaceFolder(currentRace, timingValues);
+                }
+            }
+
+
+            return ConvertTimingValuesModelToDto(timingValues);
         }
 
         private List<TimingValue> GetTmpValues() {
@@ -76,14 +78,16 @@ namespace SchletterTiming.WebFrontend.Controllers {
         [HttpPost("[action]")]
         public IEnumerable<GroupWithTime> Assign([FromBody] IEnumerable<Dto.TimingValue> timingValues) {
 
-            CurrentContext.Timing = ConvertTimingValuesDtoToModel(timingValues).ToList();
+            var newTimingValues = ConvertTimingValuesDtoToModel(timingValues).ToList();
+            var currentRace = _raceService.LoadCurrentRace();
 
-            _timingValueService.Save();
-            _raceService.AddTimingValues();
-            _raceService.CalculateFinishTimes();
-            _raceService.Save(CurrentContext.Race.Titel);
+            _timingValueService.SaveChangesToRaceFolder(currentRace, newTimingValues);
 
-            return ConvertModelToDto(CurrentContext.Race.Groups);
+            _raceService.AddTimingValues(currentRace, newTimingValues);
+            _raceService.CalculateFinishTimes(currentRace);
+            _raceService.UpdateRace(currentRace);
+
+            return ConvertModelToDto(currentRace.Groups);
         }
 
         private IEnumerable<TimingValue> ConvertTimingValuesDtoToModel(IEnumerable<Dto.TimingValue> timingValues) {
@@ -96,6 +100,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
                 Time = timingValue.Time,
                 StartNumber = int.Parse(timingValue.StartNumber),
                 MeasurementNumber = timingValue.MeasurementNumber,
+                InternalId = timingValue.InternalId
             };
         }
 
@@ -110,6 +115,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
                 MeasurementNumber = timingValue.MeasurementNumber,
                 StartNumber = timingValue.StartNumber.ToString(),
                 Time = timingValue.Time,
+                InternalId = timingValue.InternalId
             };
         }
 
@@ -125,7 +131,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
                 Startnumber = @group.StartNumber,
                 Participant1Time = @group.Participant1?.FinishTime ?? DateTime.MinValue,
                 Participant2Time = @group.Participant2?.FinishTime ?? DateTime.MinValue,
-                FinishTime = @group.FinishTime
+                FinishTime = @group?.FinishTime ?? DateTime.MinValue,
             };
         }
     }

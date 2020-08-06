@@ -30,7 +30,7 @@ export class Layout extends Component {
                 <Nav.Link href="/categories">Categories</Nav.Link>
                 <Nav.Link href="/classes">Classes</Nav.Link>
                 <NavDropdown title="Race" id="basic-nav-dropdown">
-                  <NavDropdown.Item href="/race/race">Overview</NavDropdown.Item>
+                  <NavDropdown.Item href="/race/race/">Overview</NavDropdown.Item>
                   <NavDropdown.Item href="/race/racegroups">Groups</NavDropdown.Item>
                   {/* <NavDropdown.Item href="/race/raceparticipants">Participants</NavDropdown.Item> */}
                   <NavDropdown.Item href="/race/timing">Timing</NavDropdown.Item>

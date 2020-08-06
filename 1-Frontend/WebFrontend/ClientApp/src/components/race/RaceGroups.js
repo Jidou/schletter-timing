@@ -15,19 +15,19 @@ export class RaceGroups extends Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
         this.onChange = this.onChange.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
 
         this.state = { groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true };
 
-        fetch('api/RaceGroup/')
+        fetch('api/RaceGroup/GetAllGroupsOfRace')
             .then(response => response.json())
             .then(data => {
                 this.setState({ groups: data});
             });
 
-        fetch('api/Group/')
+        fetch('api/Group/GetAllAvailableGroups')
             .then(response => response.json())
             .then(data => {
                 this.setState({ allgroups: data, suggestions: data, loading: false, activePage: 1  });
@@ -63,10 +63,46 @@ export class RaceGroups extends Component {
     }
 
 
+    handleBlur(groupId, event) {
+        var groups = this.state.groups;
+        var index = groups.findIndex((x) => x.groupId === groupId);
+        var group = groups[index];
+
+        this.updateGroup(group);
+    }
+
+
+    updateGroup(group) {
+        fetch('api/RaceGroup/UpdateGroupToRace', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(group)
+        })
+            .then(response => response.json())
+            .then(data => {
+                var groups = this.state.groups;
+                var index = groups.findIndex((x) => x.groupId === data.groupId);
+                var oldGroup = groups[index];
+                oldGroup = data;
+                groups[index] = oldGroup;
+
+                this.setState({
+                    groups: groups
+                });
+
+                toast("Group: " + group.groupname + " successfully updated");
+            })
+    }
+
+
     handleAddGroup() {
         var newGroup = this.state.allgroups.find((x) => x.groupname === this.state.searchValue);
 
         if (!newGroup) {
+            toast(this.state.searchValue + " is not a valid group");
             return;
         }
 
@@ -82,45 +118,27 @@ export class RaceGroups extends Component {
             groups: groups
         });
 
-        fetch('api/RaceGroup/', {
+        fetch('api/RaceGroup/AddGroupToRace', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(this.state.groups)
+            body: JSON.stringify(newGroup)
         })
             .then(response => response.json())
             .then(data => {
-                this.setState({ groups: data });
+                var groups = this.state.groups;
+                var index = groups.findIndex((x) => x.groupId === data.groupId);
+                var group = groups[index];
+                groups[index] = group;
+
+                this.setState({
+                    groups: groups
+                });
+
+                toast("Group successfully added");
             });
-
-        toast("Groups saved successfully");
-    }
-
-
-    handleSubmit(event) {
-        fetch('api/Group/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.state.groups)
-        })
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ groups: data });
-            });
-
-
-        event.preventDefault();
-        toast("Groups saved successfully");
-    }
-
-
-    showGroupDetails() {
-
     }
 
 
@@ -140,10 +158,10 @@ export class RaceGroups extends Component {
                         {groups.map(group =>
                             <tr key={group.groupId}>
                                 <td>
-                                    <input type="text" id="groupname" onChange={this.handleChange.bind(this, group.groupId)} value={group.groupname}></input>
+                                    <input type="text" id="groupname" onChange={this.handleChange.bind(this, group.groupId)} onBlur={this.handleBlur.bind(this, group.groupId)} value={group.groupname}></input>
                                 </td>
                                 <td>
-                                    <input type="text" id="groupclass" onChange={this.handleChange.bind(this, group.groupId)} value={group.class}></input>
+                                    <input type="text" id="groupclass" onChange={this.handleChange.bind(this, group.groupId)} onBlur={this.handleBlur.bind(this, group.groupId)} value={group.class}></input>
                                 </td>
                                 <td>{group.participant1FullName}</td>
                                 <td>{group.participant2FullName}</td>
@@ -151,25 +169,12 @@ export class RaceGroups extends Component {
                         )}
                     </tbody>
                 </Table>
-
-                {/* <div>
-                    <nav aria-label="Page navigation example">
-                        <ul className="pagination">
-                            <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                            <li className="page-item"><a className="page-link" href="#">1</a></li>
-                            <li className="page-item"><a className="page-link" href="#">2</a></li>
-                            <li className="page-item"><a className="page-link" href="#">3</a></li>
-                            <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div> */}
             </div>
         );
     }
 
 
     getInputProps() {
-
         return {
             placeholder: "Groupname",
             value: this.state.searchValue,

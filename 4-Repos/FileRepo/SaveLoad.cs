@@ -6,6 +6,8 @@ using NLog;
 
 namespace SchletterTiming.FileRepo {
     public class SaveLoad {
+        private readonly string _fileRepoBasePath = $"{Environment.CurrentDirectory}\\Data";
+        private readonly string _fileRepoRacesBasePath = $"{Environment.CurrentDirectory}\\Data\\Races";
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         // TODO: fix getting SaveFileDirectory from configuration
@@ -21,38 +23,57 @@ namespace SchletterTiming.FileRepo {
         /// Checks and creates all files and directories needed
         /// </summary>
         public void Init() {
-            var path = $"{Environment.CurrentDirectory}\\Data";
+            var path = _fileRepoBasePath;
             if (!Directory.Exists(path)) {
                 Directory.CreateDirectory(path);
             }
 
-            path = $"{Environment.CurrentDirectory}\\Data\\Races";
+            path = _fileRepoRacesBasePath;
             if (!Directory.Exists(path)) {
                 Directory.CreateDirectory(path);
             }
 
-            path = $"{Environment.CurrentDirectory}\\Data\\Participants.json";
+            path = $"{_fileRepoBasePath}\\Participants.json";
             if (!File.Exists(path)) {
                 File.Create(path);
                 File.WriteAllText(path, "[]");
             }
 
-            path = $"{Environment.CurrentDirectory}\\Data\\Groups.json";
+            path = $"{_fileRepoBasePath}\\Groups.json";
             if (!File.Exists(path)) {
                 File.Create(path);
                 File.WriteAllText(path, "[]");
             }
 
-            path = $"{Environment.CurrentDirectory}\\Data\\Categories.json";
+            path = $"{_fileRepoBasePath}\\Categories.json";
             if (!File.Exists(path)) {
                 File.Create(path);
                 File.WriteAllText(path,"[]");
             }
 
-            path = $"{Environment.CurrentDirectory}\\Data\\Classes.json";
+            path = $"{_fileRepoBasePath}\\Classes.json";
             if (!File.Exists(path)) {
                 File.Create(path);
                 File.WriteAllText(path, "[]");
+            }
+        }
+
+
+        public void SerializeObjectFullPath<T>(T serializableObject, string path) {
+            if (serializableObject == null) {
+                return;
+            }
+
+            if (!path.EndsWith(".json")) {
+                path += ".json";
+            }
+
+            try {
+                using var file = File.CreateText(path);
+                var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+                serializer.Serialize(file, serializableObject);
+            } catch (Exception ex) {
+                logger.Error(ex);
             }
         }
 
@@ -63,28 +84,36 @@ namespace SchletterTiming.FileRepo {
         /// <typeparam name="T"></typeparam>
         /// <param name="serializableObject"></param>
         /// <param name="fileName"></param>
-        public void SerializeObject<T>(T serializableObject, string fileName) {
-            if (serializableObject == null) {
-                return;
+        public void SerializeObjectFilename<T>(T serializableObject, string fileName) {
+            if (!fileName.StartsWith(_fileRepoBasePath)) {
+                fileName = $"{_fileRepoBasePath}\\{fileName}";
+            }
+
+            SerializeObjectFullPath(serializableObject, fileName);
+        }
+
+
+        public T DeSerializeObjectFullPath<T>(string fileName) {
+            if (string.IsNullOrEmpty(fileName)) {
+                return default(T);
             }
 
             if (!fileName.EndsWith(".json")) {
                 fileName += ".json";
             }
 
-            if (!fileName.StartsWith($"{Environment.CurrentDirectory}\\Data")) {
-                fileName = $"{Environment.CurrentDirectory}\\Data\\{fileName}";
-            }
+            var objectOut = default(T);
 
             try {
-                using (StreamWriter file = File.CreateText(fileName)) {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Formatting = Formatting.Indented;
-                    serializer.Serialize(file, serializableObject);
-                }
+                using var file = File.OpenText(fileName);
+                var serializer = new JsonSerializer();
+                objectOut = (T)serializer.Deserialize(file, typeof(T));
             } catch (Exception ex) {
                 logger.Error(ex);
             }
+
+            return objectOut;
+
         }
 
 
@@ -94,32 +123,27 @@ namespace SchletterTiming.FileRepo {
         /// <typeparam name="T"></typeparam>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public T DeSerializeObject<T>(string fileName) {
-            if (string.IsNullOrEmpty(fileName)) {
-                return default(T);
-            }
-
-            if (!fileName.EndsWith(".json")) {
-                fileName += ".json";
-            }
-
+        public T DeSerializeObjectFilename<T>(string fileName) {
             if (!fileName.StartsWith($"{Environment.CurrentDirectory}\\Data")) {
                 fileName = $"{Environment.CurrentDirectory}\\Data\\{fileName}";
             }
 
+            return DeSerializeObjectFullPath<T>(fileName);
+        }
 
-            T objectOut = default(T);
 
-            try {
-                using (StreamReader file = File.OpenText(fileName)) {
-                    JsonSerializer serializer = new JsonSerializer();
-                    objectOut = (T)serializer.Deserialize(file, typeof(T));
-                }
-            } catch (Exception ex) {
-                logger.Error(ex);
+        public void RemoveTmpFiles(string defaultRaceTitel) {
+            if (Directory.Exists($"{_fileRepoRacesBasePath}\\{defaultRaceTitel}")) {
+                Directory.Delete($"{_fileRepoRacesBasePath}\\{defaultRaceTitel}", true);
             }
 
-            return objectOut;
+            if (File.Exists($"{_fileRepoRacesBasePath}\\{defaultRaceTitel}.json")) {
+                File.Delete($"{_fileRepoRacesBasePath}\\{defaultRaceTitel}.json");
+            }
+        }
+
+        public string[] GetFileList(string racename) {
+            return Directory.GetFiles($"{_fileRepoRacesBasePath}\\{racename}");
         }
     }
 }

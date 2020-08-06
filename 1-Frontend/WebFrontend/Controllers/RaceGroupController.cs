@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using SchletterTiming.RunningContext;
+using SchletterTiming.WebFrontend.Converter;
 using SchletterTiming.WebFrontend.Dto;
 
 namespace SchletterTiming.WebFrontend.Controllers {
@@ -9,106 +10,50 @@ namespace SchletterTiming.WebFrontend.Controllers {
     public class RaceGroupController : Controller {
 
         private readonly RaceService _raceService;
+        private readonly ParticipantService _participantService;
 
 
-        public RaceGroupController(RaceService raceService) {
+        public RaceGroupController(RaceService raceService, ParticipantService participantService) {
             _raceService = raceService;
+            _participantService = participantService;
         }
 
 
-        [HttpGet()]
-        public IEnumerable<Group> Get() {
-            if (CurrentContext.Race is null) {
+        [HttpGet("[action]")]
+        public IEnumerable<Group> GetAllGroupsOfRace() {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
                 return new List<Group>();
             }
 
-            var allGroups = CurrentContext.Race.Groups;
+            var allGroups = _raceService.LoadCurrentRace().Groups;
+            return GroupConverter.ConvertModelToDto(allGroups);
+        }
 
-            return ConvertModelToDto(allGroups);
+        
+        [HttpPost("[action]")]
+        public Group AddGroupToRace([FromBody] Group group) {
+            var participant1 = _participantService.LoadParticipantById(group.Participant1Id);
+            var participant2 = _participantService.LoadParticipantById(group.Participant2Id);
+            var newGroup = GroupConverter.ConvertDtoToModel(group, participant1, participant2);
+
+            _raceService.AddGroup(newGroup);
+
+            return GroupConverter.ConvertModelToDto(newGroup);
         }
 
 
+        [HttpPost("[action]")]
+        public Group UpdateGroupToRace([FromBody] Group group) {
+            var currentRace = _raceService.LoadCurrentRace();
+            var oldGroup = currentRace.Groups.SingleOrDefault(x => x.GroupId == group.GroupId);
 
-
-        [HttpPost()]
-        public IEnumerable<Group> Post([FromBody] IEnumerable<Group> groups) {
-            var groupsToAdd = groups.Where(x => x.ToAdd);
-            // TODO: delete
-            //var groupsToDelete = groups.Where(x => x.ToDelete);
-
-            var newGroups = new List<Model.Group>();
-
-            var tmp = groups.Where(x => !x.ToAdd && !x.ToDelete && !x.ToUpdate);
-            var groupsToKeep = CurrentContext.AllAvailableGroups.Where(x => tmp.Any(y => y.GroupId == x.GroupId));
-
-            newGroups.AddRange(ConvertDtoToModel(groupsToAdd));
-            newGroups.AddRange(groupsToKeep);
-
-            CurrentContext.Race.Groups = newGroups.ToList();
-            _raceService.Save(CurrentContext.Race.Titel);
-
-            return ConvertModelToDto(newGroups);
-        }
-
-
-        [HttpPost()]
-        public IEnumerable<Group> UpdateStartNumbers([FromBody] IEnumerable<GroupInfoForRace> groups) {
-            var raceGroups = CurrentContext.Race.Groups;
-
-            var enumerable = raceGroups as Model.Group[] ?? raceGroups.ToArray();
-
-            foreach (var @group in groups) {
-                foreach (var raceGroup in enumerable) {
-                    if (raceGroup.GroupId == @group.GroupId) {
-                        raceGroup.StartNumber = @group.StartNumber;
-                        break;
-                    }
-                }
+            if (oldGroup is null) {
+                return null;
             }
 
-            CurrentContext.Race.Groups = enumerable;
-            _raceService.Save(CurrentContext.Race.Titel);
-
-            return ConvertModelToDto(enumerable);
-        }
-
-
-        private IEnumerable<Model.Group> ConvertDtoToModel(IEnumerable<Group> updatedGroups) {
-            var currentGroups = CurrentContext.AllAvailableGroups;
-
-            foreach(var group in updatedGroups) {
-                var groupToUpdate = currentGroups.SingleOrDefault(x => x.GroupId == group.GroupId);
-
-                if (groupToUpdate == null) {
-                    yield return new Model.Group {
-                        GroupId = group.GroupId,
-                        Class = group.Class,
-                        Groupname = group.Groupname,
-                        Participant1 = CurrentContext.AllAvailableParticipants.SingleOrDefault(x => x.ParticipantId == group.Participant1Id),
-                        Participant2 = CurrentContext.AllAvailableParticipants.SingleOrDefault(x => x.ParticipantId == group.Participant2Id),
-                    };
-                } else {
-                    groupToUpdate.Groupname = group.Groupname;
-                    groupToUpdate.Class = group.Class;
-
-                    yield return groupToUpdate;
-                }
-            }
-        }
-
-
-        private IEnumerable<Group> ConvertModelToDto(IEnumerable<Model.Group> availableGroups) {
-            foreach (var group in availableGroups) {
-                yield return new Group {
-                    Groupname = group.Groupname,
-                    Class = group.Class,
-                    GroupId = group.GroupId,
-                    Participant1Id = group.Participant1?.ParticipantId ?? 0,
-                    Participant1FullName = $"{group.Participant1?.Firstname} {group.Participant1?.Lastname}",
-                    Participant2Id = group.Participant2?.ParticipantId ?? 0,
-                    Participant2FullName = $"{group.Participant2?.Firstname} {group.Participant2?.Lastname}",
-                };
-            }
+            var groupToUpdate = GroupConverter.ConvertDtoToModel(group, oldGroup.Participant1, oldGroup.Participant2);
+            _raceService.UpdateGroups(currentRace, groupToUpdate);
+            return GroupConverter.ConvertModelToDto(groupToUpdate);
         }
     }
 }

@@ -33,21 +33,21 @@ namespace SchletterTiming.WebFrontend.Controllers {
         [HttpGet("[action]")]
         public Dto.Result LoadResult() {
 
-            if (CurrentContext.Race is null) {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
                 return null;
             }
 
-            return ConvertModelToDto(CurrentContext.Race);
+            return ConvertModelToDto(_raceService.LoadCurrentRace());
         }
 
 
         [HttpGet("[action]")]
         public IEnumerable<Dto.Class> GetAllClasses() {
-            if (CurrentContext.Race is null || CurrentContext.Race.Groups is null) {
+            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
                 return null;
             }
 
-            var groups = CurrentContext.Race.Groups;
+            var groups = _raceService.LoadCurrentRace().Groups;
 
             var uniqueClasses = groups.Select(x => x.Class).Distinct();
 
@@ -59,13 +59,13 @@ namespace SchletterTiming.WebFrontend.Controllers {
         public byte[] GetLogo() {
             var path = $"{Environment.CurrentDirectory}\\Data\\Logo\\Logo.jpg";
 
-            // Load file meta data with FileInfo
+            // LoadRace file meta data with FileInfo
             var fileInfo = new FileInfo(path);
 
             // The byte[] to save the data in
             var data = new byte[fileInfo.Length];
 
-            // Load a filestream and put its content into the byte[]
+            // LoadRace a filestream and put its content into the byte[]
             using (var fs = fileInfo.OpenRead()) {
                 fs.Read(data, 0, data.Length);
             }
@@ -95,7 +95,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
 
         private IEnumerable<GroupResult> ConvertGroupModelToGroupResultDto(IEnumerable<Group> raceGroups) {
-            var bestTime = raceGroups.Min(x => x.TimeTaken);
+            var bestTime = raceGroups.Min(x => x.TimeTaken.Value);
 
             return raceGroups.Select(raceGroup => ConvertGroupModelToGroupResultDto(raceGroup, bestTime))
                 .OrderBy(x => x.FinishTime);
@@ -106,7 +106,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
             return new GroupResult {
                 GroupId = raceGroup.GroupId,
                 Selected = true,
-                FinishTime = raceGroup.FinishTime,
+                FinishTime = raceGroup.FinishTime.Value,
                 Groupname = raceGroup.Groupname,
                 GroupClass = raceGroup.Class,
                 Startnumber = raceGroup.StartNumber,
@@ -114,8 +114,8 @@ namespace SchletterTiming.WebFrontend.Controllers {
                 Participant1Category = $"{raceGroup.Participant1?.Category}",
                 Participant2Name = $"{raceGroup.Participant2?.Firstname} {raceGroup.Participant2?.Lastname}",
                 Participant2Category = $"{raceGroup.Participant2?.Category}",
-                TimeTaken = raceGroup.TimeTaken.ToString(@"c"),
-                TimeDiff = (raceGroup.TimeTaken - bestTime).ToString(@"c")
+                TimeTaken = raceGroup.TimeTaken.Value.ToString(@"c"),
+                TimeDiff = (raceGroup.TimeTaken - bestTime).Value.ToString(@"c")
             };
         }
     }

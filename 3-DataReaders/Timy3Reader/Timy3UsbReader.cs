@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Alge;
 using NLog;
-using System.Collections.Generic;
 using SchletterTiming.Model;
 using SchletterTiming.ReaderInterfaces;
 
-namespace Timy3Reader {
+namespace SchletterTiming.Timy3Reader {
     public class Timy3UsbReader : ITimy3Reader {
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

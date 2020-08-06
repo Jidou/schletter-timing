@@ -21,60 +21,34 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public void AddParticipants(string[] input) {
-            int.TryParse(input[0], out int groupId);
-            var group = CurrentContext.AllAvailableGroups.SingleOrDefault(x => x.Groupname == input[0] || x.GroupId == groupId);
-
-            if (group == null) {
-                logger.Info($"Unable to find group {input[0]}");
-                return;
-            }
-
-            var part1Ident = input[1];
-            var part1 = CurrentContext.AllAvailableParticipants.SingleOrDefault(x => $"{x.Firstname}_{x.Lastname}" == part1Ident);
-
-            if (part1 == null) {
-                logger.Info($"Unable to find participant {input[1]}");
-                return;
-            }
-
-            var part2Ident = input[2];
-            var part2 = CurrentContext.AllAvailableParticipants.SingleOrDefault(x => $"{x.Firstname}_{x.Lastname}" == part2Ident);
-
-            if (part1 == null) {
-                logger.Info($"Unable to find participant {input[2]}");
-                return;
-            }
-
-            group.Participant1 = part1;
-            group.Participant2 = part2;
-
-            logger.Info($"Group successfully updated");
-        }
-
-
-        public void Save() {
-            var allParticipants = CurrentContext.AllAvailableGroups;
-            _repo.SerializeObject(allParticipants, SaveFileName);
-        }
-
-
         public IEnumerable<Group> LoadAllAvailableGroups() {
-            var groups = (IEnumerable<Group>)CurrentContext.AllAvailableGroups;
-            if (groups != null) {
-                return groups;
-            }
+            return _repo.DeSerializeObjectFilename<IEnumerable<Group>>(SaveFileName);
+        }
 
-            groups = _repo.DeSerializeObject<IEnumerable<Group>>(SaveFileName);
 
-            if (groups != null) {
-                CurrentContext.AllAvailableGroups = groups.ToList();
-                return groups;
-            }
+        public Group AddGroup(Group newGroup) {
+            var allGroups = LoadAllAvailableGroups();
+            var nextGroupId = allGroups.Max(x => x.GroupId) + 1;
+            newGroup.GroupId = nextGroupId;
+            var allGroupsAsList = allGroups.ToList();
+            allGroupsAsList.Add(newGroup);
+            _repo.SerializeObjectFilename(allGroupsAsList, SaveFileName);
+            return newGroup;
+        }
 
-            groups = new List<Group>();
-            CurrentContext.AllAvailableGroups = groups.ToList();
-            return groups;
+
+        public Group Update(Group groupToUpdate) {
+            var allGroups = LoadAllAvailableGroups();
+            var allGroupsAsList = allGroups.ToList();
+            var oldGroup = allGroupsAsList.Find(x => x.GroupId == groupToUpdate.GroupId);
+            allGroupsAsList[allGroupsAsList.IndexOf(oldGroup)] = groupToUpdate;
+            _repo.SerializeObjectFilename(allGroupsAsList, SaveFileName);
+            return groupToUpdate;
+        }
+
+
+        public Group LoadGroupById(int groupId) {
+            return LoadAllAvailableGroups().SingleOrDefault(x => x.GroupId == groupId);
         }
     }
 }

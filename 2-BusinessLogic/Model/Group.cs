@@ -14,8 +14,8 @@ namespace SchletterTiming.Model {
         public string Class { get; set; }
 
         public int StartNumber { get; set; }
-        public DateTime FinishTime { get; set; }
-        public TimeSpan TimeTaken { get; set; }
+        public DateTime? FinishTime { get; set; }
+        public TimeSpan? TimeTaken { get; set; }
 
 
         public Group() { }

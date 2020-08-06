@@ -14,7 +14,6 @@ export class Participants extends Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleAddParticipant = this.handleAddParticipant.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
 
@@ -27,7 +26,7 @@ export class Participants extends Component {
 
         this.state = { participants: [], categories: [], suggestions: [], value: "", loading: true };
 
-        fetch('api/Participant/')
+        fetch('api/Participant/GetAllAvailableParticipants')
             .then(response => response.json())
             .then(data => {
                 this.setState({ participants: data, activePage: 1 });
@@ -161,25 +160,6 @@ export class Participants extends Component {
     }
 
 
-    handleSubmit(event) {
-        fetch('api/Participant/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.state.participants)
-        })
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ participants: data });
-            });
-
-        event.preventDefault();
-        toast("Participants saved successfully");
-    }
-
-
     getInputProps(category, participantId) {
         var categoryName = "";
 
@@ -192,7 +172,8 @@ export class Participants extends Component {
         return {
             placeholder: "Lauf/Rad",
             value: categoryName,
-            onChange: this.onChange.bind(this, participantId)
+            onChange: this.onChange.bind(this, participantId),
+            onBlur: this.handleBlur.bind(this, participantId)
         };
     }
 
@@ -291,7 +272,7 @@ export class Participants extends Component {
                         {participants.map(participant =>
                             <tr key={participant.participantId}>
                                 <td>
-                                    <input type="text" id="Firstname" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.firstname}></input>
+                                    <input autoFocus="false" type="text" id="Firstname" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.firstname}></input>
                                 </td>
                                 <td>
                                     <input type="text" id="Lastname" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.lastname}></input>
@@ -305,8 +286,6 @@ export class Participants extends Component {
                                         renderSuggestion={this.renderSuggestion}
                                         inputProps={this.getInputProps(participant.category, participant.participantId)}
                                     />
-
-                                    {/* <input type="text" id="Category" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.category}></input> */}
                                 </td>
                                 <td>
                                     <input type="text" id="YearOfBirth" onChange={this.handleChange.bind(this, participant.participantId)} onBlur={this.handleBlur.bind(this, participant.participantId)} value={participant.yearOfBirth}></input>
@@ -328,7 +307,7 @@ export class Participants extends Component {
         return (
             <div>
                 <h1>Participants</h1>
-                <form onSubmit={this.handleSubmit}>
+                <form>
                     <div>
                         <button type="button" onClick={this.handleAddParticipant} disabled={this.dirty} className="btn btn-primary">Add Participant</button>
                     </div>

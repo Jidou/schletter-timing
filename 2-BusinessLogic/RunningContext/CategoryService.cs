@@ -21,7 +21,7 @@ namespace SchletterTiming.RunningContext {
 
 
         public IEnumerable<AvailableCategory> LoadCategories() {
-            return _repo.DeSerializeObject<IEnumerable<AvailableCategory>>(SaveFileName);
+            return _repo.DeSerializeObjectFilename<IEnumerable<AvailableCategory>>(SaveFileName);
         }
 
 
@@ -45,7 +45,7 @@ namespace SchletterTiming.RunningContext {
                 CategoryName = newCategory
             });
             
-            _repo.SerializeObject(categoriesAsList, SaveFileName);
+            _repo.SerializeObjectFilename(categoriesAsList, SaveFileName);
         }
 
 
@@ -59,7 +59,7 @@ namespace SchletterTiming.RunningContext {
             }
 
             oldCategory.CategoryName = category.CategoryName;
-            _repo.SerializeObject(currentCategories, SaveFileName);
+            _repo.SerializeObjectFilename(currentCategories, SaveFileName);
         }
 
 
@@ -73,7 +73,7 @@ namespace SchletterTiming.RunningContext {
             }
 
             categoriesAsList.Remove(categoryToDelete);
-            _repo.SerializeObject(categoriesAsList, SaveFileName);
+            _repo.SerializeObjectFilename(categoriesAsList, SaveFileName);
         }
 
 
