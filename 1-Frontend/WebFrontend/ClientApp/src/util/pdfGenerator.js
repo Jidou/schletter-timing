@@ -89,6 +89,8 @@ export function generatePdfWithCustomResult(race, groups, customResultTitle, log
     doc.cell({ font: fonts.HelveticaBold, fontSize: 16, textAlign: 'left' }).text(customResultTitle);
     doc.cell({ paddingBottom: 0.5 * pdf.cm });
 
+    calcuateTimeDiffs(groups);
+
     addTable(doc, groups);
 
     download(doc, race.titel)
