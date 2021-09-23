@@ -21,7 +21,7 @@ namespace SchletterTiming.RunningContext {
 
 
         public IEnumerable<AvailableCategory> LoadCategories() {
-            return _repo.DeSerializeObjectFilename<IEnumerable<AvailableCategory>>(SaveFileName);
+            return _repo.DeSerializeObjectFilename<IEnumerable<AvailableCategory>>(SaveFileName) ?? new List<AvailableCategory>();
         }
 
 

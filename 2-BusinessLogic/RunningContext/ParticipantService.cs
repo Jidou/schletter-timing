@@ -42,7 +42,13 @@ namespace SchletterTiming.RunningContext {
 
         public Participant AddParticipant(Participant participant) {
             var allParticipants = LoadAllAvailableParticipants().ToList();
-            var nextId = allParticipants.Max(x => x.ParticipantId) + 1;
+
+            var nextId = 0;
+
+            if (allParticipants.Any()) {
+                nextId = allParticipants.Max(x => x.ParticipantId) + 1;
+            }
+
             participant.ParticipantId = nextId;
             allParticipants.Add(participant);
             _repo.SerializeObjectFilename(allParticipants, SaveFileName);

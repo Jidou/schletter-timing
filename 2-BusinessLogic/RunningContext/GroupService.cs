@@ -22,13 +22,19 @@ namespace SchletterTiming.RunningContext {
 
 
         public IEnumerable<Group> LoadAllAvailableGroups() {
-            return _repo.DeSerializeObjectFilename<IEnumerable<Group>>(SaveFileName);
+            return _repo.DeSerializeObjectFilename<IEnumerable<Group>>(SaveFileName) ?? new List<Model.Group>();
         }
 
 
         public Group AddGroup(Group newGroup) {
             var allGroups = LoadAllAvailableGroups();
-            var nextGroupId = allGroups.Max(x => x.GroupId) + 1;
+
+            var nextGroupId = 0;
+
+            if (allGroups.Any()) {
+                nextGroupId = allGroups.Max(x => x.GroupId) + 1;
+            }
+
             newGroup.GroupId = nextGroupId;
             var allGroupsAsList = allGroups.ToList();
             allGroupsAsList.Add(newGroup);

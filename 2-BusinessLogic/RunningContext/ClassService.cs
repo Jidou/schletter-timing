@@ -22,7 +22,7 @@ namespace SchletterTiming.RunningContext {
 
 
         public IEnumerable<AvailableClass> LoadClasses() {
-            return _repo.DeSerializeObjectFilename<IEnumerable<AvailableClass>>(SaveFileName);
+            return _repo.DeSerializeObjectFilename<IEnumerable<AvailableClass>>(SaveFileName) ?? new List<AvailableClass>();
         }
 
 

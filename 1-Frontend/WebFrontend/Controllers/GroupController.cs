@@ -26,6 +26,10 @@ namespace SchletterTiming.WebFrontend.Controllers {
         public IEnumerable<Group> GetAllAvailableGroups() {
             var allAvailableGroups = _groupService.LoadAllAvailableGroups();
 
+            if (allAvailableGroups is null) {
+                return GroupConverter.ConvertModelToDto(new List<Model.Group>());
+            }
+
             return GroupConverter.ConvertModelToDto(allAvailableGroups);
         }
 
