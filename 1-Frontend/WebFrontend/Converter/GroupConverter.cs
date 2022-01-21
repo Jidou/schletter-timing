@@ -24,7 +24,7 @@ namespace SchletterTiming.WebFrontend.Converter {
 
 
         public static IEnumerable<Group> ConvertModelToDto(IEnumerable<Model.Group> availableGroups) {
-            return availableGroups.Select(ConvertModelToDto);
+            return availableGroups.Select(ConvertModelToDto).OrderBy(x => x.StartNumber);
         }
 
 
@@ -33,6 +33,7 @@ namespace SchletterTiming.WebFrontend.Converter {
                 Groupname = group.Groupname,
                 GroupId = group.GroupId,
                 Class = group.Class,
+                StartNumber = group.StartNumber,
                 Participant1Id = group.Participant1?.ParticipantId ?? 0,
                 Participant1FullName = group.Participant1?.Fullname() ?? string.Empty,
                 Participant2Id = group.Participant2?.ParticipantId ?? 0,

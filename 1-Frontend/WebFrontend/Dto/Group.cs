@@ -10,6 +10,7 @@
         public bool ToDelete { get; set; }
         public bool ToAdd { get; set; }
         public bool ToUpdate { get; set; }
+        public int StartNumber { get; set; }
     }
 
 

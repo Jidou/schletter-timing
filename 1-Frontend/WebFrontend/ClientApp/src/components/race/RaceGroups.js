@@ -148,15 +148,17 @@ export class RaceGroups extends Component {
                 <Table striped hover>
                     <thead>
                         <tr>
+                            <th>Startnummer</th>
                             <th>Groupname</th>
                             <th>Class</th>
-                            <th>Participant 1</th>
-                            <th>Participant 2</th>
+                            <th>Läufer</th>
+                            <th>Rad/E-Bike</th>
                         </tr>
                     </thead>
                     <tbody>
                         {groups.map(group =>
                             <tr key={group.groupId}>
+                                <td>{group.startNumber}</td>
                                 <td>
                                     <input type="text" id="groupname" onChange={this.handleChange.bind(this, group.groupId)} onBlur={this.handleBlur.bind(this, group.groupId)} value={group.groupname}></input>
                                 </td>

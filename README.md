@@ -132,15 +132,20 @@
     * [ ] `Autosuggestion` might cause performance issues on larger pages (Group and Participant Overview), look for alternative or improve it
     * [ ] Overhaul workflow
       * [ ] Add Option to Add Groups via the Race Overview page
+      * [ ] Remove global Group DB (To many changes between the years, to be of use)
     * [ ] Rethink Pagination for global pages
-      * [ ] Groups
       * [ ] Participants
     * [ ] i18n
       * [ ] Basic Setup
       * [ ] English
-      * [ ] German
       * [ ] Tirol
+      * [ ] German
+    * [ ] Results
+      * [ ] Multiselect/unselect (Whole group)
+      * [ ] Try to fetch name of list for name of generated file
   * [ ] future Release
+    * [ ] UX
+      * [ ] Improve Add functionality
     * [ ] Data Science Stuff ;)
       * [ ] Add Option to load multiple races for statistics
       * [ ] Add search and display options

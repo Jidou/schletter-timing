@@ -21,6 +21,11 @@ namespace SchletterTiming.WebFrontend.Controllers {
         [HttpGet("[action]")]
         public IEnumerable<Dto.AvailableCategory> GetAvailableCategories() {
             var availableCategories = _categoryService.LoadCategories();
+
+            if (availableCategories is null) {
+                return new List<Dto.AvailableCategory>();
+            }
+
             return ConvertModelToDto(availableCategories);
         }
 

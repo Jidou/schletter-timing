@@ -85,6 +85,8 @@ export function generatePdfWithCustomResult(race, groups, customResultTitle, log
     addHeader(doc, race, logo);
     addFooter(doc);
 
+    calcuateTimeDiffs(groups);
+
     doc.cell({ paddingBottom: 0.5 * pdf.cm });
     doc.cell({ font: fonts.HelveticaBold, fontSize: 16, textAlign: 'left' }).text(customResultTitle);
     doc.cell({ paddingBottom: 0.5 * pdf.cm });
@@ -106,10 +108,10 @@ export function test () {
 
     var header = doc.header();
     var headerTable = header.table({ widths: [null] })
-    headerTable.row().cell().text({ textAlign: 'center', fontSize: 14, font: fonts.HelveticaBold }).add('SchletterTrophy - Summer Challenge 2019')
+    headerTable.row().cell().text({ textAlign: 'center', fontSize: 14, font: fonts.HelveticaBold }).add('SchletterTrophy - Summer Challenge 2020')
     headerTable.row().cell().text({ textAlign: 'center', paddingBottom: 0.5 * pdf.cm }).add('Lauf- Rad Kombination\nOffizielle Ergebnissliste')
 
-    var today = new Date("2020-01-15");
+    var today = new Date("2020-09-18");
     var da = new Intl.DateTimeFormat('de', { year: 'numeric' }).format(today);
     var mo = new Intl.DateTimeFormat('de', { month: 'short' }).format(today);
     var ye = new Intl.DateTimeFormat('de', { day: '2-digit' }).format(today);
