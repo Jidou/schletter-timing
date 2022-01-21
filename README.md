@@ -7,6 +7,9 @@
       1. [Reading Data](#reading-data)
       2. [Console Frontend](#console-frontend)
       3. [Web Frontend](#web-frontend)
+         1. [2.0](#20)
+         2. [3.0](#30)
+         3. [Possible future features](#possible-future-features)
    4. [Testing](#testing)
 
 ## TODO
@@ -59,99 +62,110 @@
 
 ### Web Frontend
 
-* [ ] Web Frontend Features:
-  * [ ] 2.0 Release
-    * [x] Create race
-    * [x] Add Participants
-    * [x] Add Groups
-    * [x] Add Participants to Group
-    * [x] Add Groups to Race
-    * [x] Assign Start Numbers
-      * [ ] ~~Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server~~
-      * [x] Can be triggered multiple times with different results
-    * [x] Add Option to trigger timing value load from device
-      * [x] Test load from device with Web Frontend
-    * [x] Add Option to generate PDF(s)
-      * [x] Implement PDF generation in javascript
-      * [x] Add different options (by Group, by Class, ...)
-    * [x] Add Overview of all Participants ever, without groups
-    * [x] Add Overview of all Groups ever, with latest Participants
-    * [x] Add Overview of all Races
-    * [x] Add Option to load old Races
-    * [x] Add Option to create new Races
-      * [x] Add new CRU(D) functionality to Race detail page
-    * [x] Add Overview of Current Groups in loaded Race (old or new)
-    * [x] Remove `CurrentContext` to enable easier live reload
-    * [x] (**IMPORTANT**) Test everything done up to this point
-      * [x] Categories
-        * [x] Create
-        * [x] Read
-        * [x] Update
-      * [x] Classes
-        * [x] Create
-        * [x] Read
-        * [x] Update
-      * [x] Participants
-        * [x] Create
-        * [x] Read
-        * [x] Update
-      * [x] Groups
-        * [x] Create
-        * [x] Read
-        * [x] Update
-        * [x] Participant assignment
-      * [x] Race
-        * [x] Create new Race
-        * [x] Load old Race
-        * [x] Add Groups
-        * [x] Manipulate Groups in Race only
-          * [x] Add implementation of `onBlur`
-        * [x] Assign Start numbers
-        * [x] Load Timing Values from Device
-        * [x] Assign Timing Values to Groups
-        * [x] Results
-          * [x] Show overall results
-          * [x] Toggle Classes grouping
-            * [x] Unselect all Groups in Grouping
-          * [x] Toggle Custom result
-            * [x] Custom Result title is used for PDF
-            * [x] Unselect is working
-    * [ ] Release Preparations
-  * [ ] next Release
-    * [ ] Check if `Model.Group.Groupnumber` is still needed
-    * [ ] Make `FinishTime` in Group nullable
-    * [ ] Autofocus newly created element on large pages
-    * [ ] Sortable [table](https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/basic-sort.html)
-    * [ ] Add Delete Option
-      * [ ] Group.js
-      * [ ] Participant.js
-      * [ ] RaceGroups.js
-      * [ ] ~~RaceParticipants.js~~
-      * [ ] Categories.js
-      * [ ] Classes.js
-    * [ ] `Autosuggestion` might cause performance issues on larger pages (Group and Participant Overview), look for alternative or improve it
-    * [ ] Overhaul workflow
-      * [ ] Add Option to Add Groups via the Race Overview page
-      * [ ] Remove global Group DB (To many changes between the years, to be of use)
-    * [ ] Rethink Pagination for global pages
-      * [ ] Participants
-    * [ ] i18n
-      * [ ] Basic Setup
-      * [ ] English
-      * [ ] Tirol
-      * [ ] German
-    * [ ] Results
-      * [ ] Multiselect/unselect (Whole group)
-      * [ ] Try to fetch name of list for name of generated file
-  * [ ] future Release
-    * [ ] UX
-      * [ ] Improve Add functionality
-    * [ ] Data Science Stuff ;)
-      * [ ] Add Option to load multiple races for statistics
-      * [ ] Add search and display options
-        * [ ] Fastest group ever
-        * [ ] Time of group over multiple years
-        * ...
+#### 2.0
+
+* [x] 2.0 Release
+  * [x] Create race
+  * [x] Add Participants
+  * [x] Add Groups
+  * [x] Add Participants to Group
+  * [x] Add Groups to Race
+  * [x] Assign Start Numbers
+    * [ ] ~~Resulting numbers are __Immutable__ in Frontend, but __Mutable__ on Server~~
+    * [x] Can be triggered multiple times with different results
+  * [x] Add Option to trigger timing value load from device
+    * [x] Test load from device with Web Frontend
+  * [x] Add Option to generate PDF(s)
+    * [x] Implement PDF generation in javascript
+    * [x] Add different options (by Group, by Class, ...)
+  * [x] Add Overview of all Participants ever, without groups
+  * [x] Add Overview of all Groups ever, with latest Participants
+  * [x] Add Overview of all Races
+  * [x] Add Option to load old Races
+  * [x] Add Option to create new Races
+    * [x] Add new CRU(D) functionality to Race detail page
+  * [x] Add Overview of Current Groups in loaded Race (old or new)
+  * [x] Remove `CurrentContext` to enable easier live reload
+  * [x] (**IMPORTANT**) Test everything done up to this point
+    * [x] Categories
+      * [x] Create
+      * [x] Read
+      * [x] Update
+    * [x] Classes
+      * [x] Create
+      * [x] Read
+      * [x] Update
+    * [x] Participants
+      * [x] Create
+      * [x] Read
+      * [x] Update
+    * [x] Groups
+      * [x] Create
+      * [x] Read
+      * [x] Update
+      * [x] Participant assignment
+    * [x] Race
+      * [x] Create new Race
+      * [x] Load old Race
+      * [x] Add Groups
+      * [x] Manipulate Groups in Race only
+        * [x] Add implementation of `onBlur`
+      * [x] Assign Start numbers
+      * [x] Load Timing Values from Device
+      * [x] Assign Timing Values to Groups
+      * [x] Results
+        * [x] Show overall results
+        * [x] Toggle Classes grouping
+          * [x] Unselect all Groups in Grouping
+        * [x] Toggle Custom result
+          * [x] Custom Result title is used for PDF
+          * [x] Unselect is working
+  * [x] Release Preparations
+
+#### 3.0
+
+* [ ] next Release
+  * [ ] Overhaul workflow
+    * [ ] Add Option to Add Groups via the Race Overview page
+    * [ ] Remove global Group DB (To many changes between the years, to be of use)
+  * [ ] Rethink Pagination for global pages
+    * [ ] Participants
+  * [ ] Check if `Model.Group.Groupnumber` is still needed
+  * [ ] Make `FinishTime` in Group nullable
+  * [ ] New feature multiple start times (Groups 1-10 with starting time 1, then 11-20 with starting time 2, ...)
+    * [ ] Enable selection of multiple starting times
+    * [ ] Add Grouping features
+    * [ ] Assign starting time to Grouping
+  * [ ] Autofocus newly created element on large pages
+  * [ ] Sortable [table](https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/basic-sort.html)
+  * [ ] Add Delete Option
+    * [ ] Group.js
+    * [ ] Participant.js
+    * [ ] RaceGroups.js
+    * [ ] ~~RaceParticipants.js~~
+    * [ ] Categories.js
+    * [ ] Classes.js
+  * [ ] `Autosuggestion` might cause performance issues on larger pages (Group and Participant Overview), look for alternative or improve it
+  * [ ] i18n
+    * [ ] Basic Setup
+    * [ ] English
+    * [ ] Tirol
+    * [ ] German
+  * [ ] Results
+    * [ ] Multiselect/unselect (Whole group)
+    * [ ] Try to fetch name of list for name of generated file
+
+#### Possible future features
+
+* [ ] future Release
+  * [ ] UX
+    * [ ] Improve Add functionality
+  * [ ] Data Science Stuff ;)
+    * [ ] Add Option to load multiple races for statistics
+    * [ ] Add search and display options
+      * [ ] Fastest group ever
+      * [ ] Time of group over multiple years
+      * ...
 
 ## Testing
 
