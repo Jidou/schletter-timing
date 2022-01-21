@@ -11,6 +11,7 @@ import { Timing } from './components/race/Timing';
 import { Result } from './components/race/Result';
 import { RaceOverview } from './components/RaceOverview';
 import { Groups } from './components/Groups';
+import { Importer } from './components/Importer';
 import { Participants } from './components/Participants';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -32,6 +33,7 @@ export default class App extends Component {
         <Route path='/participants' component={Participants} />
         <Route path='/categories' component={Categories} />
         <Route path='/classes' component={Classes} />
+        <Route path='/importer' component={Importer} />
       </Layout>
     );
   }

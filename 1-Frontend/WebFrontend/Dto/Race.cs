@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SchletterTiming.Model;
 
 namespace SchletterTiming.WebFrontend.Dto {
@@ -11,5 +12,6 @@ namespace SchletterTiming.WebFrontend.Dto {
         public string Place { get; set; }
         public string Judge { get; set; }
         public TimingTools TimingTool { get; set; }
+        public IEnumerable<GroupInfoForRace> Groups { get; set; }
     }
 }

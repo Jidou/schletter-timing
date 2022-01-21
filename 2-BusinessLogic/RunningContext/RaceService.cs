@@ -125,6 +125,36 @@ namespace SchletterTiming.RunningContext {
         }
 
 
+        public void CheckUpload(IEnumerable<Model.Upload> uploads) {
+            var race = LoadCurrentRace();
+            var groups = race.Groups.ToList();
+
+            foreach (var upload in uploads) {
+                if (groups.Any(x => x.Groupname == upload.Groupname)) {
+                    var group = race.Groups.Single(x => x.Groupname == upload.Groupname);
+
+                    if (group.Participant1 == upload.Participant1 && group.Participant2 == upload.Participant2) {
+                        continue;
+                    } else {
+                        group.Participant1 = upload.Participant1;
+                        group.Participant2 = upload.Participant2;
+                    }
+                } else {
+                    groups.Add(new Group {
+                        Class = string.Empty,
+                        Groupname = upload.Groupname,
+                        Participant1 = upload.Participant1,
+                        Participant2 = upload.Participant2,
+                    });
+                }
+            }
+
+            race.Groups = groups;
+
+            Update(race);
+        }
+
+
         private void Update(Race race) {
             var filename = $"{RacesBaseFolder}/{race.Titel}";
             _repo.SerializeObjectFilename<Race>(race, filename);

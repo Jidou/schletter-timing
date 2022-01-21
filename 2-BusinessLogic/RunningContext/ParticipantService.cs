@@ -35,8 +35,13 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public Participant LoadParticipantByName(string partIdent) {
-            return LoadAllAvailableParticipants().SingleOrDefault(x => $"{x.Firstname}_{x.Lastname}" == partIdent);
+        //public Participant LoadParticipantByName(string partIdent) {
+        //    return LoadAllAvailableParticipants().SingleOrDefault(x => $"{x.Firstname}_{x.Lastname}" == partIdent);
+        //}
+
+
+        public Participant LoadParticipantByName(string name) {
+            return LoadAllAvailableParticipants().SingleOrDefault(x => CompareName(x.Firstname, x.Lastname, name));
         }
 
 
@@ -61,6 +66,46 @@ namespace SchletterTiming.RunningContext {
             var oldParticipant = allParticipants.Find(x => x.ParticipantId == participantToUpdate.ParticipantId);
             allParticipants[allParticipants.IndexOf(oldParticipant)] = participantToUpdate;
             _repo.SerializeObjectFilename(allParticipants, SaveFileName);
+        }
+
+
+        public void CheckUpload(IEnumerable<string> allParticipants, string category) {
+            var allAvailableParticipants = LoadAllAvailableParticipants();
+
+            foreach (var participant in allParticipants) {
+                var nameSplit = participant.Split(' ');
+                var found = false;
+
+                foreach (var availableParticipant in allAvailableParticipants) {
+                    if (CompareName(availableParticipant.Firstname, availableParticipant.Lastname, participant)) {
+
+                        if (availableParticipant.Category != category) {
+                            availableParticipant.Category = category;
+                            UpdateParticipant(availableParticipant);
+                        } else {
+                            found = true;
+                        }
+
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    AddParticipant(new Participant {
+                        Firstname = nameSplit[0],
+                        Lastname = nameSplit[1],
+                        Category = category,
+                    });
+                }
+            }
+        }
+
+
+        private bool CompareName(string firstname, string lastname, string fullname) {
+            var nameSplit = fullname.Split(' ');
+
+            return (firstname == nameSplit[0] && lastname == nameSplit[1]) ||
+                   (firstname == nameSplit[1] && lastname == nameSplit[0]);
         }
     }
 }

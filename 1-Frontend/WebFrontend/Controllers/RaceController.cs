@@ -106,6 +106,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
                 Date = currentRace.Date,
                 TimingTool = currentRace.TimingTool,
                 StartTime = currentRace.StartTime,
+                Groups = ConvertGroupModelsToDto(currentRace.Groups)
             };
         }
 
