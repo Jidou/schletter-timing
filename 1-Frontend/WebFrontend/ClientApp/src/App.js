@@ -21,14 +21,14 @@ export default class App extends Component {
     return (
       <Layout>
         <Route exact path='/' component={Home} />
-        <Route path='/race/race/:name' component={Race} />
+        <Route path='/race/race/' component={Race} />
         <Route path='/race/newrace/' component={Race} />
         <Route path='/race/racegroups' component={RaceGroups} />
         {/* <Route path='/race/raceparticipants' component={RaceParticipants} /> */}
         <Route path='/race/timing' component={Timing} />
         <Route path='/race/result' component={Result} />
         <Route path='/raceoverview' component={RaceOverview} />
-        <Route path='/groups' component={Groups} />
+        {/* <Route path='/groups' component={Groups} /> */}
         <Route path='/participants' component={Participants} />
         <Route path='/categories' component={Categories} />
         <Route path='/classes' component={Classes} />

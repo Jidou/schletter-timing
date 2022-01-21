@@ -25,7 +25,7 @@ export class Layout extends Component {
             <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
               <Nav className="mr-auto">
                 <Nav.Link href="/raceoverview">Races</Nav.Link>
-                <Nav.Link href="/groups">Groups</Nav.Link>
+                {/* <Nav.Link href="/groups">Groups</Nav.Link> */}
                 <Nav.Link href="/participants">Participants</Nav.Link>
                 <Nav.Link href="/categories">Categories</Nav.Link>
                 <Nav.Link href="/classes">Classes</Nav.Link>

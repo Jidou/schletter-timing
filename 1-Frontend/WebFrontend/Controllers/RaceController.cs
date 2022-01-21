@@ -43,7 +43,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         [HttpGet("[action]")]
         public Race CreateNewRace() {
-            _raceService.UnsetCurrentRace();
+            //_raceService.UnsetCurrentRace();
             return ConvertModelToDto(_raceService.CreateEmptyRace());
         }
 

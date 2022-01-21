@@ -126,8 +126,10 @@
 
 * [ ] next Release
   * [ ] Overhaul workflow
+    * [x] Remove global Group DB (To many changes between the years, to be of use)
     * [ ] Add Option to Add Groups via the Race Overview page
-    * [ ] Remove global Group DB (To many changes between the years, to be of use)
+  * [ ] CSV Importer
+  * [x] Fix race load error
   * [ ] Rethink Pagination for global pages
     * [ ] Participants
   * [ ] Check if `Model.Group.Groupnumber` is still needed

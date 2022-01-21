@@ -62,7 +62,11 @@ export class RaceOverview extends Component {
 
 
     handleLoad(racename, event) {
-        this.props.history.push("/race/race/" + racename);
+        fetch('api/Race/SetCurrentRace?racename=' + racename)
+            .then(response => response.json())
+            .then(_ => {
+                this.props.history.push("/race/race/");
+            });
     }
 
 

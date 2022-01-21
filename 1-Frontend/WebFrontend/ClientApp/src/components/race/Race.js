@@ -90,46 +90,23 @@ export class Race extends Component {
         this.handleChangeInChild = this.handleChangeInChild.bind(this);
         this.handleChangeInTable = this.handleChangeInTable.bind(this);
         this.handleTableBlur = this.handleTableBlur.bind(this);
-        this.state = { race: [], groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true };
+        this.state = { race: [], groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true, newRace: false };
 
-        if (this.props.match.path === '/race/race/:name') {
-            var racename = this.props.match.params.name;
-
-            fetch('api/Race/SetCurrentRace?racename=' + racename)
-                .then(_ => {
-                    fetch('api/Race/LoadRace')
-                        .then(response => response.json())
-                        .then(data => {
-                            this.setState({ race: data });
-                            fetch('api/Race/GetGroupInfoForRace')
-                                .then(response => response.json())
-                                .then(data => {
-                                    this.setState({ groups: data, loading: false });
-                                });
-                        });
+        if (this.props.match.url === '/race/newrace') {
+            fetch('api/Race/CreateNewRace')
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({ race: data, groups: [], newRace: true, loading: false });
                 });
-                            
-        } else if (this.props.match.url === '/race/race') {
+        } else {
             fetch('api/Race/LoadRace')
                 .then(response => response.json())
                 .then(data => {
                     this.setState({ race: data });
-                    fetch('api/RaceGroup/GetGroupInfoForRace')
+                    fetch('api/RaceGroup/GetAllGroupsOfRace')
                         .then(response => response.json())
                         .then(data => {
-                            this.setState({ groups: data, loading: false });
-                        });
-                });
-
-        } else if (this.props.match.url === '/race/newrace') {
-            fetch('api/Race/CreateNewRace')
-                .then(response => response.json())
-                .then(data => {
-                    this.setState({ race: data });
-                    fetch('api/Race/GetGroupInfoForRace')
-                        .then(response => response.json())
-                        .then(data => {
-                            this.setState({ groups: data, loading: false });
+                            this.setState({ groups: data, newRace: false, loading: false });
                         });
                 });
         }
@@ -325,7 +302,7 @@ export class Race extends Component {
     }
 
 
-    handleBlur(event) {
+    handleBlur(event) {        
         fetch('api/Race/UpdateRace', {
             method: 'POST',
             headers: {
@@ -335,6 +312,14 @@ export class Race extends Component {
             body: JSON.stringify(this.state.race)
         })
         .then(toast("Race saved successfully"));
+
+        if (this.state.newRace && this.state.race.racename !== "") {
+            fetch('api/Race/SetCurrentRace?racename=' + this.state.race.racename)
+                .then(response => response.json())
+                .then(_ => {
+                    this.setState({newRace: false});
+                });
+        }
     }
 
 
