@@ -24,11 +24,16 @@ namespace SchletterTiming.WebFrontend.Controllers {
 
         [HttpPost("[action]")]
         public Race Upload([FromBody] IEnumerable<Dto.Upload> uploads) {
-            var runners = uploads.Select(x => x.Participant1);
-            var bikers = uploads.Select(x => x.Participant2);
+            var runners = uploads.Where(x => x.Category1 == "Lauf").Select(x => x.Participant1).ToList();
+            runners.AddRange(uploads.Where(x => x.Category2 == "Lauf").Select(x => x.Participant2).ToList());
+            var bikers = uploads.Where(x => x.Category1 == "Rad").Select(x => x.Participant1).ToList();
+            bikers.AddRange(uploads.Where(x => x.Category2 == "Rad").Select(x => x.Participant2).ToList());
+            var eBikers = uploads.Where(x => x.Category1 == "E-Bike").Select(x => x.Participant1).ToList();
+            eBikers.AddRange(uploads.Where(x => x.Category2 == "E-Bike").Select(x => x.Participant2).ToList());
 
             _participantService.CheckUpload(runners, "Läufer");
             _participantService.CheckUpload(bikers, "Radfahrer");
+            _participantService.CheckUpload(eBikers, "E-Biker");
 
             var uploadsModel = uploads.Select(ConvertDtoToModel);
 

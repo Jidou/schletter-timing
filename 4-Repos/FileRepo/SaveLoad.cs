@@ -143,6 +143,7 @@ namespace SchletterTiming.FileRepo {
         }
 
         public string[] GetFileList(string racename) {
+            Directory.CreateDirectory($"{_fileRepoRacesBasePath}\\{racename}");
             return Directory.GetFiles($"{_fileRepoRacesBasePath}\\{racename}");
         }
     }
