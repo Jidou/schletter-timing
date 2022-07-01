@@ -125,30 +125,19 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public void CheckUpload(IEnumerable<Model.Upload> uploads) {
+        public void CheckUpload(IEnumerable<Upload> uploads) {
             var race = LoadCurrentRace();
             var groups = race.Groups.ToList();
             var groupId = 0;
 
             foreach (var upload in uploads) {
-                if (groups.Any(x => x.Groupname == upload.Groupname)) {
-                    var group = race.Groups.Single(x => x.Groupname == upload.Groupname);
-
-                    if (group.Participant1 == upload.Participant1 && group.Participant2 == upload.Participant2) {
-                        continue;
-                    } else {
-                        group.Participant1 = upload.Participant1;
-                        group.Participant2 = upload.Participant2;
-                    }
-                } else {
-                    groups.Add(new Group {
-                        Class = upload.Class,
-                        GroupId = groupId,
-                        Groupname = upload.Groupname,
-                        Participant1 = upload.Participant1,
-                        Participant2 = upload.Participant2,
-                    });
-                }
+                groups.Add(new Group {
+                    Class = upload.Class,
+                    GroupId = groupId,
+                    Groupname = upload.Groupname,
+                    Participant1 = upload.Participant1,
+                    Participant2 = upload.Participant2,
+                });
 
                 groupId++;
             }
@@ -223,11 +212,8 @@ namespace SchletterTiming.RunningContext {
         }
 
 
-        public void UpdateGroups(Race currentRace, Group groupToUpdate) {
-            var currentGroups = currentRace.Groups.ToList();
-            var oldGroup = currentGroups.Find(x => x.GroupId == groupToUpdate.GroupId);
-            currentGroups[currentGroups.IndexOf(oldGroup)] = groupToUpdate;
-            currentRace.Groups = currentGroups;
+        public void UpdateGroups(Race currentRace, IEnumerable<Group> newGroups) {
+            currentRace.Groups = newGroups;
             Update(currentRace);
         }
     }

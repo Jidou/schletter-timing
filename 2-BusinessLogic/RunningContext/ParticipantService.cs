@@ -61,6 +61,34 @@ namespace SchletterTiming.RunningContext {
         }
 
 
+        public Participant LoadOrAddParticipant(string name, string category) {
+            if (string.IsNullOrEmpty(name)) {
+                return null;
+            }
+
+            var allParticipants = LoadAllAvailableParticipants();
+
+            var participant = allParticipants.SingleOrDefault(x => CompareName(x.Firstname, x.Lastname, name));
+
+            if (participant != null) {
+                return participant;
+            }
+
+            var nameSplit = name.Split(' ');
+
+            if (nameSplit.Length > 1) {
+                var newParticipant = new Participant {
+                    Firstname = nameSplit[0],
+                    Lastname = nameSplit[1],
+                    Category = category,
+                };
+
+                return AddParticipant(newParticipant);
+            }
+
+            return null;
+        }
+
         public void UpdateParticipant(Participant participantToUpdate) {
             var allParticipants = LoadAllAvailableParticipants().ToList();
             var oldParticipant = allParticipants.Find(x => x.ParticipantId == participantToUpdate.ParticipantId);

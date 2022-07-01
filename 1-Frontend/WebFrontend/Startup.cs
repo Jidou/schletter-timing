@@ -25,7 +25,6 @@ namespace SchletterTiming.WebFrontend {
             services.AddTransient<RaceService>();
             services.AddTransient<CategoryService>();
             services.AddTransient<ClassService>();
-            services.AddTransient<GroupService>();
             services.AddTransient<ParticipantService>();
             services.AddTransient<TimingValueService>();
             services.AddTransient<SaveLoad>();

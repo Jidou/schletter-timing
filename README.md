@@ -160,17 +160,18 @@
   * [ ] Overhaul workflow
     * [x] Remove global Group DB (To many changes between the years, to be of use)
     * [ ] Add Option to Add Groups via the Race Overview page
-  * [ ] CSV Importer
+  * [x] CSV Importer
   * [x] Fix race load error
   * [ ] Rethink Pagination for global pages
     * [ ] Participants
-  * [ ] Check if `Model.Group.Groupnumber` is still needed
-  * [ ] Make `FinishTime` in Group nullable
+  * [x] Check if `Model.Group.Groupnumber` is still needed
+    * [x] No, removed it
+  * [x] Make `FinishTime` in Group nullable
   * [ ] New feature multiple start times (Groups 1-10 with starting time 1, then 11-20 with starting time 2, ...)
     * [ ] Enable selection of multiple starting times
     * [ ] Add Grouping features
     * [ ] Assign starting time to Grouping
-  * [ ] Autofocus newly created element on large pages
+  * [x] Autofocus newly created element on large pages
   * [ ] Sortable [table](https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/basic-sort.html)
   * [ ] Add Delete Option
     * [ ] Group.js

@@ -11,13 +11,11 @@ namespace SchletterTiming.WebFrontend.Controllers {
     public class UploadController : Controller {
 
         private readonly RaceService _raceService;
-        private readonly GroupService _groupService;
         private readonly ParticipantService _participantService;
 
 
-        public UploadController(RaceService raceService, GroupService groupService, ParticipantService participantService) {
+        public UploadController(RaceService raceService, ParticipantService participantService) {
             _raceService = raceService;
-            _groupService = groupService;
             _participantService = participantService;
         }
 
@@ -50,6 +48,7 @@ namespace SchletterTiming.WebFrontend.Controllers {
             return new Model.Upload
             {
                 Groupname = upload.GroupName,
+                Class = upload.Class,
                 Participant1 = participant1,
                 Participant2 = participant2,
             };

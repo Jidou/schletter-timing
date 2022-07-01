@@ -15,18 +15,16 @@ namespace SchletterTiming.ConsoleFrontend {
         private readonly TimingValueService _timingValueService;
         private readonly RaceService _raceService;
         private readonly ParticipantService _participantService;
-        private readonly GroupService _groupService;
         private readonly CategoryService _categoryService;
         private readonly ClassService _classService;
 
 
-        public Console(IConfiguration configuration, SaveLoad repo, TimingValueService timingValueService, RaceService raceService, ParticipantService participantService, GroupService groupService, CategoryService categoryService, ClassService classService) {
+        public Console(IConfiguration configuration, SaveLoad repo, TimingValueService timingValueService, RaceService raceService, ParticipantService participantService, CategoryService categoryService, ClassService classService) {
             _configuration = configuration;
             _repo = repo;
             _timingValueService = timingValueService;
             _raceService = raceService;
             _participantService = participantService;
-            _groupService = groupService;
             _categoryService = categoryService;
             _classService = classService;
         }
@@ -231,7 +229,6 @@ namespace SchletterTiming.ConsoleFrontend {
             }
 
             if (input[0] == "ag") {
-                AddGroup(input.Skip(1).ToArray());
                 return;
             }
 
@@ -269,7 +266,6 @@ namespace SchletterTiming.ConsoleFrontend {
                 }
 
                 if (input[0] == "ag") {
-                    AddGroup(input.Skip(1).ToArray());
                     continue;
                 }
 
@@ -298,36 +294,7 @@ namespace SchletterTiming.ConsoleFrontend {
             logger.Info("Could not create race, wrong number of arguments");
         }
 
-
-        private void AddGroup(string[] input) {
-            if (string.IsNullOrEmpty(CurrentContext.CurrentRaceTitle)) {
-                logger.Info($"No race created yet");
-                return;
-            }
-
-            var currentGroups = _raceService.LoadCurrentRace().Groups.ToList();
-            var availableGroups = _groupService.LoadAllAvailableGroups();
-
-            foreach (var groupIdentifier in input) {
-                int.TryParse(groupIdentifier, out int startNumber);
-                var group = availableGroups.SingleOrDefault(x => x.Groupname == groupIdentifier || x.StartNumber == startNumber);
-
-                if (group == null) {
-                    logger.Info($"Unable to find group {groupIdentifier}");
-                    return;
-                }
-
-                if (currentGroups.Contains(group)) {
-                    logger.Info($"Group {groupIdentifier} is already part of this race");
-                    continue;
-                }
-
-                _raceService.AddGroup(group);
-
-                logger.Info($"Group {groupIdentifier} successfully added to race");
-            }
-        }
-
+        
         #endregion
 
         #region Participants
@@ -400,7 +367,6 @@ namespace SchletterTiming.ConsoleFrontend {
             }
 
             if (input[0] == "l") {
-                _groupService.LoadAllAvailableGroups();
                 return;
             }
 
@@ -441,7 +407,6 @@ namespace SchletterTiming.ConsoleFrontend {
                 }
 
                 if (input[0] == "l") {
-                    _groupService.LoadAllAvailableGroups();
                     continue;
                 }
 
@@ -455,7 +420,6 @@ namespace SchletterTiming.ConsoleFrontend {
 
         private void TryCreateNewGroup(string[] input) {
             if (input.Length == 3) {
-                _groupService.AddGroup(new Model.Group(input));
                 logger.Info("Added new Group");
                 return;
             }
@@ -468,13 +432,6 @@ namespace SchletterTiming.ConsoleFrontend {
             int.TryParse(input[0], out int groupId);
             var part1Ident = input[1];
             var part2Ident = input[2];
-
-            var group = _groupService.LoadGroupById(groupId);
-
-            if (group == null) {
-                logger.Info($"Unable to find group {input[0]}");
-                return;
-            }
 
             var part1 = _participantService.LoadParticipantByName(part1Ident);
 
@@ -490,10 +447,6 @@ namespace SchletterTiming.ConsoleFrontend {
                 return;
             }
 
-            group.Participant1 = part1;
-            group.Participant2 = part2;
-
-            _groupService.Update(group);
 
             logger.Info($"Group successfully updated");
         }

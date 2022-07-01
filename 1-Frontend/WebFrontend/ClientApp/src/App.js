@@ -10,7 +10,6 @@ import { Classes } from './components/Classes';
 import { Timing } from './components/race/Timing';
 import { Result } from './components/race/Result';
 import { RaceOverview } from './components/RaceOverview';
-import { Groups } from './components/Groups';
 import { Importer } from './components/Importer';
 import { Participants } from './components/Participants';
 import 'bootstrap/dist/css/bootstrap.min.css';

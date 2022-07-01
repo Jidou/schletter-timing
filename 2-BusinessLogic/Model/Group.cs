@@ -8,9 +8,8 @@ namespace SchletterTiming.Model {
 
         public int GroupId { get; set; }
         public string Groupname { get; set; }
-        public int Groupnumber { get; set; }
-        public Participant Participant1 { get; set; }
-        public Participant Participant2 { get; set; }
+        public Participant? Participant1 { get; set; }
+        public Participant? Participant2 { get; set; }
         public string Class { get; set; }
 
         public int StartNumber { get; set; }
@@ -23,14 +22,12 @@ namespace SchletterTiming.Model {
 
         public Group(string groupname, int groupnumber, string @class) {
             Groupname = groupname;
-            Groupnumber = groupnumber;
             Class = @class;
         }
 
 
         public Group(string[] input) {
             Groupname = input[0];
-            Groupnumber = int.Parse(input[1]);
             Class = input[2];
         }
     }

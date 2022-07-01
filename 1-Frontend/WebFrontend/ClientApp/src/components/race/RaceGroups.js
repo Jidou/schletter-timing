@@ -19,20 +19,13 @@ export class RaceGroups extends Component {
         this.onChange = this.onChange.bind(this);
         this.handleAddGroup = this.handleAddGroup.bind(this);
 
-        this.state = { groups: [], allgroups: [], suggestions: [], searchValue: "", loading: true };
+        this.state = { groups: [], searchValue: "", loading: true };
 
         fetch('api/RaceGroup/GetAllGroupsOfRace')
             .then(response => response.json())
             .then(data => {
-                this.setState({ groups: data});
+                this.setState({ groups: data, loading: false, activePage: 1});
             });
-
-        fetch('api/Group/GetAllAvailableGroups')
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ allgroups: data, suggestions: data, loading: false, activePage: 1  });
-            });
-
     }
 
 
@@ -47,6 +40,10 @@ export class RaceGroups extends Component {
             tmp.groupname = value;
         } else if (target === "groupclass") {
             tmp.class = value;
+        } else if (target === "participant1") {
+            tmp.participant1FullName = value;
+        } else if (target === "participant2") {
+            tmp.participant2FullName = value;
         } else {
             return;
         }
@@ -68,77 +65,51 @@ export class RaceGroups extends Component {
         var index = groups.findIndex((x) => x.groupId === groupId);
         var group = groups[index];
 
-        this.updateGroup(group);
+        this.updateGroups(groups);
     }
 
 
-    updateGroup(group) {
-        fetch('api/RaceGroup/UpdateGroupToRace', {
+    updateGroups(groups) {
+        fetch('api/RaceGroup/UpdateGroups', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(group)
+            body: JSON.stringify(groups)
         })
             .then(response => response.json())
             .then(data => {
                 var groups = this.state.groups;
-                var index = groups.findIndex((x) => x.groupId === data.groupId);
-                var oldGroup = groups[index];
-                oldGroup = data;
-                groups[index] = oldGroup;
 
                 this.setState({
                     groups: groups
                 });
 
-                toast("Group: " + group.groupname + " successfully updated");
+                toast("Groups: successfully updated");
             })
     }
 
 
     handleAddGroup() {
-        var newGroup = this.state.allgroups.find((x) => x.groupname === this.state.searchValue);
-
-        if (!newGroup) {
-            toast(this.state.searchValue + " is not a valid group");
-            return;
-        }
-
         var groups = this.state.groups;
 
+        var maxGroupId = Math.max.apply(Math, groups.map(function (o) { return o.groupId; }))
         var maxStartNumber = Math.max.apply(Math, groups.map(function (o) { return o.startNumber; }))
-        newGroup.startNumber = ++maxStartNumber;
-        newGroup.toAdd = true;
+
+        var newGroup = {
+            groupname: "",
+            groupId: ++maxGroupId,
+            startNumber: maxStartNumber === 0 ? 0 : ++maxStartNumber,
+            toAdd: true
+
+        }
 
         groups.push(newGroup);
 
         this.setState({
             groups: groups
         });
-
-        fetch('api/RaceGroup/AddGroupToRace', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newGroup)
-        })
-            .then(response => response.json())
-            .then(data => {
-                var groups = this.state.groups;
-                var index = groups.findIndex((x) => x.groupId === data.groupId);
-                var group = groups[index];
-                groups[index] = group;
-
-                this.setState({
-                    groups: groups
-                });
-
-                toast("Group successfully added");
-            });
     }
 
 
@@ -165,8 +136,12 @@ export class RaceGroups extends Component {
                                 <td>
                                     <input type="text" id="groupclass" onChange={this.handleChange.bind(this, group.groupId)} onBlur={this.handleBlur.bind(this, group.groupId)} value={group.class}></input>
                                 </td>
-                                <td>{group.participant1FullName}</td>
-                                <td>{group.participant2FullName}</td>
+                                <td>
+                                    <input type="text" id="participant1" onChange={this.handleChange.bind(this, group.groupId)} onBlur={this.handleBlur.bind(this, group.groupId)} value={group.participant1FullName}></input>
+                                </td>
+                                <td>
+                                    <input type="text" id="participant2" onChange={this.handleChange.bind(this, group.groupId)} onBlur={this.handleBlur.bind(this, group.groupId)} value={group.participant2FullName}></input>
+                                </td>
                             </tr>
                         )}
                     </tbody>
@@ -182,42 +157,6 @@ export class RaceGroups extends Component {
             value: this.state.searchValue,
             onChange: this.onChange
         };
-    }
-
-
-    getSuggestions = value => {
-        const inputValue = value.trim().toLowerCase();
-        const inputLength = inputValue.length;
-
-        return inputLength === 0 ? [] : this.state.allgroups.filter(group =>
-            group.groupname.toLowerCase().slice(0, inputLength) === inputValue
-        );
-    };
-
-
-    onSuggestionsFetchRequested = ({ value }) => {
-        this.setState({
-            suggestions: this.getSuggestions(value)
-        });
-    };
-
-
-    onSuggestionsClearRequested = () => {
-        this.setState({
-            suggestions: this.state.allgroups,
-        });
-    };
-
-
-    getSuggestionValue(suggestion) {
-        return suggestion.groupname;
-    }
-
-
-    renderSuggestion(suggestion) {
-        return (
-            <span>{suggestion.groupname}</span>
-        );
     }
 
 
@@ -238,14 +177,6 @@ export class RaceGroups extends Component {
                 <h1>Race Groups</h1>
                 <form>
                     <div className="form-group">
-                        <Autosuggest
-                            suggestions={this.state.suggestions}
-                            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-                            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-                            getSuggestionValue={this.getSuggestionValue}
-                            renderSuggestion={this.renderSuggestion}
-                            inputProps={this.getInputProps()}
-                        />
                         <button type="button" onClick={this.handleAddGroup} className="btn btn-primary">Add Group</button>
                     </div>
                     {contents}

@@ -12,9 +12,8 @@ namespace SchletterTiming.WebFrontend.Converter {
             return new Model.Group {
                 GroupId = group.GroupId,
                 Groupname = group.Groupname,
-                Groupnumber = 0,
                 Class = group.Class,
-                StartNumber = 0,
+                StartNumber = group.StartNumber,
                 FinishTime = null,
                 TimeTaken = null,
                 Participant1 = participant1,

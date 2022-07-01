@@ -12,12 +12,10 @@ namespace SchletterTiming.WebFrontend.Controllers {
     public class ParticipantController : Controller {
 
         private readonly ParticipantService _participantService;
-        private readonly GroupService _groupService;
 
 
-        public ParticipantController(ParticipantService participantService, GroupService groupService) {
+        public ParticipantController(ParticipantService participantService) {
             _participantService = participantService;
-            _groupService = groupService;
         }
 
 
@@ -25,31 +23,6 @@ namespace SchletterTiming.WebFrontend.Controllers {
         public IEnumerable<Participant> GetAllAvailableParticipants() {
             var allAvailableParticipants = _participantService.LoadAllAvailableParticipants();
             return ParticipantConverter.ConvertModelToDto(allAvailableParticipants);
-        }
-
-
-        [HttpGet("[action]")]
-        public IEnumerable<ParticipantSuggestions> GetAllParticipantsWithoutGroup() {
-
-            var allAvailableParticipants = _participantService.LoadAllAvailableParticipants();
-            var allGropus = _groupService.LoadAllAvailableGroups();
-
-            var allParticipantsIds = new List<int>();
-
-            foreach (var @group in allGropus) {
-                if (@group.Participant1 != null) {
-                    allParticipantsIds.Add(@group.Participant1.ParticipantId);
-                }
-
-                if (@group.Participant2 != null) {
-                    allParticipantsIds.Add(@group.Participant2.ParticipantId);
-                }
-            }
-
-            var participantsWithoutGroup =
-                allAvailableParticipants.Where(x => allParticipantsIds.All(y => y != x.ParticipantId));
-
-            return ConvertModelToOtherParticipantSuggestionsDto(participantsWithoutGroup);
         }
 
 

@@ -11,14 +11,12 @@ namespace SchletterTiming.WebFrontend.Controllers {
     public class RaceController : Controller {
 
         private readonly RaceService _raceService;
-        private readonly GroupService _groupService;
         private readonly ParticipantService _participantService;
         private readonly TimingValueService _timingValueService;
 
 
-        public RaceController(RaceService raceService, GroupService groupService, ParticipantService participantService, TimingValueService timingValueService) {
+        public RaceController(RaceService raceService, ParticipantService participantService, TimingValueService timingValueService) {
             _raceService = raceService;
-            _groupService = groupService;
             _participantService = participantService;
             _timingValueService = timingValueService;
         }
