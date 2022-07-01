@@ -1,16 +1,48 @@
 # schletter-timing
 
 1. [schletter-timing](#schletter-timing)
-   1. [TODO](#todo)
-   2. [Components](#components)
-   3. [Roadmap](#roadmap)
+   1. [How to start Timy](#how-to-start-timy)
+   2. [How to send data to application](#how-to-send-data-to-application)
+   3. [TODO](#todo)
+   4. [Components](#components)
+   5. [Roadmap](#roadmap)
       1. [Reading Data](#reading-data)
       2. [Console Frontend](#console-frontend)
       3. [Web Frontend](#web-frontend)
          1. [2.0](#20)
          2. [3.0](#30)
          3. [Possible future features](#possible-future-features)
-   4. [Testing](#testing)
+   6. [Testing](#testing)
+
+## How to start Timy
+
+* Press Larger Green Button `Start ON`
+* Wait for Message: `Wirklich einschalten? Druecken Sie die Gruene OK Taste`
+* Press Round Green Button `OK`
+* Wait for Menu
+* Select `Backup`
+* Here you can Delete the old Values or keep them
+* Insert Date and Time, continue with `OK` Button
+* Press `Start ON` to send Sync Puls
+
+## How to send data to application
+
+* Make sure, Timy is connected to Laptop
+* In Application:
+  * Load the Race in the application
+  * Navigate to Race -> Timing
+  * Press `Get Times`
+* On Timy
+  * Press the Button with the List icon (next to `2nd`)
+  * Navigate to `Interface`
+  * Select `RS-232`
+  * Select `Send Memory`
+* You should now see two Lists in the Application
+  * All Groups with Starting numbers on the left hand side
+  * All Times with Start Number `0` on the right hand side
+* Now you have to match up the Times with the start numbers
+  * Additional Times can be ignored (set Start Number to 0)
+* After this, press the `Assign` Button
 
 ## TODO
 
