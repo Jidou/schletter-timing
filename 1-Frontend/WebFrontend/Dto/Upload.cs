@@ -6,5 +6,6 @@
         public string Category1 { get; set; }
         public string Participant2 { get; set; }
         public string Category2 { get; set; }
+        public string Class { get; set; }
     }
 }

@@ -128,6 +128,7 @@ namespace SchletterTiming.RunningContext {
         public void CheckUpload(IEnumerable<Model.Upload> uploads) {
             var race = LoadCurrentRace();
             var groups = race.Groups.ToList();
+            var groupId = 0;
 
             foreach (var upload in uploads) {
                 if (groups.Any(x => x.Groupname == upload.Groupname)) {
@@ -141,12 +142,15 @@ namespace SchletterTiming.RunningContext {
                     }
                 } else {
                     groups.Add(new Group {
-                        Class = string.Empty,
+                        Class = upload.Class,
+                        GroupId = groupId,
                         Groupname = upload.Groupname,
                         Participant1 = upload.Participant1,
                         Participant2 = upload.Participant2,
                     });
                 }
+
+                groupId++;
             }
 
             race.Groups = groups;

@@ -92,8 +92,8 @@ namespace SchletterTiming.RunningContext {
 
                 if (!found) {
                     AddParticipant(new Participant {
-                        Firstname = nameSplit[0],
-                        Lastname = nameSplit[1],
+                        Lastname = nameSplit[0],
+                        Firstname = nameSplit[1],
                         Category = category,
                     });
                 }
@@ -104,8 +104,8 @@ namespace SchletterTiming.RunningContext {
         private bool CompareName(string firstname, string lastname, string fullname) {
             var nameSplit = fullname.Split(' ');
 
-            return (firstname == nameSplit[0] && lastname == nameSplit[1]) ||
-                   (firstname == nameSplit[1] && lastname == nameSplit[0]);
+            return (lastname == nameSplit[0] && firstname == nameSplit[1]) ||
+                   (lastname == nameSplit[1] && firstname == nameSplit[0]);
         }
     }
 }
